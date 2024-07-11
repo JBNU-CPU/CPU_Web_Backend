@@ -35,3 +35,4 @@ public class Notification {
     private boolean isAnonymous;
 
 }
+
