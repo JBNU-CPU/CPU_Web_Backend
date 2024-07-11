@@ -4,10 +4,10 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Entity
 @Builder
 @DynamicUpdate
