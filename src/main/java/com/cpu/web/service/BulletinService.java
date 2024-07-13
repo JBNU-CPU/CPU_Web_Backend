@@ -5,6 +5,10 @@ import com.cpu.web.entity.Bulletin;
 import com.cpu.web.repository.BulletinRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class BulletinService {
 
@@ -14,7 +18,8 @@ public class BulletinService {
         this.bulletinRepository = bulletinRepository;
     }
 
-    public boolean createContent(BulletinDTO bulletinDTO){
+    // 글 저장
+    public boolean createBulletin(BulletinDTO bulletinDTO){
 
         String title = bulletinDTO.getTitle();
         String content = bulletinDTO.getContent();
@@ -43,5 +48,38 @@ public class BulletinService {
         return true;
 
     }
+    
+    // 전체 글 조회
+    public List<BulletinDTO> getAllBulletin() {
+        return bulletinRepository.findAll().stream()
+                .map(BulletinDTO::new)
+                .collect(Collectors.toList());
+    }
 
+    // 특정 글 조회
+    public BulletinDTO getBulletinById(Long id) {
+        Optional<Bulletin> bulletin = bulletinRepository.findById(id);
+        return bulletin.map(BulletinDTO::new).orElse(null);
+    }
+
+    // 글 수정
+    public void updateBulletin(Long id, BulletinDTO bulletinDTO) {
+        Optional<Bulletin> existingBulletin = bulletinRepository.findById(id);
+        if (existingBulletin.isPresent()){
+            Bulletin bulletin = existingBulletin.get();
+            bulletin.setTitle(bulletinDTO.getTitle());
+            bulletin.setContent(bulletinDTO.getContent());
+            bulletin.setAnonymous(bulletinDTO.isAnonymous());
+            bulletinRepository.save(bulletin);
+        } else {
+            // 예외처리
+        }
+    }
+
+    public void deleteBulletin(Long id) {
+        bulletinRepository.deleteById(id);
+    }
+
+    // 글 삭제
+    
 }

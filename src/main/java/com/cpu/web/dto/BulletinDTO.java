@@ -11,6 +11,14 @@ public class BulletinDTO {
     private String content;
     private boolean isAnonymous;
 
+    public BulletinDTO(){}
+
+    public BulletinDTO(Bulletin bulletin) {
+        this.title = bulletin.getTitle();
+        this.content = bulletin.getContent();
+        this.isAnonymous = bulletin.isAnonymous();
+    }
+
     public Bulletin toContentEntity(){
 
         Bulletin bulletin = new Bulletin();

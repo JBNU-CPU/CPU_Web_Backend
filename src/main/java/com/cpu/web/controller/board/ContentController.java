@@ -1,13 +1,15 @@
 package com.cpu.web.controller.board;
 
 import com.cpu.web.dto.BulletinDTO;
+import com.cpu.web.entity.Bulletin;
 import com.cpu.web.service.BulletinService;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 // 자유 게시판 컨트롤러
 @RestController
-@RequestMapping("/content")
+@RequestMapping("/bulletin")
 public class ContentController {
 
     private final BulletinService bulletinService;
@@ -16,21 +18,37 @@ public class ContentController {
         this.bulletinService = bulletinService;
     }
 
-
-    // 자유 게시판 페이지
-    @GetMapping
-    public String content(Model model) {
-
-        return "content";
-    }
-
-    //  자유 글 작성
+    //글 작성
     @PostMapping
-    public String createContent(@RequestBody BulletinDTO bulletinDTO) {
+    public void createContent(@RequestBody BulletinDTO bulletinDTO) {
 
-        boolean isSaved = bulletinService.createContent(bulletinDTO);
+        boolean isSaved = bulletinService.createBulletin(bulletinDTO);
         System.out.println(isSaved);
 
-        return  "content";
+    }
+
+    //글 전체 조회
+    @GetMapping
+    public List<BulletinDTO> getAllBulletins() {
+
+        return  bulletinService.getAllBulletin();
+    }
+
+    // 특정 글 조회
+    @GetMapping("/{id}")
+    public BulletinDTO getBulletinById(@PathVariable Long id) {
+        return bulletinService.getBulletinById(id);
+    }
+
+    // 글 수정
+    @PutMapping("/{id}")
+    public void updateBulletin(@PathVariable Long id, @RequestBody BulletinDTO bulletinDTO){
+        bulletinService.updateBulletin(id, bulletinDTO);
+    }
+
+    // 글 삭제
+    @DeleteMapping("/{id}")
+    public void deleteBulletin(@PathVariable Long id){
+        bulletinService.deleteBulletin(id);
     }
 }

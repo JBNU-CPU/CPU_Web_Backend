@@ -29,6 +29,7 @@ public class Bulletin {
     @UpdateTimestamp
     private Timestamp updateDate;
 
+
     //@ManyToOne
     //private UserEntity userEntity;
 }
