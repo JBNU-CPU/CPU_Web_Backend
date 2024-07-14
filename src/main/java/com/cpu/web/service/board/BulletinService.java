@@ -1,8 +1,8 @@
-package com.cpu.web.service;
+package com.cpu.web.service.board;
 
-import com.cpu.web.dto.BulletinDTO;
-import com.cpu.web.entity.Bulletin;
-import com.cpu.web.repository.BulletinRepository;
+import com.cpu.web.dto.board.BulletinDTO;
+import com.cpu.web.entity.board.Bulletin;
+import com.cpu.web.repository.board.BulletinRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

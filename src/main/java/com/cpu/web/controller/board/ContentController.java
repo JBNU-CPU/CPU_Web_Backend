@@ -1,8 +1,7 @@
 package com.cpu.web.controller.board;
 
-import com.cpu.web.dto.BulletinDTO;
-import com.cpu.web.entity.Bulletin;
-import com.cpu.web.service.BulletinService;
+import com.cpu.web.dto.board.BulletinDTO;
+import com.cpu.web.service.board.BulletinService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

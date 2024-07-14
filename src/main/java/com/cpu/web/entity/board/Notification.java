@@ -1,4 +1,4 @@
-package com.cpu.web.entity;
+package com.cpu.web.entity.board;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -33,6 +33,7 @@ public class Notification {
 
     @Column(name = "is_anonymous", nullable = false)
     private boolean isAnonymous;
+
 
 }
 

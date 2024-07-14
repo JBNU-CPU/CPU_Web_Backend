@@ -1,9 +1,9 @@
-package com.cpu.web.service;
+package com.cpu.web.service.board;
 
 
-import com.cpu.web.dto.NotificationDTO;
-import com.cpu.web.entity.Notification;
-import com.cpu.web.repository.NotificationRepository;
+import com.cpu.web.dto.board.NotificationDTO;
+import com.cpu.web.entity.board.Notification;
+import com.cpu.web.repository.board.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +22,20 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
+    // 전체 글 조회
     public List<NotificationDTO> getAllNotifications() {
         return notificationRepository.findAll().stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
+    // 특정 글 조회
     public NotificationDTO getNotificationById(int id) {
         Optional<Notification> notification = notificationRepository.findById(id);
         return notification.map(this::convertToDTO).orElse(null);
     }
 
+    // 글 저장
     public NotificationDTO createNotification(NotificationDTO notificationDTO) {
         Notification notification = convertToEntity(notificationDTO);
         notification.setPostDate(LocalDateTime.now());
@@ -40,6 +43,7 @@ public class NotificationService {
         return convertToDTO(savedNotification);
     }
 
+    // 글 수정
     public NotificationDTO updateNotification(int id, NotificationDTO notificationDTO) {
         Optional<Notification> existingNotification = notificationRepository.findById(id);
         if (existingNotification.isPresent()) {
@@ -56,6 +60,7 @@ public class NotificationService {
         }
     }
 
+    // 글 삭제
     public void deleteNotification(int id) {
         notificationRepository.deleteById(id);
     }

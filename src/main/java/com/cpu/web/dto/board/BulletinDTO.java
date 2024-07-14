@@ -1,6 +1,6 @@
-package com.cpu.web.dto;
+package com.cpu.web.dto.board;
 
-import com.cpu.web.entity.Bulletin;
+import com.cpu.web.entity.board.Bulletin;
 import lombok.Getter;
 import lombok.Setter;
 

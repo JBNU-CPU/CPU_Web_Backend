@@ -1,4 +1,4 @@
-package com.cpu.web.entity;
+package com.cpu.web.entity.board;
 
 import jakarta.persistence.*;
 import lombok.Getter;

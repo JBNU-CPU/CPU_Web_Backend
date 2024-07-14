@@ -1,4 +1,4 @@
-package com.cpu.web.dto;
+package com.cpu.web.dto.board;
 
 import lombok.*;
 import java.time.LocalDateTime;
