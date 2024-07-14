@@ -9,16 +9,19 @@ import lombok.Setter;
 public class BulletinDTO {
     private String  title;
     private String content;
-    private boolean isAnonymous;
+    private boolean anonymous;
 
     public BulletinDTO(){}
 
+
+    // entity => dto
     public BulletinDTO(Bulletin bulletin) {
         this.title = bulletin.getTitle();
         this.content = bulletin.getContent();
-        this.isAnonymous = bulletin.isAnonymous();
+        this.anonymous = bulletin.isAnonymous();
     }
 
+    // dto => entity
     public Bulletin toContentEntity(){
 
         Bulletin bulletin = new Bulletin();
@@ -27,9 +30,11 @@ public class BulletinDTO {
 
         bulletin.setContent(content);
 
-        bulletin.setAnonymous(isAnonymous);
+        bulletin.setAnonymous(anonymous);
 
         return bulletin;
     }
+
+
 }
 

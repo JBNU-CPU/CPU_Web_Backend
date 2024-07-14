@@ -9,21 +9,20 @@ import java.util.List;
 // 자유 게시판 컨트롤러
 @RestController
 @RequestMapping("/bulletin")
-public class ContentController {
+public class BulletinController {
 
     private final BulletinService bulletinService;
 
-    public ContentController(BulletinService bulletinService){
+    public BulletinController(BulletinService bulletinService){
         this.bulletinService = bulletinService;
     }
 
     //글 작성
     @PostMapping
-    public void createContent(@RequestBody BulletinDTO bulletinDTO) {
+    public void createBulletin(@RequestBody BulletinDTO bulletinDTO) {
 
-        boolean isSaved = bulletinService.createBulletin(bulletinDTO);
-        System.out.println(isSaved);
-
+        bulletinService.createBulletin(bulletinDTO);
+        System.out.println(bulletinDTO.isAnonymous());
     }
 
     //글 전체 조회

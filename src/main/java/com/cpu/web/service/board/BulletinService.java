@@ -19,34 +19,32 @@ public class BulletinService {
     }
 
     // 글 저장
-    public boolean createBulletin(BulletinDTO bulletinDTO){
+    public void createBulletin(BulletinDTO bulletinDTO){
 
         String title = bulletinDTO.getTitle();
         String content = bulletinDTO.getContent();
 
         // 제목 유효한지
         if(title == null){
-            return false;
+            throw new IllegalArgumentException("제목이 유효하지 않습니다.");
         }else if(title.isEmpty()){
-            return false;
+            throw new IllegalArgumentException("제목이 유효하지 않습니다.");
         }else if(title.isBlank()){
-            return false;
+            throw new IllegalArgumentException("제목이 유효하지 않습니다.");
         }
 
         // 내용 유효한지
         if(content == null){
-            return false;
+            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
         }else if(content.isEmpty()){
-            return false;
+            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
         }else if(content.isBlank()){
-            return false;
+            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
         }
+
 
         Bulletin bulletin = bulletinDTO.toContentEntity();
         bulletinRepository.save(bulletin);
-
-        return true;
-
     }
     
     // 전체 글 조회
