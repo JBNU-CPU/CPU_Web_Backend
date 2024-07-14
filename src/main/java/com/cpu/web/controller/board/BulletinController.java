@@ -13,23 +13,20 @@ public class BulletinController {
 
     private final BulletinService bulletinService;
 
-    public BulletinController(BulletinService bulletinService){
+    public BulletinController(BulletinService bulletinService) {
         this.bulletinService = bulletinService;
     }
 
     //글 작성
     @PostMapping
     public void createBulletin(@RequestBody BulletinDTO bulletinDTO) {
-
         bulletinService.createBulletin(bulletinDTO);
-        System.out.println(bulletinDTO.isAnonymous());
     }
 
     //글 전체 조회
     @GetMapping
     public List<BulletinDTO> getAllBulletins() {
-
-        return  bulletinService.getAllBulletin();
+        return bulletinService.getAllBulletin();
     }
 
     // 특정 글 조회
@@ -40,13 +37,13 @@ public class BulletinController {
 
     // 글 수정
     @PutMapping("/{id}")
-    public void updateBulletin(@PathVariable Long id, @RequestBody BulletinDTO bulletinDTO){
+    public void updateBulletin(@PathVariable Long id, @RequestBody BulletinDTO bulletinDTO) {
         bulletinService.updateBulletin(id, bulletinDTO);
     }
 
     // 글 삭제
     @DeleteMapping("/{id}")
-    public void deleteBulletin(@PathVariable Long id){
+    public void deleteBulletin(@PathVariable Long id) {
         bulletinService.deleteBulletin(id);
     }
 }
