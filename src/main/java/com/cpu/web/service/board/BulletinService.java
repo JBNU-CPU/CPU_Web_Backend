@@ -1,7 +1,10 @@
 package com.cpu.web.service.board;
 
+import com.cpu.web.dto.board.BulletinCommentDTO;
 import com.cpu.web.dto.board.BulletinDTO;
 import com.cpu.web.entity.board.Bulletin;
+import com.cpu.web.entity.comment.BulletinComment;
+import com.cpu.web.repository.board.BulletinCommentRepository;
 import com.cpu.web.repository.board.BulletinRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +17,15 @@ public class BulletinService {
 
     private final BulletinRepository bulletinRepository;
 
-    public BulletinService(BulletinRepository bulletinRepository) {
+    private final BulletinCommentRepository bulletinCommentRepository;
+
+    public BulletinService(BulletinRepository bulletinRepository, BulletinCommentRepository bulletinCommentRepository) {
+
         this.bulletinRepository = bulletinRepository;
+        this.bulletinCommentRepository = bulletinCommentRepository;
     }
 
-    // 글 저장
+    // 글 생성
     public void createBulletin(BulletinDTO bulletinDTO) {
 
         String title = bulletinDTO.getTitle();
@@ -43,7 +50,7 @@ public class BulletinService {
         }
 
 
-        Bulletin bulletin = bulletinDTO.toContentEntity();
+        Bulletin bulletin = bulletinDTO.toBulletinEntity();
         bulletinRepository.save(bulletin);
     }
 
@@ -73,4 +80,21 @@ public class BulletinService {
     }
 
 
+    // 댓글 생성
+    public void createBulletinComment(BulletinCommentDTO bulletinCommentDTO) {
+        String content = bulletinCommentDTO.getContent();
+
+        // 내용 유효한지
+        if (content == null) {
+            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
+        } else if (content.isEmpty()) {
+            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
+        } else if (content.isBlank()) {
+            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
+        }
+
+        Bulletin bulletin = bulletinRepository.findById(bulletinCommentDTO.getBulletinId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글에 접근하였습니다. 접근하신 게시글 아이디는 다음과 같습니다.: " + bulletinCommentDTO.getBulletinId()));
+        BulletinComment bulletinComment = bulletinCommentDTO.toBulletinCommentEntity(bulletin);
+        bulletinCommentRepository.save(bulletinComment);
+    }
 }

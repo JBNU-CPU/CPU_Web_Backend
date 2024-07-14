@@ -22,7 +22,7 @@ public class BulletinDTO {
     }
 
     // dto => entity
-    public Bulletin toContentEntity(){
+    public Bulletin toBulletinEntity(){
 
         Bulletin bulletin = new Bulletin();
 

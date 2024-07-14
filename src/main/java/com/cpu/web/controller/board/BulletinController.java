@@ -1,5 +1,6 @@
 package com.cpu.web.controller.board;
 
+import com.cpu.web.dto.board.BulletinCommentDTO;
 import com.cpu.web.dto.board.BulletinDTO;
 import com.cpu.web.service.board.BulletinService;
 import org.springframework.web.bind.annotation.*;
@@ -45,5 +46,11 @@ public class BulletinController {
     @DeleteMapping("/{id}")
     public void deleteBulletin(@PathVariable Long id) {
         bulletinService.deleteBulletin(id);
+    }
+
+    // 댓글 작성
+    @PostMapping("/comment")
+    public void createBulletinComment(@RequestBody BulletinCommentDTO bulletinCommentDTO) {
+        bulletinService.createBulletinComment(bulletinCommentDTO);
     }
 }
