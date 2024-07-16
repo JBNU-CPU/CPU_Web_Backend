@@ -17,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "noti_id", nullable = false)
     private int id;
 
@@ -39,5 +40,12 @@ public class Notification {
     @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NotificationComment> notificationComments;
 
-}
+    // 명시적인 getter와 setter 추가
+    public boolean getIsAnonymous() {
+        return isAnonymous;
+    }
 
+    public void setIsAnonymous(boolean isAnonymous) {
+        this.isAnonymous = isAnonymous;
+    }
+}

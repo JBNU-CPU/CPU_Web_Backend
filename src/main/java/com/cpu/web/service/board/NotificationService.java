@@ -1,6 +1,5 @@
 package com.cpu.web.service.board;
 
-
 import com.cpu.web.dto.board.NotificationDTO;
 import com.cpu.web.entity.board.Notification;
 import com.cpu.web.repository.board.NotificationRepository;
@@ -50,7 +49,7 @@ public class NotificationService {
             Notification notification = existingNotification.get();
             notification.setTitle(notificationDTO.getTitle());
             notification.setContents(notificationDTO.getContents());
-            notification.setAnonymous(notificationDTO.isAnonymous());
+            notification.setIsAnonymous(notificationDTO.getIsAnonymous());
             // 필요한 경우 다른 필드도 업데이트합니다.
 
             Notification updatedNotification = notificationRepository.save(notification);
@@ -72,7 +71,7 @@ public class NotificationService {
                 .title(notification.getTitle())
                 .contents(notification.getContents())
                 .postDate(notification.getPostDate())
-                .isAnonymous(notification.isAnonymous())
+                .isAnonymous(notification.getIsAnonymous())
                 .build();
     }
 
@@ -83,8 +82,7 @@ public class NotificationService {
                 .title(notificationDTO.getTitle())
                 .contents(notificationDTO.getContents())
                 .postDate(notificationDTO.getPostDate())
-                .isAnonymous(notificationDTO.isAnonymous())
+                .isAnonymous(notificationDTO.getIsAnonymous())
                 .build();
     }
 }
-
