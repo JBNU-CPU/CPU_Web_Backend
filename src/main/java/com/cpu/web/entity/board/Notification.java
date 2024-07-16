@@ -1,10 +1,12 @@
 package com.cpu.web.entity.board;
 
+import com.cpu.web.entity.comment.NotificationComment;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,6 +36,8 @@ public class Notification {
     @Column(name = "is_anonymous", nullable = false)
     private boolean isAnonymous;
 
+    @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NotificationComment> notificationComments;
 
 }
 

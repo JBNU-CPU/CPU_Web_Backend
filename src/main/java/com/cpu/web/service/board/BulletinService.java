@@ -1,10 +1,10 @@
 package com.cpu.web.service.board;
 
-import com.cpu.web.dto.board.BulletinCommentDTO;
 import com.cpu.web.dto.board.BulletinDTO;
+import com.cpu.web.dto.comment.NotificationCommentDTO;
 import com.cpu.web.entity.board.Bulletin;
 import com.cpu.web.entity.comment.BulletinComment;
-import com.cpu.web.repository.board.BulletinCommentRepository;
+import com.cpu.web.repository.comment.BulletinCommentRepository;
 import com.cpu.web.repository.board.BulletinRepository;
 import org.springframework.stereotype.Service;
 
@@ -81,7 +81,7 @@ public class BulletinService {
 
 
     // 댓글 생성
-    public void createBulletinComment(BulletinCommentDTO bulletinCommentDTO) {
+    public void createBulletinComment(NotificationCommentDTO.BulletinCommentDTO bulletinCommentDTO) {
         String content = bulletinCommentDTO.getContent();
 
         // 내용 유효한지
