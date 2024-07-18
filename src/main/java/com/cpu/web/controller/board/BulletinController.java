@@ -1,6 +1,7 @@
 package com.cpu.web.controller.board;
 
 import com.cpu.web.dto.board.BulletinDTO;
+import com.cpu.web.dto.comment.BulletinCommentDTO;
 import com.cpu.web.dto.comment.NotificationCommentDTO;
 import com.cpu.web.service.board.BulletinService;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,7 @@ public class BulletinController {
 
     // 댓글 작성
     @PostMapping("/comment")
-    public void createBulletinComment(@RequestBody NotificationCommentDTO.BulletinCommentDTO bulletinCommentDTO) {
+    public void createBulletinComment(@RequestBody BulletinCommentDTO bulletinCommentDTO) {
         bulletinService.createBulletinComment(bulletinCommentDTO);
     }
 }
