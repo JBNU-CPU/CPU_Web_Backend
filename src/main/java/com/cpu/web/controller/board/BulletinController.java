@@ -54,4 +54,11 @@ public class BulletinController {
     public void createBulletinComment(@RequestBody BulletinCommentDTO bulletinCommentDTO) {
         bulletinService.createBulletinComment(bulletinCommentDTO);
     }
+    
+    // 댓글 전체 조회
+    @GetMapping("/comment/{id}")
+    public List<BulletinCommentDTO> getAllBulletinComments(@PathVariable Long id) {
+        return bulletinService.getAllBulletinComments(id);
+    }
+
 }

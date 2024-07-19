@@ -2,7 +2,6 @@ package com.cpu.web.service.board;
 
 import com.cpu.web.dto.board.BulletinDTO;
 import com.cpu.web.dto.comment.BulletinCommentDTO;
-import com.cpu.web.dto.comment.NotificationCommentDTO;
 import com.cpu.web.entity.board.Bulletin;
 import com.cpu.web.entity.comment.BulletinComment;
 import com.cpu.web.repository.comment.BulletinCommentRepository;
@@ -97,5 +96,10 @@ public class BulletinService {
         Bulletin bulletin = bulletinRepository.findById(bulletinCommentDTO.getBulletinId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글에 접근하였습니다. 접근하신 게시글 아이디는 다음과 같습니다.: " + bulletinCommentDTO.getBulletinId()));
         BulletinComment bulletinComment = bulletinCommentDTO.toBulletinCommentEntity(bulletin);
         bulletinCommentRepository.save(bulletinComment);
+    }
+
+    // 특정 글 모든 댓글 조회
+    public List<BulletinCommentDTO> getAllBulletinComments(Long id) {
+        return bulletinCommentRepository.findByBulletin_BulletinId(id).stream().map(BulletinCommentDTO::new).collect(Collectors.toList());
     }
 }

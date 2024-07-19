@@ -12,6 +12,9 @@ public class BulletinCommentDTO {
     private Long bulletinId;
     private String content;
 
+    public BulletinCommentDTO(){}
+
+    // dto => entity
     public BulletinComment toBulletinCommentEntity(Bulletin bulletin){
         BulletinComment bulletinComment = new BulletinComment();
 
@@ -20,4 +23,11 @@ public class BulletinCommentDTO {
 
         return bulletinComment;
     }
+
+    // entity => dto
+    public BulletinCommentDTO(BulletinComment bulletinComment) {
+        this.content = bulletinComment.getContents();
+        this.bulletinId = bulletinComment.getBulletin().getBulletinId();
+    }
+
 }
