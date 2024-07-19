@@ -55,10 +55,27 @@ public class BulletinController {
         bulletinService.createBulletinComment(bulletinCommentDTO);
     }
     
-    // 댓글 전체 조회
+    // 특정 글 댓글 전체 조회
     @GetMapping("/comment/{id}")
     public List<BulletinCommentDTO> getAllBulletinComments(@PathVariable Long id) {
         return bulletinService.getAllBulletinComments(id);
     }
 
+    // 특정 댓글 조회
+    @GetMapping("/comment/one/{id}")
+    public BulletinCommentDTO getBulletinComment(@PathVariable Long id) {
+        return bulletinService.getBulletinComment(id);
+    }
+
+    // 댓글 수정
+    @PutMapping("/comment/{id}")
+    public void updateBulletinComment(@PathVariable Long id, @RequestBody BulletinCommentDTO bulletinCommentDTO) {
+        bulletinService.updateBulletinComment(id, bulletinCommentDTO);
+    }
+
+    // 댓글 삭제
+    @DeleteMapping("/comment/{id}")
+    public void deleteBulletinComment(@PathVariable Long id) {
+        bulletinService.deleteBulletinComment(id);
+    }
 }

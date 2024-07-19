@@ -102,4 +102,21 @@ public class BulletinService {
     public List<BulletinCommentDTO> getAllBulletinComments(Long id) {
         return bulletinCommentRepository.findByBulletin_BulletinId(id).stream().map(BulletinCommentDTO::new).collect(Collectors.toList());
     }
+
+    // 특정 댓글 조회
+    public BulletinCommentDTO getBulletinComment(Long id) {
+        Optional<BulletinComment> bulletinComment = bulletinCommentRepository.findById(id);
+        return bulletinComment.map(BulletinCommentDTO::new).orElse(null);
+    }
+
+    // 댓글 수정
+    public void updateBulletinComment(Long id, BulletinCommentDTO bulletinCommentDTO) {
+        BulletinComment bulletinComment = bulletinCommentRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        bulletinComment.setContents(bulletinCommentDTO.getContent());
+        bulletinCommentRepository.save(bulletinComment);
+    }
+
+    public void deleteBulletinComment(Long id) {
+        bulletinCommentRepository.deleteById(id);
+    }
 }
