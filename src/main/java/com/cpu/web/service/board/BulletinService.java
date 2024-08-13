@@ -116,6 +116,7 @@ public class BulletinService {
         bulletinCommentRepository.save(bulletinComment);
     }
 
+    // 댓글 삭제
     public void deleteBulletinComment(Long id) {
         bulletinCommentRepository.deleteById(id);
     }
