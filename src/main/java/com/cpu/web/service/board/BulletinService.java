@@ -52,7 +52,9 @@ public class BulletinService {
 
     // 전체 글 조회
     public List<BulletinDTO> getAllBulletins() {
-        return bulletinRepository.findAll().stream().map(BulletinDTO::new).collect(Collectors.toList());
+        return bulletinRepository.findAll().stream()
+                .map(BulletinDTO::new)
+                .collect(Collectors.toList());
     }
 
     // 특정 글 조회
@@ -66,7 +68,7 @@ public class BulletinService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid bulletin ID: " + id));
         bulletin.setTitle(bulletinDTO.getTitle());
         bulletin.setContent(bulletinDTO.getContent());
-        bulletin.setAnonymous(bulletinDTO.isAnonymous());
+        bulletin.setIsAnonymous(bulletinDTO.isAnonymous());
         Bulletin updatedBulletin = bulletinRepository.save(bulletin);
         return new BulletinDTO(updatedBulletin);
     }

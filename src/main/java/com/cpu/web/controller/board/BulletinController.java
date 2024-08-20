@@ -33,7 +33,7 @@ public class BulletinController {
         return ResponseEntity.created(location).body(bulletinDTO);
     }
 
-    //글 전체 조회
+    // 전체 글 조회
     @GetMapping
     public List<BulletinDTO> getAllBulletins() {
         return bulletinService.getAllBulletins();

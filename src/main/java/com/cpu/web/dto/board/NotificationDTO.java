@@ -1,27 +1,31 @@
 package com.cpu.web.dto.board;
 
-import lombok.*;
-import java.time.LocalDateTime;
+import com.cpu.web.entity.board.Notification;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class NotificationDTO {
-    private int id;
-    private int studentNumber;
     private String title;
-    private String contents;
-    private LocalDateTime postDate;
-    private boolean isAnonymous;
+    private String content;
+    private boolean anonymous;
 
-    // 명시적인 getter와 setter 추가 (필요 시)
-    public boolean getIsAnonymous() {
-        return isAnonymous;
+    public NotificationDTO(){}
+
+    // entity => dto
+    public NotificationDTO(Notification notification) {
+        this.title = notification.getTitle();
+        this.content = notification.getContent();
+        this.anonymous = notification.getIsAnonymous();
     }
 
-    public void setIsAnonymous(boolean isAnonymous) {
-        this.isAnonymous = isAnonymous;
+    // dto => entity
+    public Notification toNotificationEntity() {
+        Notification notification = new Notification();
+        notification.setTitle(title);
+        notification.setContent(content);
+        notification.setIsAnonymous(anonymous);
+        return notification;
     }
 }
