@@ -14,8 +14,14 @@ public class BulletinCommentDTO {
 
     public BulletinCommentDTO(){}
 
+    // entity => dto
+    public BulletinCommentDTO(BulletinComment bulletinComment) {
+        this.content = bulletinComment.getContents();
+        this.bulletinId = bulletinComment.getBulletin().getBulletinId();
+    }
+
     // dto => entity
-    public BulletinComment toBulletinCommentEntity(Bulletin bulletin){
+    public BulletinComment toBulletinCommentEntity(String content, Bulletin bulletin){
         BulletinComment bulletinComment = new BulletinComment();
 
         bulletinComment.setContents(content);
@@ -23,11 +29,4 @@ public class BulletinCommentDTO {
 
         return bulletinComment;
     }
-
-    // entity => dto
-    public BulletinCommentDTO(BulletinComment bulletinComment) {
-        this.content = bulletinComment.getContents();
-        this.bulletinId = bulletinComment.getBulletin().getBulletinId();
-    }
-
 }

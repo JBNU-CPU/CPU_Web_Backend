@@ -19,8 +19,6 @@ public class BulletinComment {
     @Column(name = "comment_id", nullable = false, unique = true)
     private Long commentId;
 
-    //private int studentNumber;
-
     private String contents;
 
     @CreationTimestamp
@@ -32,5 +30,4 @@ public class BulletinComment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bulletin_id", nullable = false)
     private Bulletin bulletin;
-
 }
