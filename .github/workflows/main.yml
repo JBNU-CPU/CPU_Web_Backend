@@ -62,11 +62,26 @@ jobs:
       ## NLP 적용하면 IP -> 도메인으로 수정 + EC2 늘리면 run 추가
         - name: Deploy to EC2
           run: |
+            echo "Creating private key file..."
             echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
             chmod 600 private_key.pem
+            echo "Private key file created and permissions set."
+
+            echo "Copying JAR file to EC2..."
             scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/trelloServer.jar
+            echo "JAR file copied successfully."
+
+            echo "Connecting to EC2 via SSH and restarting application..."
             ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/trelloServer.jar > app.log 2>&1 &"
+            echo "Application restarted successfully."
+
             rm -f private_key.pem
+            echo "Private key file removed."
+#            echo "${{ secrets.EC2_SSH_KEY }}" > private_key.pem
+#            chmod 600 private_key.pem
+#            scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USERNAME }}/trelloServer.jar
+#            ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/trelloServer.jar > app.log 2>&1 &"
+#            rm -f private_key.pem
 
 #        with:
 #          host: ${{ secrets.REMOTE_IP }} # 인스턴스 IP
