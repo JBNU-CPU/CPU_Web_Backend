@@ -42,18 +42,38 @@ jobs:
           echo "Content of environment variables:"
           printenv
 
+      - name: Create private key file
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Test SSH connection
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo SSH connection successful"
+
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          port: 22
-          script: |
-            echo "Stopping any running Java applications..."
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             pkill -f 'java -jar' || true
-            echo "Moving JAR file to deployment directory..."
+            mkdir -p /home/ubuntu/cpu/
             mv ./build/libs/web-0.0.1-SNAPSHOT.jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar
-            echo "Starting the application..."
             nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar > /home/ubuntu/cpu/app.log 2>&1 &
-            echo "Deployment script finished."
+          EOF
+#      - name: Deploy to EC2
+#        uses: appleboy/ssh-action@v0.1.8
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USER }}
+#          key: ${{ secrets.EC2_KEY }}
+#          port: 22
+#          script: |
+#            echo "Stopping any running Java applications..."
+#            pkill -f 'java -jar' || true
+#            echo "Moving JAR file to deployment directory..."
+#            mv ./build/libs/web-0.0.1-SNAPSHOT.jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar
+#            echo "Starting the application..."
+#            nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar > /home/ubuntu/cpu/app.log 2>&1 &
+#            echo "Deployment script finished."
+      - name: Remove private key file
+        run: |
+          rm -f private_key.pem
