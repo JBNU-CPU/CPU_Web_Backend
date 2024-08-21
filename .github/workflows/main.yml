@@ -3,77 +3,64 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - main  # main 브랜치에 코드가 푸시될 때 워크플로우 실행
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 최신 Ubuntu 환경에서 실행
     env:
       ACTIONS_STEP_DEBUG: true  # 디버그 모드 활성화
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # GitHub 리포지토리에서 코드를 체크아웃
 
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: 'temurin'  # Adoptium Temurin JDK 사용
+          java-version: '21'  # JDK 21 버전을 설정
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+        run: chmod +x ./gradlew  # Gradle Wrapper 파일에 실행 권한 부여
 
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew build -x test  # Gradle을 사용하여 프로젝트 빌드, 테스트는 생략
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: jar-file
-          path: build/libs/web-0.0.1-SNAPSHOT.jar
+          name: jar-file  # 아티팩트 이름
+          path: build/libs/web-0.0.1-SNAPSHOT.jar  # 빌드된 JAR 파일 경로
 
       - name: Debugging Step
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "List of files in the directory:"
-          ls -al
-          echo "Content of environment variables:"
-          printenv
+        run: |  # 디버그 정보를 출력
+          echo "Current working directory:"  # 현재 작업 디렉토리 출력
+          pwd  # 현재 디렉토리 경로를 출력
+          echo "List of files in the directory:"  # 디렉토리 내 파일 목록 출력
+          ls -al  # 디렉토리 내 모든 파일의 상세 정보 출력
+          echo "Content of environment variables:"  # 환경 변수 출력
+          printenv  # 모든 환경 변수 출력
 
       - name: Create private key file
-        run: |
-          echo "${{ secrets.EC2_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
+        run: |  # SSH 프라이빗 키 파일 생성
+          echo "${{ secrets.EC2_KEY }}" > private_key.pem  # GitHub Secrets에서 가져온 SSH 키를 파일로 저장
+          chmod 600 private_key.pem  # 프라이빗 키 파일에 적절한 권한 설정
 
       - name: Test SSH connection
-        run: |
+        run: |  # SSH 연결을 테스트
           ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo SSH connection successful"
+          # EC2 인스턴스에 SSH로 접속하여 연결이 성공하면 "SSH connection successful" 메시지 출력
 
       - name: Deploy to EC2
-        run: |
+        run: |  # EC2에 애플리케이션 배포
           ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            pkill -f 'java -jar' || true
-            mkdir -p /home/ubuntu/cpu/
-            mv ./build/libs/web-0.0.1-SNAPSHOT.jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar
-            nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar > /home/ubuntu/cpu/app.log 2>&1 &
+            pkill -f 'java -jar' || true  # 실행 중인 Java 애플리케이션 종료
+            mkdir -p /home/ubuntu/cpu/  # 필요한 경우, 배포 디렉토리 생성
+            mv ./build/libs/web-0.0.1-SNAPSHOT.jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar  # JAR 파일 이동
+            nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar > /home/ubuntu/cpu/app.log 2>&1 &  # 새 JAR 파일로 애플리케이션 실행 및 로그 저장
           EOF
-#      - name: Deploy to EC2
-#        uses: appleboy/ssh-action@v0.1.8
-#        with:
-#          host: ${{ secrets.EC2_HOST }}
-#          username: ${{ secrets.EC2_USER }}
-#          key: ${{ secrets.EC2_KEY }}
-#          port: 22
-#          script: |
-#            echo "Stopping any running Java applications..."
-#            pkill -f 'java -jar' || true
-#            echo "Moving JAR file to deployment directory..."
-#            mv ./build/libs/web-0.0.1-SNAPSHOT.jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar
-#            echo "Starting the application..."
-#            nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar > /home/ubuntu/cpu/app.log 2>&1 &
-#            echo "Deployment script finished."
+
       - name: Remove private key file
-        run: |
+        run: |  # 작업이 끝난 후 프라이빗 키 파일 삭제
           rm -f private_key.pem
