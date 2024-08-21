@@ -60,9 +60,9 @@ jobs:
             fi
 
             echo "Starting new application with direct environment variables..."
-            export SPRING_DATASOURCE_URL=jdbc:mysql://cpu-database.clyosgmewz53.ap-northeast-2.rds.amazonaws.com:3306/cpudb
-            export SPRING_DATASOURCE_USERNAME=admin
-            export SPRING_DATASOURCE_PASSWORD=12345678
+            export SPRING_DATASOURCE_URL=${{ secrets.RDS_URL }}
+            export SPRING_DATASOURCE_USERNAME=${{ secrets.RDS_USERNAME }}
+            export SPRING_DATASOURCE_PASSWORD=${{ secrets.RDS_PASSWORD }}
             nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds > /home/ubuntu/cpu/app.log 2>&1 &
             NEW_PID=$(pgrep -f 'java -jar')
           
