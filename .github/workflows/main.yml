@@ -33,15 +33,6 @@ jobs:
           name: jar-file  # 아티팩트 이름
           path: build/libs/web-0.0.1-SNAPSHOT.jar  # 빌드된 JAR 파일 경로
 
-      - name: Debugging Step
-        run: |  # 디버그 정보를 출력
-          echo "Current working directory:"  # 현재 작업 디렉토리 출력
-          pwd  # 현재 디렉토리 경로를 출력
-          echo "List of files in the directory:"  # 디렉토리 내 파일 목록 출력
-          ls -al  # 디렉토리 내 모든 파일의 상세 정보 출력
-          echo "Content of environment variables:"  # 환경 변수 출력
-          printenv  # 모든 환경 변수 출력
-
       - name: Create private key file
         run: |  # SSH 프라이빗 키 파일 생성
           echo "${{ secrets.EC2_KEY }}" > private_key.pem  # GitHub Secrets에서 가져온 SSH 키를 파일로 저장
@@ -53,7 +44,7 @@ jobs:
           # EC2 인스턴스에 SSH로 접속하여 연결이 성공하면 "SSH connection successful" 메시지 출력
 
       - name: Deploy to EC2
-        run: |
+        run: |  # EC2에 애플리케이션 배포
           echo "Copying JAR file to EC2..."
           scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar
 
@@ -68,8 +59,8 @@ jobs:
               echo "No Java process found"
             fi
 
-            echo "Starting new application..."
-            nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar > /home/ubuntu/cpu/app.log 2>&1 &
+            echo "Starting new application with 'rds' profile..."
+            nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds > /home/ubuntu/cpu/app.log 2>&1 &
             NEW_PID=$(pgrep -f 'java -jar')
             if [ -n "$NEW_PID" ]; then
               echo "New application started with PID $NEW_PID"
@@ -79,7 +70,6 @@ jobs:
               exit 1
             fi
           EOF
-      
 
       - name: Remove private key file
         run: |  # 작업이 끝난 후 프라이빗 키 파일 삭제
