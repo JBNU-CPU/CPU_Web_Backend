@@ -59,9 +59,13 @@ jobs:
               echo "No Java process found"
             fi
 
-            echo "Starting new application with 'rds' profile..."
+            echo "Starting new application with direct environment variables..."
+            export SPRING_DATASOURCE_URL=jdbc:mysql://cpu-database.clyosgmewz53.ap-northeast-2.rds.amazonaws.com:3306/cpudb
+            export SPRING_DATASOURCE_USERNAME=admin
+            export SPRING_DATASOURCE_PASSWORD=12345678
             nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds > /home/ubuntu/cpu/app.log 2>&1 &
             NEW_PID=$(pgrep -f 'java -jar')
+          
             if [ -n "$NEW_PID" ]; then
               echo "New application started with PID $NEW_PID"
             else
