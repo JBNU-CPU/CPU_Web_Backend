@@ -26,4 +26,4 @@ jobs:
             chmod +x ./gradlew
             ./gradlew clean build -x test  --no-daemon
             pkill -f 'java -jar' || true 
-            nohup java -jar build/libs/web-0.0.1-SNAPSHOT.jar &
+            nohup java -jar build/libs/web-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
