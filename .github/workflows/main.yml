@@ -55,10 +55,25 @@ jobs:
       - name: Deploy to EC2
         run: |  # EC2에 애플리케이션 배포
           ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            pkill -f 'java -jar' || true  # 실행 중인 Java 애플리케이션 종료
+            echo "Stopping current Java application..."
+            PID=$(pgrep -f 'java -jar')  # 실행 중인 Java 프로세스의 PID를 찾습니다. 
+            if [ -n "$PID" ]; then  # PID가 존재하면
+              kill -9 $PID  # 프로세스를 종료합니다.
+              echo "Stopped process $PID"
+            else
+              echo "No Java process found"
+            fi
+          
+            echo "Deploying new application..."
             mkdir -p /home/ubuntu/cpu/  # 필요한 경우, 배포 디렉토리 생성
             mv ./build/libs/web-0.0.1-SNAPSHOT.jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar  # JAR 파일 이동
             nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar > /home/ubuntu/cpu/app.log 2>&1 &  # 새 JAR 파일로 애플리케이션 실행 및 로그 저장
+            NEW_PID=$(pgrep -f 'java -jar')
+            if [ -n "$NEW_PID" ]; then
+              echo "New application started with PID $NEW_PID"
+            else
+              echo "Failed to start new application"
+            fi  
           EOF
 
       - name: Remove private key file
