@@ -1,9 +1,11 @@
-# dev.yml
-name: dev branch auto ci process script
+# main.yml
+name: main branch auto ci process script
 
 on: # 아래 job을 실행시킬 상황
   push:
-    branches: [ dev ]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -19,9 +21,9 @@ jobs:
           key: ${{ secrets.REMOTE_PRIVATE_KEY }} # ec2 instance pem key
           port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트
           script: | # 실행할 스크립트
-            cd /home/ubuntu/Server-V2
-            git pull origin dev
+            cd /home/ubuntu/CPU_Web_Backend
+            git pull origin main
             pm2 kill
             npm i --force
             npm run build
-            pm2 start dist/main.js
+            pm2 start npm -- run node:start:dev
