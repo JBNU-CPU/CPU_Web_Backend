@@ -19,7 +19,7 @@ public class Member {
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
-    private String role;
+    private String role; // ROLE_USER, ROLE_ADMIN
     @Column(nullable = false)
     private String personName;
 }

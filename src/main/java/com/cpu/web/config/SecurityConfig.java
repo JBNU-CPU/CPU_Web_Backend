@@ -23,19 +23,20 @@ public class SecurityConfig {
         http.csrf((csrf) -> csrf.disable());
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/login", "/signup", "/signupProc").permitAll()
+                .requestMatchers("/", "/login", "/loginProc","/signup", "/signupProc").permitAll()
                 .requestMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
 
         http.formLogin((formLogin) -> formLogin
                 .loginPage("/login")
-                .loginProcessingUrl("/loginProc")
+                .loginProcessingUrl("/loginProc") // 로그인 처리 엔드포인트
                 .defaultSuccessUrl("/")
-                .permitAll()
         );
 
-        http.logout(logout -> logout.logoutUrl("/logout"));
+        http.logout((logout) -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/"));
 
         return http.build();
     }

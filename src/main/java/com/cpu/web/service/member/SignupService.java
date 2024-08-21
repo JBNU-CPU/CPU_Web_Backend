@@ -14,20 +14,20 @@ public class SignupService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public void signup(SignupDTO signupDTO) {
+    public Long signup(SignupDTO signupDTO) {
 
         if (memberRepository.existsByUsername(signupDTO.getUsername())) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
         }
 
         Member member = new Member();
-        
         member.setUsername(signupDTO.getUsername());
         member.setPassword(bCryptPasswordEncoder.encode(signupDTO.getPassword()));
         member.setPersonName(signupDTO.getPersonName());
         member.setRole("ROLE_USER");
 
-        memberRepository.save(member);
+        member = memberRepository.save(member);
+        return member.getId(); // 사용자 ID 반환
     }
 
 }
