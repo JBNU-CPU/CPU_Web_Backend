@@ -23,7 +23,6 @@ jobs:
           script: | # 실행할 스크립트
             cd /home/ubuntu/CPU_Web_Backend
             git pull origin main
-            pm2 kill
-            npm i --force
-            npm run build
-            pm2 start npm -- run node:start:dev
+            ./gradlew clean build -x test 
+            pkill -f 'java -jar' || true 
+            nohup java -jar build/libs/web-0.0.1-SNAPSHOT.jar &
