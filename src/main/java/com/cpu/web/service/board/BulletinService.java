@@ -2,7 +2,6 @@ package com.cpu.web.service.board;
 
 import com.cpu.web.dto.board.BulletinDTO;
 import com.cpu.web.dto.comment.BulletinCommentDTO;
-import com.cpu.web.dto.comment.NotificationCommentDTO;
 import com.cpu.web.entity.board.Bulletin;
 import com.cpu.web.entity.comment.BulletinComment;
 import com.cpu.web.repository.comment.BulletinCommentRepository;
