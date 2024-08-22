@@ -21,11 +21,14 @@ public class Bulletin {
     @Column(name = "bulletin_id", nullable = false, unique = true)
     private Long bulletinId;
 
+    @Column(name = "title", length = 30, nullable = false)
     private String title;
 
+    @Column(name = "content", length = 500, nullable = false)
     private String content;
 
-    private boolean isAnonymous;
+    @Column(name = "is_anonymous", nullable = false)
+    private Boolean isAnonymous;
 
     @CreationTimestamp
     private Timestamp createDate;

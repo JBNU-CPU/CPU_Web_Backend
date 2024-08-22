@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### db 민감 정보 ###
+application-rds.properties

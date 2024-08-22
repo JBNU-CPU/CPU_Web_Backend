@@ -18,20 +18,15 @@ public class BulletinDTO {
     public BulletinDTO(Bulletin bulletin) {
         this.title = bulletin.getTitle();
         this.content = bulletin.getContent();
-        this.anonymous = bulletin.isAnonymous();
+        this.anonymous = bulletin.getIsAnonymous();
     }
 
     // dto => entity
     public Bulletin toBulletinEntity(){
-
         Bulletin bulletin = new Bulletin();
-
         bulletin.setTitle(title);
-
         bulletin.setContent(content);
-
-        bulletin.setAnonymous(anonymous);
-
+        bulletin.setIsAnonymous(anonymous);
         return bulletin;
     }
 

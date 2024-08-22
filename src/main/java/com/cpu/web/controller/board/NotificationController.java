@@ -1,22 +1,34 @@
 package com.cpu.web.controller.board;
 
 import com.cpu.web.dto.board.NotificationDTO;
+import com.cpu.web.entity.board.Notification;
 import com.cpu.web.service.board.NotificationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 // 공지 게시판 컨트롤러
 @RestController
-@RequestMapping("/notifications")
+@RequiredArgsConstructor
+@RequestMapping("/notification")
 public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @Autowired
-    public NotificationController(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    // 글 작성
+    @PostMapping
+    public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
+        Notification notification = notificationService.createNotification(notificationDTO);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/notification/{id}")
+                .buildAndExpand(notification.getNotificationId())
+                .toUri();
+        return ResponseEntity.created(location).body(notificationDTO);
     }
 
     // 전체 글 조회
@@ -26,27 +38,25 @@ public class NotificationController {
     }
 
     // 특정 글 조회
-    @GetMapping("/{id}")
-    public NotificationDTO getNotificationById(@PathVariable int id) {
-        return notificationService.getNotificationById(id);
-    }
 
-    // 글 저장
-    @PostMapping
-    public NotificationDTO createNotification(@RequestBody NotificationDTO notificationDTO) {
-        return notificationService.createNotification(notificationDTO);
+    @GetMapping("/{id}")
+    public ResponseEntity<NotificationDTO> getNotificationById(@PathVariable Long id) {
+        Optional<NotificationDTO> notificationDTO = notificationService.getNotificationById(id);
+        return notificationDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     // 글 수정
     @PutMapping("/{id}")
-    public NotificationDTO updateNotification(@PathVariable int id, @RequestBody NotificationDTO notificationDTO) {
-        return notificationService.updateNotification(id, notificationDTO);
+    public ResponseEntity<NotificationDTO> updateNotification(@PathVariable Long id, @RequestBody NotificationDTO notificationDTO) {
+        NotificationDTO updatedNotificationDTO = notificationService.updateNotification(id, notificationDTO);
+        return ResponseEntity.ok(updatedNotificationDTO);
     }
 
     // 글 삭제
     @DeleteMapping("/{id}")
-    public void deleteNotification(@PathVariable int id) {
+    public ResponseEntity<?> deleteNotification(@PathVariable Long id) {
         notificationService.deleteNotification(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
