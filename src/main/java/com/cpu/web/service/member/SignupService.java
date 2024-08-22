@@ -24,7 +24,7 @@ public class SignupService {
         member.setUsername(signupDTO.getUsername());
         member.setPassword(bCryptPasswordEncoder.encode(signupDTO.getPassword()));
         member.setPersonName(signupDTO.getPersonName());
-        member.setRole("ROLE_USER");
+        member.setRole("ROLE_ADMIN");
 
         member = memberRepository.save(member);
         return member.getId(); // 사용자 ID 반환
