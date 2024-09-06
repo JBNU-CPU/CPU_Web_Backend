@@ -80,7 +80,7 @@ public class NotificationController {
         return ResponseEntity.ok(updatedNotificationDTO);
     }
 
-    // 글 삭제
+    // 글 삭제 테스트
     @DeleteMapping("/{id}")
     @Operation(summary = "공지 글 삭제", description = "공지 글 삭제 API")
     @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
