@@ -9,7 +9,6 @@ import lombok.Setter;
 public class NotificationDTO {
     private String title;
     private String content;
-    private boolean anonymous;
 
     public NotificationDTO(){}
 
@@ -17,7 +16,6 @@ public class NotificationDTO {
     public NotificationDTO(Notification notification) {
         this.title = notification.getTitle();
         this.content = notification.getContent();
-        this.anonymous = notification.getIsAnonymous();
     }
 
     // dto => entity
@@ -25,7 +23,6 @@ public class NotificationDTO {
         Notification notification = new Notification();
         notification.setTitle(title);
         notification.setContent(content);
-        notification.setIsAnonymous(anonymous);
         return notification;
     }
 }

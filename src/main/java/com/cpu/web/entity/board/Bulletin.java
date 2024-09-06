@@ -27,9 +27,6 @@ public class Bulletin {
     @Column(name = "content", length = 500, nullable = false)
     private String content;
 
-    @Column(name = "is_anonymous", nullable = false)
-    private Boolean isAnonymous;
-
     @CreationTimestamp
     private Timestamp createDate;
 

@@ -62,7 +62,6 @@ public class NotificationService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다: " + id));
         notification.setTitle(notificationDTO.getTitle());
         notification.setContent(notificationDTO.getContent());
-        notification.setIsAnonymous(notificationDTO.isAnonymous());
         Notification updatedNotification = notificationRepository.save(notification);
         return new NotificationDTO(updatedNotification);
     }
