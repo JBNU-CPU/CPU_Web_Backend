@@ -1,3 +1,4 @@
+
 package com.cpu.web.controller.board;
 
 import com.cpu.web.dto.board.BulletinDTO;
@@ -71,7 +72,7 @@ public class BulletinController {
                 .toUri();
         return ResponseEntity.created(location).body(bulletinCommentDTO);
     }
-    
+
     // 특정 글의 모든 댓글 조회
     @GetMapping("/{id}/comments")
     public List<BulletinCommentDTO> getAllBulletinComments(@PathVariable Long id) {

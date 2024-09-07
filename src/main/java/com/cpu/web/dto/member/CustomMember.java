@@ -14,7 +14,7 @@ public class CustomMember implements UserDetails {
     public CustomMember(Member member) {
         this.member = member;
     }
-    
+
     // 사용자 권한 반환
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f7f7;
+            color: #333;
+            font-family: Arial, sans-serif;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        label {
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            box-sizing: border-box; /* Ensures padding does not affect width */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>My Profile</h1>
+    <form th:action="@{/profile}" method="post">
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" th:value="${profile.name}" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" th:value="${profile.email}" required>
+        </div>
+        <div>
+            <label for="phoneNum">Phone Number:</label>
+            <input type="text" id="phoneNum" name="phoneNum" th:value="${profile.phoneNum}" required>
+        </div>
+        <div>
+            <label for="birth">Birth:</label>
+            <input type="date" id="birth" name="birth" th:value="${profile.birth}" required>
+        </div>
+        <div>
+            <label for="residence">Residence:</label>
+            <input type="text" id="residence" name="residence" th:value="${profile.residence}" required>
+        </div>
+        <div>
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" th:value="${profile.age}" required>
+        </div>
+        <div>
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" th:value="${profile.gender}" required>
+                <option value="MALE" th:selected="${profile.gender == 'MALE'}">Male</option>
+                <option value="FEMALE" th:selected="${profile.gender == 'FEMALE'}">Female</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Update</button>
+        </div>
+    </form>
+    <a href="/withdrawal"><button>회원 탈퇴</button></a>
+</div>
+</body>
+</html>
