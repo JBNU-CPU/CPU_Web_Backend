@@ -17,16 +17,28 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true, nullable = false)
     private String username;
+
     @Column(nullable = false)
     private String password;
+
     @Column(nullable = false)
-    private String role; // ROLE_USER, ROLE_ADMIN
+    private String role; // ROLE_GUEST -> ROLE_MEMBER -> ROLE_ADMIN
+
     @Column(nullable = false)
     private String personName;
+
+    @Column(nullable = false)
+    private String nickName;
+
+    @Column(nullable = false)
+    private String email;
+
     @CreationTimestamp
     private Timestamp createDate;
+
     @UpdateTimestamp
     private Timestamp updateDate;
 }

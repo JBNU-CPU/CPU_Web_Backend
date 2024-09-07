@@ -41,7 +41,6 @@ public class BulletinService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid bulletin ID: " + id));
         bulletin.setTitle(bulletinDTO.getTitle());
         bulletin.setContent(bulletinDTO.getContent());
-        bulletin.setIsAnonymous(bulletinDTO.isAnonymous());
         Bulletin updatedBulletin = bulletinRepository.save(bulletin);
         return convertToDTO(updatedBulletin);
     }

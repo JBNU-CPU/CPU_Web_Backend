@@ -41,7 +41,6 @@ public class NotificationService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid notification ID: " + id));
         notification.setTitle(notificationDTO.getTitle());
         notification.setContent(notificationDTO.getContent());
-        notification.setIsAnonymous(notificationDTO.isAnonymous());
         Notification updatedNotification = notificationRepository.save(notification);
         return convertToDTO(updatedNotification);
     }

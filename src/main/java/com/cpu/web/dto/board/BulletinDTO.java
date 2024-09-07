@@ -9,7 +9,6 @@ import lombok.Setter;
 public class BulletinDTO {
     private String  title;
     private String content;
-    private boolean anonymous;
 
     public BulletinDTO(){}
 
@@ -18,7 +17,6 @@ public class BulletinDTO {
     public BulletinDTO(Bulletin bulletin) {
         this.title = bulletin.getTitle();
         this.content = bulletin.getContent();
-        this.anonymous = bulletin.getIsAnonymous();
     }
 
     // dto => entity
@@ -26,7 +24,6 @@ public class BulletinDTO {
         Bulletin bulletin = new Bulletin();
         bulletin.setTitle(title);
         bulletin.setContent(content);
-        bulletin.setIsAnonymous(anonymous);
         return bulletin;
     }
 

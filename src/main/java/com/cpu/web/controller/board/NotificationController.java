@@ -1,69 +1,62 @@
 package com.cpu.web.controller.board;
 
 import com.cpu.web.dto.board.NotificationDTO;
+import com.cpu.web.entity.board.Notification;
 import com.cpu.web.service.board.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-@Controller
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+
+// 공지 게시판 컨트롤러
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/notification")
 public class NotificationController {
 
     private final NotificationService notificationService;
 
-    // 페이징된 전체 글 조회
+    // 글 작성
+    @PostMapping
+    public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
+        Notification notification = notificationService.createNotification(notificationDTO);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/notification/{id}")
+                .buildAndExpand(notification.getNotificationId())
+                .toUri();
+        return ResponseEntity.created(location).body(notificationDTO);
+    }
+
+    // 전체 글 조회
     @GetMapping
-    public String getAllNotifications(@RequestParam(defaultValue = "0") int page, Model model) {
-        int size = 10; // 한 페이지에 10개의 게시글
-        Page<NotificationDTO> notificationPage = notificationService.getAllNotifications(page, size);
-        model.addAttribute("notifications", notificationPage.getContent());
-        return "notifications"; // notifications.html 템플릿 반환
+    public List<NotificationDTO> getAllNotifications() {
+        return notificationService.getAllNotifications();
     }
 
     // 특정 글 조회
-    @GetMapping("/{id}")
-    public String getNotificationById(@PathVariable Long id, Model model) {
-        NotificationDTO notificationDTO = notificationService.getNotificationById(id).orElse(null);
-        model.addAttribute("notification", notificationDTO);
-        return "notificationDetail"; // notificationDetail.html 템플릿 반환
-    }
 
-    // 글 저장
-    @PostMapping
-    public String createNotification(@ModelAttribute NotificationDTO notificationDTO) {
-        notificationService.createNotification(notificationDTO);
-        return "redirect:/notification";
+    @GetMapping("/{id}")
+    public ResponseEntity<NotificationDTO> getNotificationById(@PathVariable Long id) {
+        Optional<NotificationDTO> notificationDTO = notificationService.getNotificationById(id);
+        return notificationDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     // 글 수정
-    @PostMapping("/{id}")
-    public String updateNotification(@PathVariable Long id, @ModelAttribute NotificationDTO notificationDTO) {
-        notificationService.updateNotification(id, notificationDTO);
-        return "redirect:/notification/" + id;
+    @PutMapping("/{id}")
+    public ResponseEntity<NotificationDTO> updateNotification(@PathVariable Long id, @RequestBody NotificationDTO notificationDTO) {
+        NotificationDTO updatedNotificationDTO = notificationService.updateNotification(id, notificationDTO);
+        return ResponseEntity.ok(updatedNotificationDTO);
     }
 
     // 글 삭제
-    @PostMapping("/{id}/delete")
-    public String deleteNotification(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteNotification(@PathVariable Long id) {
         notificationService.deleteNotification(id);
-        return "redirect:/notification";
+        return ResponseEntity.noContent().build();
     }
 
-    // 게시글 등록 페이지
-    @GetMapping("/new")
-    public String newNotification() {
-        return "newNotification"; // newNotification.html 템플릿 반환
-    }
-
-    // 게시글 수정 페이지
-    @GetMapping("/{id}/edit")
-    public String editNotification(@PathVariable Long id, Model model) {
-        NotificationDTO notificationDTO = notificationService.getNotificationById(id).orElse(null);
-        model.addAttribute("notification", notificationDTO);
-        return "editNotification"; // editNotification.html 템플릿 반환
-    }
 }
