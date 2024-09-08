@@ -4,6 +4,7 @@ import com.cpu.web.dto.board.StudyDTO;
 import com.cpu.web.entity.board.Study;
 import com.cpu.web.service.board.StudyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -29,9 +30,12 @@ public class StudyController {
         return ResponseEntity.created(location).body(studyDTO);
     }
 
+    // 페이징 처리된 스터디 글 목록 조회
     @GetMapping
-    public List<StudyDTO> getAllStudies() {
-        return studyService.getAllStudies();
+    public Page<StudyDTO> getAllStudies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return studyService.getAllStudies(page, size);
     }
 
     @GetMapping("/{id}")

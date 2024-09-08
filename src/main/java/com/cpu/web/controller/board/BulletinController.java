@@ -7,6 +7,7 @@ import com.cpu.web.entity.board.Bulletin;
 import com.cpu.web.entity.comment.BulletinComment;
 import com.cpu.web.service.board.BulletinService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -34,10 +35,12 @@ public class BulletinController {
         return ResponseEntity.created(location).body(bulletinDTO);
     }
 
-    // 전체 글 조회
+    // 페이징 처리된 전체 글 조회
     @GetMapping
-    public List<BulletinDTO> getAllBulletins() {
-        return bulletinService.getAllBulletins();
+    public Page<BulletinDTO> getAllBulletins(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return bulletinService.getAllBulletins(page, size);
     }
 
     // 특정 글 조회

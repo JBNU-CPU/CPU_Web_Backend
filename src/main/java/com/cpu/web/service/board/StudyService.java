@@ -4,6 +4,8 @@ import com.cpu.web.dto.board.StudyDTO;
 import com.cpu.web.entity.board.Study;
 import com.cpu.web.repository.board.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +23,10 @@ public class StudyService {
         return studyRepository.save(study);
     }
 
-    public List<StudyDTO> getAllStudies() {
-        return studyRepository.findAll().stream()
-                .map(StudyDTO::new)
-                .collect(Collectors.toList());
+    // 페이징 처리된 스터디 글 조회
+    public Page<StudyDTO> getAllStudies(int page, int size) {
+        Page<Study> studies = studyRepository.findAll(PageRequest.of(page, size));
+        return studies.map(StudyDTO::new);
     }
 
     public Optional<StudyDTO> getStudyById(Long id) {

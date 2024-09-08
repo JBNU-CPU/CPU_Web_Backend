@@ -4,6 +4,8 @@ import com.cpu.web.dto.board.NotificationDTO;
 import com.cpu.web.entity.board.Notification;
 import com.cpu.web.repository.board.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,11 +46,10 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
-    // 전체 글 조회
-    public List<NotificationDTO> getAllNotifications() {
-        return notificationRepository.findAll().stream()
-                .map(NotificationDTO::new)
-                .collect(Collectors.toList());
+    // 페이징 처리된 공지 글 조회
+    public Page<NotificationDTO> getAllNotifications(int page, int size) {
+        Page<Notification> notifications = notificationRepository.findAll(PageRequest.of(page, size));
+        return notifications.map(NotificationDTO::new);
     }
 
     // 특정 글 조회

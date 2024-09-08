@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -46,16 +47,17 @@ public class NotificationController {
         return ResponseEntity.created(location).body(notificationDTO);
     }
 
-    // 전체 글 조회
+    // 페이징 처리된 공지 글 목록 조회
     @GetMapping
     @Operation(summary = "공지 글 목록 조회", description = "공지 글 목록 조회 API")
     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    public List<NotificationDTO> getAllNotifications() {
-        return notificationService.getAllNotifications();
+    public Page<NotificationDTO> getAllNotifications(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return notificationService.getAllNotifications(page, size);
     }
 
     // 특정 글 조회
-
     @GetMapping("/{id}")
     @Operation(summary = "공지 글 상세 조회", description = "공지 글 상세 조회 API")
     @ApiResponses(value = {

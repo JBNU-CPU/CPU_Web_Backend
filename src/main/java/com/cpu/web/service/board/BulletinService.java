@@ -7,6 +7,8 @@ import com.cpu.web.entity.comment.BulletinComment;
 import com.cpu.web.repository.comment.BulletinCommentRepository;
 import com.cpu.web.repository.board.BulletinRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,11 +52,10 @@ public class BulletinService {
         return bulletinRepository.save(bulletin);
     }
 
-    // 전체 글 조회
-    public List<BulletinDTO> getAllBulletins() {
-        return bulletinRepository.findAll().stream()
-                .map(BulletinDTO::new)
-                .collect(Collectors.toList());
+    // 페이징 처리된 전체 글 조회
+    public Page<BulletinDTO> getAllBulletins(int page, int size) {
+        Page<Bulletin> bulletins = bulletinRepository.findAll(PageRequest.of(page, size));
+        return bulletins.map(BulletinDTO::new);
     }
 
     // 특정 글 조회
