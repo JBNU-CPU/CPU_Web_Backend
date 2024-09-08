@@ -26,7 +26,15 @@ public class AdminService {
     public MemberDTO updateRole(Long id, String role) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다: " + id));
-        member.setRole(role);
+
+        // 문자열로 받은 권한을 Role enum으로 변환
+        try {
+            Member.Role newRole = Member.Role.valueOf(role);  // 문자열을 Role enum으로 변환
+            member.setRole(newRole);  // Role 설정
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 권한입니다: " + role);
+        }
+
         Member updatedMember = memberRepository.save(member);
         return new MemberDTO(updatedMember);
     }

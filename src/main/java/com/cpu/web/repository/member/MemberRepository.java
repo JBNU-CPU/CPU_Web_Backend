@@ -8,8 +8,15 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    boolean existsByUsername(String username);
+    // ID (username) 중복 체크 및 검색
+    boolean existsByUsername(String username);  // 이미 존재하는 아이디인지 확인
     Optional<Member> findByUsername(String username);
+
+    // 닉네임 중복 체크
+    boolean existsByNickName(String nickName);  // 이미 존재하는 닉네임인지 확인
+
+    // 이메일 중복 체크
+    boolean existsByEmail(String email);        // 이미 존재하는 이메일인지 확인
 
     @Transactional
     void deleteByUsername(String username);

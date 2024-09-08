@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.management.relation.Role;
 import java.sql.Timestamp;
 
 @Entity
@@ -25,9 +24,6 @@ public class Member {
     private String password;
 
     @Column(nullable = false)
-    private String role; // ROLE_GUEST -> ROLE_MEMBER -> ROLE_ADMIN
-
-    @Column(nullable = false)
     private String personName;
 
     @Column(nullable = false)
@@ -41,4 +37,14 @@ public class Member {
 
     @UpdateTimestamp
     private Timestamp updateDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
+    public enum Role {
+        ROLE_GUEST,
+        ROLE_USER,
+        ROLE_ADMIN
+    }
 }
