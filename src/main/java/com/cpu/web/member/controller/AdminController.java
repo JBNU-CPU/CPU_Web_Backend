@@ -38,7 +38,7 @@ public class AdminController {
     @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     public ResponseEntity<MemberDTO> updateRole(@PathVariable Long id, @RequestParam String role) {
-        if(role.equals("ROLE_ADMIN")||role.equals("ROLE_USER")){
+        if(role.equals("ROLE_ADMIN")||role.equals("ROLE_MEMBER")){
             MemberDTO updateMemberDTO = adminService.updateRole(id, role);
             return ResponseEntity.ok(updateMemberDTO);
         }
@@ -53,6 +53,4 @@ public class AdminController {
         adminService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
-    //TODO: 스터디 신청자 조회, 변경, 삭제
 }
