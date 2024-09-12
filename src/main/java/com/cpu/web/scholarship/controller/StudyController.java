@@ -2,7 +2,7 @@ package com.cpu.web.scholarship.controller;
 
 import com.cpu.web.scholarship.dto.StudyDTO;
 import com.cpu.web.scholarship.entity.Study;
-import com.cpu.web.board.service.StudyService;
+import com.cpu.web.scholarship.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;

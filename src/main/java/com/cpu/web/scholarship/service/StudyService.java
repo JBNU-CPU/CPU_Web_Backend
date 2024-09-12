@@ -1,4 +1,4 @@
-package com.cpu.web.board.service;
+package com.cpu.web.scholarship.service;
 
 import com.cpu.web.scholarship.dto.StudyDTO;
 import com.cpu.web.scholarship.entity.Study;
