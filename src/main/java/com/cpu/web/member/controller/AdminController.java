@@ -33,7 +33,7 @@ public class AdminController {
     // 유저 권한 변경
     @PutMapping("/user/{id}")
     public ResponseEntity<MemberDTO> updateRole(@PathVariable Long id, @RequestParam String role) {
-        if(role.equals("ROLE_ADMIN")||role.equals("ROLE_USER")){
+        if(role.equals("ROLE_ADMIN")||role.equals("ROLE_MEMBER")){
             MemberDTO updateMemberDTO = adminService.updateRole(id, role);
             return ResponseEntity.ok(updateMemberDTO);
         }
