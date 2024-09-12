@@ -53,6 +53,4 @@ public class AdminController {
         adminService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
-    //TODO: 스터디 신청자 조회, 변경, 삭제
 }
