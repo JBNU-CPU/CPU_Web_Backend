@@ -22,8 +22,6 @@ public class AdminController {
 
     @GetMapping
     public String admin(Authentication authentication) {
-        CustomMember customMember = (CustomMember) authentication.getPrincipal();
-        System.out.println("로그인 아이디 : " + customMember.getUsername());
         return "admin";
     }
 
