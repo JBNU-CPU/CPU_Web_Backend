@@ -6,7 +6,10 @@ import com.cpu.web.member.dto.MyPageEditDTO;
 import com.cpu.web.member.dto.NewPasswordDTO;
 import com.cpu.web.member.service.MyPageService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,6 +44,16 @@ public class MyPageController {
 
     // 회원 정보 수정
     @PutMapping()
+    @Operation(summary = "회원 정보 수정", description = "회원 정보 수정 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+    })
+    @Parameters({
+            @Parameter(name = "nickname", description = "닉네임", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "닉네임"))),
+            @Parameter(name = "password", description = "비밀번호", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format ="password", example = "qwer1234"))),
+            @Parameter(name = "personName", description = "이름", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "홍길동"))),
+            @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "email", example = "user@example.com")))
+    })
     public ResponseEntity<MemberDTO> updateMember(@RequestBody MyPageEditDTO myPageEditDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberDTO updatedMemberDTO = myPageService.updateMember(myPageEditDTO, username);
@@ -49,6 +62,14 @@ public class MyPageController {
 
     // 아이디 및 이메일 검증
     @GetMapping("/check")
+    @Operation(summary = "회원 정보 수정", description = "회원 정보 수정 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+    })
+    @Parameters({
+            @Parameter(name = "username", description = "아이디", schema = @Schema(type = "String", minLength = 5, maxLength = 9, example = "202018556")),
+            @Parameter(name = "email", description = "이메일")
+    })
     public ResponseEntity<?> checkIdAndEmail(@RequestBody CheckDTO checkDTO){
         Boolean isChecked = myPageService.checkIdAndEmail(checkDTO);
         return ResponseEntity.ok(isChecked);
@@ -56,6 +77,13 @@ public class MyPageController {
     
     // 비밀번호 찾기
     @PostMapping("/password")
+    @Operation(summary = "비밀번호 찾기", description = "비밀번호 재설정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+    })
+    @Parameters({
+            @Parameter(name = "password", description = "비밀번호")
+    })
     public ResponseEntity<?> setNewPassword(@RequestBody NewPasswordDTO newPasswordDTO){
         myPageService.setNewPassword(newPasswordDTO);
         return ResponseEntity.ok().build();
@@ -63,6 +91,10 @@ public class MyPageController {
     
     // 회원 탈퇴
     @DeleteMapping("/withdraw")
+    @Operation(summary = "회원탈퇴", description = "회원 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+    })
     public ResponseEntity<?> withdraw(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         myPageService.withdraw(username);

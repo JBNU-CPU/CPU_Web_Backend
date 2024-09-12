@@ -8,7 +8,6 @@ public class MainController {
 
     @GetMapping("/")
     public String main(){
-        System.out.println("pull request 테스트");
         return "main";
     }
 
