@@ -3,9 +3,12 @@ package com.cpu.web.board.service;
 import com.cpu.web.board.dto.PostDTO;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.PostRepository;
+import com.cpu.web.member.entity.Member;
+import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,9 +19,12 @@ public class PostService {
 
     private final PostRepository postRepository;
 
+    private final MemberRepository memberRepository;
     // 글 생성
     public Post createPost(PostDTO postDTO) {
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Member> member = memberRepository.findByUsername(username);
         String title = postDTO.getTitle();
         String content = postDTO.getContent();
 
@@ -40,8 +46,11 @@ public class PostService {
             throw new IllegalArgumentException("내용이 유효하지 않습니다.");
         }
 
+        if (member.isEmpty()){
+           throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        }
 
-        Post post = postDTO.toPostEntity();
+        Post post = postDTO.toPostEntity(member.get());
         return postRepository.save(post);
     }
 
@@ -58,8 +67,20 @@ public class PostService {
 
     // 글 수정
     public PostDTO updatePost(Long id, PostDTO postDTO) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Member> member = memberRepository.findByUsername(username);
+
+        if (member.isEmpty()){
+            throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
+        }
+
+        if (!member.get().equals(postRepository.findById(id))){
+            throw new IllegalArgumentException("수정 권한이 없는 유저입니다: " + username);
+        }
+
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Post ID: " + id));
+        
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
         Post updatedPost = postRepository.save(post);
@@ -68,6 +89,18 @@ public class PostService {
 
     // 글 삭제
     public void deletePost(Long id) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Member> member = memberRepository.findByUsername(username);
+
+        if (member.isEmpty()){
+            throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
+        }
+
+        if (!member.get().equals(postRepository.findById(id))){
+            throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + username);
+        }
+
         if (!postRepository.existsById(id)){
             throw new IllegalArgumentException("Invalid Post ID: " + id);
         }
