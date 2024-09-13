@@ -7,21 +7,26 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
+@Entity
 @Getter
 @Setter
-@Entity
-public class Notification {
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "notification_id", nullable = false, unique = true)
-    private Long notificationId;
+    @Column(name = "post_id")
+    private Long postId;
 
-    @Column(name = "title", length = 30, nullable = false)
+    @Column(name = "is_notice", nullable = false)
+    private Boolean isNotice;
+
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content", length = 500, nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
     @CreationTimestamp
@@ -29,4 +34,9 @@ public class Notification {
 
     @UpdateTimestamp
     private Timestamp updateDate;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> commentList = new ArrayList<Comment>();
+
+    // 멤버 연결
 }
