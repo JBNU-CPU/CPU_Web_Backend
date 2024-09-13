@@ -59,17 +59,17 @@ public class PostService {
     // 글 수정
     public PostDTO updatePost(Long id, PostDTO postDTO) {
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid bulletin ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Post ID: " + id));
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
-        Post updatedBulletin = postRepository.save(post);
-        return new PostDTO(updatedBulletin);
+        Post updatedPost = postRepository.save(post);
+        return new PostDTO(updatedPost);
     }
 
     // 글 삭제
     public void deletePost(Long id) {
         if (!postRepository.existsById(id)){
-            throw new IllegalArgumentException("Invalid bulletin ID: " + id);
+            throw new IllegalArgumentException("Invalid Post ID: " + id);
         }
         postRepository.deleteById(id);
     }
