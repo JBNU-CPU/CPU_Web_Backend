@@ -21,7 +21,7 @@ public class MemberDTO {
 
     // entity => dto 변환
     public MemberDTO(Member member) {
-        this.id = member.getId();
+        this.id = member.getMemberId();
         this.username = member.getUsername();
         this.nickName = member.getNickName();
         this.role = member.getRole();  // Role enum을 직접 사용

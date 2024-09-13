@@ -1,5 +1,6 @@
 package com.cpu.web.board.entity;
 
+import com.cpu.web.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,8 +36,11 @@ public class Post {
     @UpdateTimestamp
     private Timestamp updateDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<Comment>();
 
-    // 멤버 연결
 }

@@ -2,6 +2,7 @@ package com.cpu.web.board.dto;
 
 import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.entity.Post;
+import com.cpu.web.member.entity.Member;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,12 +22,11 @@ public class CommentDTO {
     }
 
     // dto => entity
-    public Comment toCommentEntity(String content, Post post){
+    public Comment toCommentEntity(String content, Post post, Member member){
         Comment comment = new Comment();
-
         comment.setContent(content);
         comment.setPost(post);
-
+        comment.setMember(member);
         return comment;
     }
 }
