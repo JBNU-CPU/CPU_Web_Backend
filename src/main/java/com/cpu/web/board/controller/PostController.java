@@ -40,10 +40,10 @@ public class PostController {
             @Parameter(name = "title", description = "제목", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "박관소 개최 안내"))),
             @Parameter(name = "content", description = "내용", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "2024년 하반기 박관소가 개최 예정입니다.")))
     })
-    public ResponseEntity<PostDTO> createBulletin(@RequestBody PostDTO postDTO) {
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
         Post post = postService.createPost(postDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/bulletin/{id}")
+                .path("/post/{id}")
                 .buildAndExpand(post.getPostId())
                 .toUri();
         return ResponseEntity.created(location).body(postDTO);
@@ -55,7 +55,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     })
-    public Page<PostDTO> getAllBulletins(
+    public Page<PostDTO> getAllPosts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return postService.getAllPosts(page, size);
@@ -68,9 +68,9 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다..", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<PostDTO> getBulletinById(@PathVariable Long id) {
-        Optional<PostDTO> bulletinDTO = postService.getPostById(id);
-        return bulletinDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PostDTO> getPost(@PathVariable Long id) {
+        Optional<PostDTO> postDTO = postService.getPostById(id);
+        return postDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     // 글 수정
@@ -83,7 +83,7 @@ public class PostController {
             @Parameter(name = "title", description = "제목", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "박관소 개최 안내"))),
             @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "2024년 하반기 박관소가 개최 예정입니다.")))
     })
-    public  ResponseEntity<PostDTO> updateBulletin(@PathVariable Long id, @RequestBody PostDTO postDTO) {
+    public  ResponseEntity<PostDTO> updatePost(@PathVariable Long id, @RequestBody PostDTO postDTO) {
         PostDTO updatedPostDTO = postService.updatePost(id, postDTO);
         return ResponseEntity.ok(updatedPostDTO);
     }
@@ -94,7 +94,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
     })
-    public ResponseEntity<?> deleteBulletin(@PathVariable Long id) {
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
     }

@@ -71,7 +71,7 @@ public class CommentController {
             @Parameter(name = "postId", description = "게시글 아이디", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "Long", example = "123"))),
             @Parameter(name = "comment", description = "댓글 내용", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "퍼가용~"))),
     })
-    public ResponseEntity<CommentDTO> updateBulletinComment(@PathVariable Long id, @RequestBody CommentDTO commentDTO) {
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable Long id, @RequestBody CommentDTO commentDTO) {
         CommentDTO updatedComment = commentService.updateComment(id, commentDTO);
         return ResponseEntity.ok(updatedComment);
     }
@@ -82,7 +82,7 @@ public class CommentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
     })
-    public ResponseEntity<?> deleteBulletinComment(@PathVariable Long id) {
+    public ResponseEntity<?> deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
         return ResponseEntity.noContent().build();  // 204 No Content
     }
