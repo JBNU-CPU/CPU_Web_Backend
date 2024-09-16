@@ -21,12 +21,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf((csrf) -> csrf.disable());
-
         http.cors( cors -> cors.disable());
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/", "/login", "/loginProc","/signup", "/signupProc").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/study/**").permitAll() //study 경로 인증 없이 허용
+                .requestMatchers("/bulletin").permitAll()//test용 0915준혁
                 .anyRequest().authenticated()
         );
 

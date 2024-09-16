@@ -1,8 +1,10 @@
 package com.cpu.web.scholarship.controller;
 
+import com.cpu.web.board.dto.BulletinDTO;
+import com.cpu.web.board.entity.Bulletin;
 import com.cpu.web.scholarship.dto.StudyDTO;
 import com.cpu.web.scholarship.entity.Study;
-import com.cpu.web.board.service.StudyService;
+import com.cpu.web.scholarship.service.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +25,14 @@ public class StudyController {
     public ResponseEntity<StudyDTO> createStudy(@RequestBody StudyDTO studyDTO) {
         Study study = studyService.createStudy(studyDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
+                .path("/study/{id}")
                 .buildAndExpand(study.getStudyId())
                 .toUri();
         return ResponseEntity.created(location).body(studyDTO);
     }
 
     // 페이징 처리된 스터디 글 목록 조회
-    @GetMapping
+    /*@GetMapping
     public Page<StudyDTO> getAllStudies(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -53,5 +55,5 @@ public class StudyController {
     public ResponseEntity<?> deleteStudy(@PathVariable Long id) {
         studyService.deleteStudy(id);
         return ResponseEntity.noContent().build();
-    }
+    }*/
 }
