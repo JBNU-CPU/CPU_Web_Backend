@@ -1,6 +1,6 @@
 package com.cpu.web.board.entity;
 
-import com.cpu.web.board.entity.Bulletin;
+import com.cpu.web.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,14 +12,15 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
-public class BulletinComment {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id", nullable = false, unique = true)
+    @Column(name = "comment_id")
     private Long commentId;
 
-    private String contents;
+    @Column(name = "content", nullable = false)
+    private String content;
 
     @CreationTimestamp
     private Timestamp postDate;
@@ -28,6 +29,12 @@ public class BulletinComment {
     private Timestamp updateDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bulletin_id", nullable = false)
-    private Bulletin bulletin;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+
 }

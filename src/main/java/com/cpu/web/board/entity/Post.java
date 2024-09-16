@@ -1,5 +1,6 @@
 package com.cpu.web.board.entity;
 
+import com.cpu.web.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,17 +14,20 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Bulletin {
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bulletin_id", nullable = false, unique = true)
-    private Long bulletinId;
+    @Column(name = "post_id")
+    private Long postId;
 
-    @Column(name = "title", length = 30, nullable = false)
+    @Column(name = "is_notice", nullable = false)
+    private Boolean isNotice;
+
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content", length = 500, nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
     @CreationTimestamp
@@ -32,8 +36,11 @@ public class Bulletin {
     @UpdateTimestamp
     private Timestamp updateDate;
 
-    @OneToMany(mappedBy = "bulletin", cascade = CascadeType.ALL)
-    private List<BulletinComment> bulletinCommentList = new ArrayList<>();
-    //@ManyToOne
-    //private UserEntity userEntity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> commentList = new ArrayList<Comment>();
+
 }

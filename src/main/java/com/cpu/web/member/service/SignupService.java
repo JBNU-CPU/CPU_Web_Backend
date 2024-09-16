@@ -45,7 +45,7 @@ public class SignupService {
 
         // 회원 정보 저장
         member = memberRepository.save(member);
-        return member.getId(); // 사용자 ID 반환
+        return member.getMemberId(); // 사용자 ID 반환
     }
 
 }
