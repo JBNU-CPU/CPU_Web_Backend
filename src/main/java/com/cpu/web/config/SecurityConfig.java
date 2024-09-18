@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/loginProc","/signup", "/signupProc").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/study/**").permitAll() //study 경로 인증 없이 허용
-                .requestMatchers("/bulletin").permitAll()//test용 0915준혁
+                .requestMatchers("/post").permitAll()//test용 0915준혁
                 .anyRequest().authenticated()
         );
 

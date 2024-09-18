@@ -1,18 +1,14 @@
 package com.cpu.web.scholarship.controller;
 
-import com.cpu.web.board.dto.BulletinDTO;
-import com.cpu.web.board.entity.Bulletin;
 import com.cpu.web.scholarship.dto.StudyDTO;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.service.StudyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
