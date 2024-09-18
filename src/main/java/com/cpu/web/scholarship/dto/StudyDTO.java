@@ -1,29 +1,29 @@
-//package com.cpu.web.scholarship.dto;
-//
-//import com.cpu.web.scholarship.entity.Study;
-//import lombok.Getter;
-//import lombok.Setter;
-//
-//@Getter
-//@Setter
-//public class StudyDTO {
-//    private String title;
-//    private String content;
-//    private boolean anonymous;
-//
-//    public StudyDTO() {}
-//
-//    public StudyDTO(Study study) {
-//        this.title = study.getTitle();
-//        this.content = study.getContent();
-//        this.anonymous = study.getIsAnonymous();
-//    }
-//
-//    public Study toStudyEntity() {
-//        Study study = new Study();
-//        study.setTitle(title);
-//        study.setContent(content);
-//        study.setIsAnonymous(anonymous);
-//        return study;
-//    }
-//}
+package com.cpu.web.scholarship.dto;
+
+import com.cpu.web.scholarship.entity.Study;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class StudyDTO {
+    private Long memberId;
+    private String studyName;
+    private Study.StudyType studyType;
+    private int maxMembers;
+    private String studyDescription;
+
+    public StudyDTO() {}//기본생성자
+
+    public Study toStudyEntity(){
+        Study study = new Study();
+        study.setMemberId(this.memberId);
+        study.setStudyName(this.studyName);
+        study.setStudyType(this.studyType);
+        study.setMaxMembers(this.maxMembers);
+        study.setStudyDescription(this.studyDescription);
+        return study;
+    }
+}
