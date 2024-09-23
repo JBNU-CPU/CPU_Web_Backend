@@ -88,7 +88,7 @@ public class PostController {
         return ResponseEntity.ok(updatedPostDTO);
     }
 
-    // 글 삭제.
+    // 글 삭제
     @DeleteMapping("/{id}")
     @Operation(summary = "게시글 삭제", description = "게시글 삭제 API")
     @ApiResponses(value = {
