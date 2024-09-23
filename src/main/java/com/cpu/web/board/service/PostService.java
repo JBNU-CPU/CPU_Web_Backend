@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -107,4 +109,8 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
+    public Page<PostDTO> fullTextSearchByTitle(String title) {
+        Page<Post> posts = postRepository.fullTextSearchByTitle(PageRequest.of(0, 10), title);
+        return posts.map(PostDTO::new);
+    }
 }
