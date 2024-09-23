@@ -21,19 +21,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf((csrf) -> csrf.disable());
-        http.cors( cors -> cors.disable());
+        http.cors(cors -> cors.disable());
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/login", "/loginProc","/signup", "/signupProc").permitAll()
+                .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**").permitAll()  // 이메일 인증 경로 허용
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/study/**").permitAll() //study 경로 인증 없이 허용
-                .requestMatchers("/post").permitAll()//test용 0915준혁
+                .requestMatchers("/study/**").permitAll()
+                .requestMatchers("/post/**").permitAll() //test용 0915준혁
                 .anyRequest().authenticated()
         );
 
         http.formLogin((formLogin) -> formLogin
                 .loginPage("/login")
-                .loginProcessingUrl("/loginProc") // 로그인 처리 엔드포인트
+                .loginProcessingUrl("/loginProc")
                 .defaultSuccessUrl("/")
         );
 
@@ -43,5 +43,6 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
 }
