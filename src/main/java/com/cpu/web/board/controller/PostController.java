@@ -103,6 +103,7 @@ public class PostController {
     @GetMapping("/search/{title}")
     public Page<PostDTO> fullTextSearchByTitle(@PathVariable String title){
         // TODO 현재 "네 번쩨" 라고 검색했을 때, "세 번째 게시글", "네 번째 게시글" 등 모두 검색 됨. 공백 문제 해결해야 함
+        title = "\"" + title + "\"";
         return postService.fullTextSearchByTitle(title);
     }
 }

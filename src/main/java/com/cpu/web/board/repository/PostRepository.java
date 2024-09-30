@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAll(Pageable pageable);
 
-    @Query(value = "SELECT * FROM post WHERE MATCH(title) AGAINST(?1)", nativeQuery = true)
+    @Query(value = "SELECT * FROM post WHERE MATCH(title) AGAINST(?1 IN BOOLEAN MODE)", nativeQuery = true)
     Page<Post> fullTextSearchByTitle(Pageable pageable, String text);
 
 }
