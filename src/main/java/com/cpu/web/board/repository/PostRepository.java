@@ -6,10 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAll(Pageable pageable);
 
-    @Query(value = "SELECT * FROM post WHERE MATCH(title) AGAINST(?1 IN BOOLEAN MODE)", nativeQuery = true)
-    Page<Post> fullTextSearchByTitle(Pageable pageable, String text);
-
+    List<Post> findByTitleContaining(String title);
 }

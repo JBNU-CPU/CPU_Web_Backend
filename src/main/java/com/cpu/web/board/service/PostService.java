@@ -109,8 +109,7 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public Page<PostDTO> fullTextSearchByTitle(String title) {
-        Page<Post> posts = postRepository.fullTextSearchByTitle(PageRequest.of(0, 10), title);
-        return posts.map(PostDTO::new);
+    public List<Post> fullTextSearchByTitle(String title) {
+        return postRepository.findByTitleContaining(title);
     }
 }

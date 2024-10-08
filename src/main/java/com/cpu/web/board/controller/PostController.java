@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -100,10 +101,8 @@ public class PostController {
     }
 
     // 글 제목 검색
-    @GetMapping("/search/{title}")
-    public Page<PostDTO> fullTextSearchByTitle(@PathVariable String title){
-        // TODO 현재 "네 번쩨" 라고 검색했을 때, "세 번째 게시글", "네 번째 게시글" 등 모두 검색 됨. 공백 문제 해결해야 함
-        title = "\"" + title + "\"";
+    @GetMapping("/search")
+    public List<Post> fullTextSearchByTitle(@RequestParam(value = "title", required = false) String title){
         return postService.fullTextSearchByTitle(title);
     }
 }
