@@ -34,7 +34,7 @@ public class Post {
     private Timestamp createDate;
 
     @UpdateTimestamp
-    private Timestamp updateDate;
+    private Timestamp updateDate;//
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
