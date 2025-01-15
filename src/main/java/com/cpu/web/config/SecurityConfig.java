@@ -1,5 +1,6 @@
 package com.cpu.web.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +42,14 @@ public class SecurityConfig {
                 .loginPage("/login")
                 .loginProcessingUrl("/loginProc")
                 .successHandler((request, response, authentication) -> {
-                    response.setStatus(200);
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getWriter().write("{\"message\": \"Login successful\"}");
+                })
+                .failureHandler((request, response, exception) -> {
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("{\"message\": \"Login failed\"}");
                 })
         );
 
