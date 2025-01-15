@@ -40,7 +40,9 @@ public class SecurityConfig {
         http.formLogin((formLogin) -> formLogin
                 .loginPage("/login")
                 .loginProcessingUrl("/loginProc")
-                .defaultSuccessUrl("/")
+                .successHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                })
         );
 
         http.logout((logout) -> logout
