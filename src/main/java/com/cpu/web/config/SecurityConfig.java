@@ -47,6 +47,11 @@ public class SecurityConfig {
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().write("{\"message\": \"Login successful\"}");
                 })
+                .failureHandler((request, response, exception) -> {
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("{\"message\": \"Login failed\", \"error\": \"" + exception.getMessage() + "\"}");
+                })
         );
 
         http.logout((logout) -> logout
