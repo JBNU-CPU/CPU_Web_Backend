@@ -56,6 +56,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
+        System.out.println("login success");
+        
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
     }
@@ -63,5 +65,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
 
+        System.out.println("login fail");
+        
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 }
