@@ -1,8 +1,10 @@
 package com.cpu.web.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -40,7 +42,11 @@ public class SecurityConfig {
         http.formLogin((formLogin) -> formLogin
                 .loginPage("/login")
                 .loginProcessingUrl("/loginProc")
-                .defaultSuccessUrl("/")
+                .successHandler((request, response, authentication) -> {
+                    response.setContentType("application/json;charset=UTF-8");
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getWriter().write("{\"message\": \"Login successful\"}");
+                })
         );
 
         http.logout((logout) -> logout
@@ -49,6 +55,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 }
