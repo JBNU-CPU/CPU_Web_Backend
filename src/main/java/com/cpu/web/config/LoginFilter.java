@@ -59,7 +59,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
         System.out.println("login success");
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
+        System.out.println(authentication.getName());
 
         // 강제로 쿠키 생성
         Cookie customCookie = new Cookie("JSESSIONID", request.getSession().getId());
