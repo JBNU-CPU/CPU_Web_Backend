@@ -55,9 +55,9 @@ public class SecurityConfig {
         loginFilter.setFilterProcessesUrl("/loginProc");
         http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // 항상 세션 생성
-        );
+        // http.sessionManagement(session -> session
+        //         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // 항상 세션 생성
+        // );
 
 
         http.logout((logout) -> logout
