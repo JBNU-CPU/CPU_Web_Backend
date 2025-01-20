@@ -56,7 +56,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
-        response.setStatus(200);
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     @Override
