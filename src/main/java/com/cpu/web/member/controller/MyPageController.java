@@ -36,7 +36,9 @@ public class MyPageController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 유저에 접근하였습니다.", content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<MemberDTO> getMyInformation(){
+        System.out.println("mypage controller user request ------------");
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println(username);
         Optional<MemberDTO> myInformationDTO = myPageService.getMyInformation(username);
         return myInformationDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 
