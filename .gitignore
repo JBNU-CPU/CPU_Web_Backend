@@ -40,4 +40,4 @@ out/
 application-rds.properties
 
 ### SSL 인증서
-keystore.p12
+src/main/resources/ssl/keystore.p12
