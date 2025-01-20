@@ -60,7 +60,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         System.out.println("login success");
 
         // 강제로 쿠키 생성
-        Cookie customCookie = new Cookie("customCookie", "customValue");
+        Cookie customCookie = new Cookie("JSESSIONID", request.getSession().getId());
 
         // 쿠키 설정
         customCookie.setPath("/"); // 모든 경로에서 쿠키를 사용할 수 있도록 설정
