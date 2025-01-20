@@ -11,8 +11,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
@@ -74,6 +76,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // // 응답에 쿠키 추가
         // response.addCookie(customCookie);
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        HttpSessionSecurityContextRepository secRepo = new HttpSessionSecurityContextRepository();
+        secRepo.saveContext(context, request, response);
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
