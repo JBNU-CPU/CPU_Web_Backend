@@ -60,8 +60,10 @@ public class SecurityConfig {
 
         http.formLogin(login -> login.disable());
 
-        http.addFilterBefore(new LoginFilter(authenticationManager(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
-
+        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration));
+        loginFilter.setFilterProcessesUrl("/loginProc");
+        http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
+        
         http.logout((logout) -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/"));
