@@ -67,7 +67,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         customCookie.setHttpOnly(true); // 자바스크립트에서 접근 불가
         customCookie.setSecure(true); // HTTPS에서만 전송
         customCookie.setMaxAge(60 * 60); // 쿠키 유효 기간: 1시간 (초 단위)
-        customCookie.setDomain(".jbnucou.co.kr");
+        customCookie.setDomain(".jbnucpu.co.kr");
 
         // 응답에 쿠키 추가
         response.addCookie(customCookie);
