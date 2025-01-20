@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,10 +41,8 @@ public class SecurityConfig {
 
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/mypage", "/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**").permitAll()  // 이메일 인증 경로 허용
+                .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**").permitAll()  // 이메일 인증 경로 허용
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/study/**").permitAll()
-                .requestMatchers("/post/**").permitAll() //test용 0915준혁
                 .anyRequest().authenticated()
         );
 
@@ -54,11 +51,6 @@ public class SecurityConfig {
         LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration));
         loginFilter.setFilterProcessesUrl("/loginProc");
         http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // http.sessionManagement(session -> session
-        //         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // 항상 세션 생성
-        // );
-
 
         http.logout((logout) -> logout
                 .logoutUrl("/logout")
