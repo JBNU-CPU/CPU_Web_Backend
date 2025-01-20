@@ -42,7 +42,7 @@ public class SecurityConfig {
 
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**").permitAll()  // 이메일 인증 경로 허용
+                .requestMatchers("/mypage", "/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**").permitAll()  // 이메일 인증 경로 허용
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/study/**").permitAll()
                 .requestMatchers("/post/**").permitAll() //test용 0915준혁
