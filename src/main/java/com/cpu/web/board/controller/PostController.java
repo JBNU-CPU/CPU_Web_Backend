@@ -38,7 +38,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class)))
     })
-    public ResponseEntity<PostRequestDTO> createPost(
+    public ResponseEntity<PostResponseDTO> createPost(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "게시글 작성 데이터",
                     required = true,
@@ -50,7 +50,9 @@ public class PostController {
                 .path("/post/{id}")
                 .buildAndExpand(post.getPostId())
                 .toUri();
-        return ResponseEntity.created(location).body(postRequestDTO);
+
+
+        return ResponseEntity.created(location).body(new PostResponseDTO(post));
     }
 
     // 페이징 처리된 전체 글 조회
