@@ -101,7 +101,7 @@ public class PostService {
             throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
         }
 
-        if (!member.get().equals(postRepository.findById(id))){
+        if (!username.equals(postRepository.findById(id).orElseThrow().getMember().getUsername())){
             throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + username);
         }
 
@@ -112,6 +112,7 @@ public class PostService {
     }
 
     public List<Post> fullTextSearchByTitle(String title) {
+
         return postRepository.findByTitleContaining(title);
     }
 }
