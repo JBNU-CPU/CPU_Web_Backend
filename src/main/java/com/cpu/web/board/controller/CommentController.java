@@ -1,6 +1,6 @@
 package com.cpu.web.board.controller;
 
-import com.cpu.web.board.dto.CommentDTO;
+import com.cpu.web.board.dto.response.CommentDTO;
 import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.service.CommentService;
 import io.swagger.v3.oas.annotations.Operation;

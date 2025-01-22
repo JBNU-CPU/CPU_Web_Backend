@@ -1,4 +1,4 @@
-package com.cpu.web.board.dto;
+package com.cpu.web.board.dto.response;
 
 import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.entity.Post;

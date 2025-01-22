@@ -2,7 +2,9 @@ package com.cpu.web.board.controller;
 
 // 게시판 컨트롤러
 
-import com.cpu.web.board.dto.PostDTO;
+import com.cpu.web.board.dto.request.PostRequestDTO;
+import com.cpu.web.board.dto.response.PageResponseDTO;
+import com.cpu.web.board.dto.response.PostResponseDTO;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -30,35 +33,46 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
+
     //글 작성
     @PostMapping
-    @Operation(summary = "게시글 작성", description = "게시글 작성 API")
+    @Operation(summary = "게시글 작성", description = "게시글 작성")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class)))
     })
-    @Parameters({
-            @Parameter(name = "isNotice", description = "공지 여부", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "boolean", example = "true"))),
-            @Parameter(name = "title", description = "제목", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "박관소 개최 안내"))),
-            @Parameter(name = "content", description = "내용", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "2024년 하반기 박관소가 개최 예정입니다.")))
-    })
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
-        Post post = postService.createPost(postDTO);
+    public ResponseEntity<PostResponseDTO> createPost(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "게시글 작성 데이터",
+                    required = true,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostRequestDTO.class))
+            )@RequestBody PostRequestDTO postRequestDTO
+    ) {
+        Post post = postService.createPost(postRequestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/post/{id}")
                 .buildAndExpand(post.getPostId())
                 .toUri();
-        return ResponseEntity.created(location).body(postDTO);
+
+
+        return ResponseEntity.created(location).body(new PostResponseDTO(post));
     }
 
     // 페이징 처리된 전체 글 조회
     @GetMapping
-    @Operation(summary = "게시글 전체 조회", description = "게시글 전체 조회 API")
+    @Operation(summary = "게시글 전체 조회", description = "페이지네이션된 게시글 리스트 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResponseDTO.class)))
     })
-    public Page<PostDTO> getAllPosts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public Page<PostResponseDTO> getAllPosts(@Parameter(description = "페이지 크기 (최대 100)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+
+        if(page < 0) {
+            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
+        }
+
+        if(size <= 0 || size >100) {
+            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
+        }
+
         return postService.getAllPosts(page, size);
     }
 
@@ -66,11 +80,11 @@ public class PostController {
     @GetMapping("/{id}")
     @Operation(summary = "게시글 개별 조회", description = "게시글 개별 조회 API")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다..", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<PostDTO> getPost(@PathVariable Long id) {
-        Optional<PostDTO> postDTO = postService.getPostById(id);
+    public ResponseEntity<PostResponseDTO> getPost(@Parameter(description = "조회할 게시글 ID", example = "1") @PathVariable Long id) {
+        Optional<PostResponseDTO> postDTO = postService.getPostById(id);
         return postDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -80,13 +94,9 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     })
-    @Parameters({
-            @Parameter(name = "title", description = "제목", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "박관소 개최 안내"))),
-            @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "2024년 하반기 박관소가 개최 예정입니다.")))
-    })
-    public  ResponseEntity<PostDTO> updatePost(@PathVariable Long id, @RequestBody PostDTO postDTO) {
-        PostDTO updatedPostDTO = postService.updatePost(id, postDTO);
-        return ResponseEntity.ok(updatedPostDTO);
+    public  ResponseEntity<PostResponseDTO> updatePost(@PathVariable Long id, @RequestBody PostResponseDTO postResponseDTO) {
+        PostResponseDTO updatedPostResponseDTO = postService.updatePost(id, postResponseDTO);
+        return ResponseEntity.ok(updatedPostResponseDTO);
     }
 
     // 글 삭제
