@@ -1,5 +1,6 @@
 package com.cpu.web.config;
 
+import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ public class SecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final MemberRepository memberRepository;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -49,7 +51,7 @@ public class SecurityConfig {
 
         http.formLogin(login -> login.disable());
 
-        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration));
+        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), memberRepository);
         loginFilter.setFilterProcessesUrl("/loginProc");
         http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
