@@ -31,7 +31,7 @@ public class PostService {
         Optional<Member> member = memberRepository.findByUsername(username);
         String title = postRequestDTO.getTitle();
         String content = postRequestDTO.getContent();
-        System.out.println("member = " + member);
+
         // 제목 유효한지
         if (title == null) {
             throw new IllegalArgumentException("제목이 유효하지 않습니다.");
@@ -78,7 +78,7 @@ public class PostService {
             throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
         }
 
-        if (!member.get().equals(postRepository.findById(id))){
+        if (!username.equals(postRepository.findById(id).orElseThrow().getMember().getUsername())){
             throw new IllegalArgumentException("수정 권한이 없는 유저입니다: " + username);
         }
 
