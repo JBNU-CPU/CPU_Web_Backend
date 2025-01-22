@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +60,7 @@ public class PostService {
 
     // 페이징 처리된 전체 글 조회
     public Page<PostResponseDTO> getAllPosts(int page, int size) {
-        Page<Post> posts = postRepository.findAll(PageRequest.of(page, size));
+        Page<Post> posts = postRepository.findAll(PageRequest.of(page, size, Sort.by("postId").descending()));
         return posts.map(PostResponseDTO::new);
     }
 
