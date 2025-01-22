@@ -6,22 +6,31 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.userdetails.User;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 public class PostDTO {
 
+    private Long id;
     private Boolean isNotice;
     private String  title;
     private String content;
+    private Timestamp createDate;
+    private String nickName;
 
     public PostDTO(){}
 
 
     // entity => dto
     public PostDTO(Post post) {
+
+        this.id = post.getPostId();
         this.isNotice = post.getIsNotice();
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.createDate = post.getCreateDate();
+        this.nickName = post.getMember().getNickName();
     }
 
     // dto => entity
