@@ -41,7 +41,7 @@ public class SignupService {
         member.setEmail(signupDTO.getEmail());
 
         // 기본적으로 ROLE_GUEST 설정
-        member.setRole(Role.ROLE_GUEST);
+        member.setRole(Role.ROLE_ADMIN);
 
         // 회원 정보 저장
         member = memberRepository.save(member);
