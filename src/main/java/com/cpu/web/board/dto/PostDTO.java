@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class PostDTO {
-
+//
     private Long id;
     private Boolean isNotice;
     private String  title;
