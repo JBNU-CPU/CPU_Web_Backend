@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
-public class Member_Study {
+public class MemberStudy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class Member_Study {
     private Long memberStudyId;
 
     @CreationTimestamp
-    private Timestamp createDate;
+    private Timestamp joinDate;
 
     @Column(name = "is_leader", nullable = false) // 팀장 여부
     private Boolean isLeader;

@@ -13,9 +13,20 @@ public class StudyDTO {
     private int maxMembers;
     private String studyDescription;
 
-    public StudyDTO() {}//기본생성자
+    // 기본 생성자
+    public StudyDTO() {}
 
-    public Study toStudyEntity(){
+    // Study 객체를 받아 StudyDTO 객체를 초기화하는 생성자
+    public StudyDTO(Study study) {
+        this.memberId = study.getMemberId();
+        this.studyName = study.getStudyName();
+        this.studyType = study.getStudyType();
+        this.maxMembers = study.getMaxMembers();
+        this.studyDescription = study.getStudyDescription();
+    }
+
+    // DTO 정보를 사용하여 Study 엔티티 객체를 생성하는 메소드
+    public Study toStudyEntity() {
         Study study = new Study();
         study.setMemberId(this.memberId);
         study.setStudyName(this.studyName);
