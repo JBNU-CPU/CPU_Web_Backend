@@ -26,7 +26,10 @@ public class PostResponseDTO {
 
     @Schema(description = "작성일", example = "2025-01-22T11:45:33.183+00:00")
     private Timestamp createDate;
-    
+
+    @Schema(description = "작성자 ID", example = "1")
+    private Long memberId;
+
     @Schema(description = "작성자 닉네임", example = "씨피유미남")
     private String nickName;
 
@@ -41,6 +44,7 @@ public class PostResponseDTO {
         this.title = post.getTitle();
         this.content = post.getContent();
         this.createDate = post.getCreateDate();
+        this.memberId = post.getMember().getMemberId();
         this.nickName = post.getMember().getNickName();
     }
 }
