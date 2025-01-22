@@ -59,7 +59,7 @@ public class PostService {
 
     // 페이징 처리된 전체 글 조회
     public Page<PostResponseDTO> getAllPosts(int page, int size) {
-        Page<Post> posts = postRepository.findAll(PageRequest.of(page, size, Sort.by("id").descending()));
+        Page<Post> posts = postRepository.findAll(PageRequest.of(page, size, Sort.by("postId").descending()));
         return posts.map(PostResponseDTO::new);
     }
 
