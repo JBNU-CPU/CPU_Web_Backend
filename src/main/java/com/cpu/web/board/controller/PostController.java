@@ -30,6 +30,7 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
+
     //글 작성
     @PostMapping
     @Operation(summary = "게시글 작성", description = "게시글 작성 API")
@@ -56,9 +57,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     })
-    public Page<PostDTO> getAllPosts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    public Page<PostDTO> getAllPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return postService.getAllPosts(page, size);
     }
 

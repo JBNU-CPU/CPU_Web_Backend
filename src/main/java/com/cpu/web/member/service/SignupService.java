@@ -40,8 +40,8 @@ public class SignupService {
         member.setNickName(signupDTO.getNickName());
         member.setEmail(signupDTO.getEmail());
 
-        // 기본적으로 ROLE_GUEST 설정
-        member.setRole(Role.ROLE_GUEST);
+        // 기본적으로 ROLE_MEMBER 설정
+        member.setRole(Role.ROLE_MEMBER);
 
         // 회원 정보 저장
         member = memberRepository.save(member);
