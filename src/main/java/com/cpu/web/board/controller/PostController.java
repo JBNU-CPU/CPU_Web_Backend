@@ -50,8 +50,6 @@ public class PostController {
                 .path("/post/{id}")
                 .buildAndExpand(post.getPostId())
                 .toUri();
-
-
         return ResponseEntity.created(location).body(new PostResponseDTO(post));
     }
 
@@ -121,6 +119,6 @@ public class PostController {
     // 글 제목 검색
     @GetMapping("/search")
     public List<Post> fullTextSearchByTitle(@RequestParam(value = "title", required = false) String title){
-        return postService.fullTextSearchByTitle(title);
+        return postService.searchByTitle(title);
     }
 }

@@ -31,7 +31,7 @@ public class PostService {
         Optional<Member> member = memberRepository.findByUsername(username);
         String title = postRequestDTO.getTitle();
         String content = postRequestDTO.getContent();
-
+        System.out.println("member = " + member);
         // 제목 유효한지
         if (title == null) {
             throw new IllegalArgumentException("제목이 유효하지 않습니다.");
@@ -111,8 +111,9 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public List<Post> fullTextSearchByTitle(String title) {
-
+    public List<Post> searchByTitle(String title) {
+        List<Post> searchResult = postRepository.findByTitleContaining(title);
+        System.out.println("searchResult = " + searchResult);
         return postRepository.findByTitleContaining(title);
     }
 }
