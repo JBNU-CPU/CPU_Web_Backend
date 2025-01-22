@@ -1,17 +1,16 @@
-package com.cpu.web.board.dto;
+package com.cpu.web.board.dto.response;
 
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.member.entity.Member;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.core.userdetails.User;
 
 import java.sql.Timestamp;
 
 @Getter
 @Setter
-public class PostDTO {
-//
+public class PostResponseDTO {
+
     private Long id;
     private Boolean isNotice;
     private String  title;
@@ -19,11 +18,11 @@ public class PostDTO {
     private Timestamp createDate;
     private String nickName;
 
-    public PostDTO(){}
+    public PostResponseDTO(){}
 
 
     // entity => dto
-    public PostDTO(Post post) {
+    public PostResponseDTO(Post post) {
 
         this.id = post.getPostId();
         this.isNotice = post.getIsNotice();
@@ -32,16 +31,4 @@ public class PostDTO {
         this.createDate = post.getCreateDate();
         this.nickName = post.getMember().getNickName();
     }
-
-    // dto => entity
-    public Post toPostEntity(Member member){
-        Post post = new Post();
-        post.setIsNotice(isNotice);
-        post.setTitle(title);
-        post.setContent(content);
-        post.setMember(member);
-        return post;
-    }
-
-
 }

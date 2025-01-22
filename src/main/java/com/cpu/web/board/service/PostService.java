@@ -1,6 +1,7 @@
 package com.cpu.web.board.service;
 
-import com.cpu.web.board.dto.PostDTO;
+import com.cpu.web.board.dto.request.PostRequestDTO;
+import com.cpu.web.board.dto.response.PostResponseDTO;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.PostRepository;
 import com.cpu.web.member.entity.Member;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,12 +23,12 @@ public class PostService {
 
     private final MemberRepository memberRepository;
     // 글 생성
-    public Post createPost(PostDTO postDTO) {
+    public Post createPost(PostRequestDTO postRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Member> member = memberRepository.findByUsername(username);
-        String title = postDTO.getTitle();
-        String content = postDTO.getContent();
+        String title = postRequestDTO.getTitle();
+        String content = postRequestDTO.getContent();
 
         // 제목 유효한지
         if (title == null) {
@@ -52,23 +52,23 @@ public class PostService {
            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
-        Post post = postDTO.toPostEntity(member.get());
+        Post post = postRequestDTO.toPostEntity(member.get());
         return postRepository.save(post);
     }
 
     // 페이징 처리된 전체 글 조회
-    public Page<PostDTO> getAllPosts(int page, int size) {
+    public Page<PostResponseDTO> getAllPosts(int page, int size) {
         Page<Post> posts = postRepository.findAll(PageRequest.of(page, size));
-        return posts.map(PostDTO::new);
+        return posts.map(PostResponseDTO::new);
     }
 
     // 특정 글 조회
-    public Optional<PostDTO> getPostById(Long id) {
-        return postRepository.findById(id).map(PostDTO::new);
+    public Optional<PostResponseDTO> getPostById(Long id) {
+        return postRepository.findById(id).map(PostResponseDTO::new);
     }
 
     // 글 수정
-    public PostDTO updatePost(Long id, PostDTO postDTO) {
+    public PostResponseDTO updatePost(Long id, PostResponseDTO postResponseDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Member> member = memberRepository.findByUsername(username);
 
@@ -83,10 +83,10 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Post ID: " + id));
         
-        post.setTitle(postDTO.getTitle());
-        post.setContent(postDTO.getContent());
+        post.setTitle(postResponseDTO.getTitle());
+        post.setContent(postResponseDTO.getContent());
         Post updatedPost = postRepository.save(post);
-        return new PostDTO(updatedPost);
+        return new PostResponseDTO(updatedPost);
     }
 
     // 글 삭제

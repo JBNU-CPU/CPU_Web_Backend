@@ -1,6 +1,6 @@
 package com.cpu.web.board.service;
 
-import com.cpu.web.board.dto.CommentDTO;
+import com.cpu.web.board.dto.response.CommentDTO;
 import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.CommentRepository;
