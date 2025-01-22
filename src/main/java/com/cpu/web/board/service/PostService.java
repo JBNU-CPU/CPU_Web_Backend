@@ -6,6 +6,7 @@ import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.PostRepository;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -104,7 +105,7 @@ public class PostService {
         }
 
         if (!postRepository.existsById(id)){
-            throw new IllegalArgumentException("Invalid Post ID: " + id);
+            throw new EntityNotFoundException("Invalid Post ID: " + id);
         }
         postRepository.deleteById(id);
     }

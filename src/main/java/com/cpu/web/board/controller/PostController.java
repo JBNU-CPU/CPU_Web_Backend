@@ -78,7 +78,7 @@ public class PostController {
 
     // 특정 글 조회
     @GetMapping("/{id}")
-    @Operation(summary = "게시글 개별 조회", description = "게시글 개별 조회 API")
+    @Operation(summary = "게시글 개별 조회", description = "게시글 ID로 게시글 개별 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다.", content = @Content(mediaType = "application/json"))
@@ -90,22 +90,32 @@ public class PostController {
 
     // 글 수정
     @PutMapping("/{id}")
-    @Operation(summary = "게시글 수성", description = "게시글 수정 API")
+    @Operation(summary = "게시글 수정", description = "게시글 ID로 특정 게시글 수정")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다.", content = @Content(mediaType = "application/json"))
     })
-    public  ResponseEntity<PostResponseDTO> updatePost(@PathVariable Long id, @RequestBody PostResponseDTO postResponseDTO) {
+    public  ResponseEntity<PostResponseDTO> updatePost(
+            @Parameter(description = "수정할 게시글의 ID", example = "1")
+            @PathVariable Long id,
+
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "수정할 게시글 데이터", required = true,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
+            ) @RequestBody PostResponseDTO postResponseDTO) {
         PostResponseDTO updatedPostResponseDTO = postService.updatePost(id, postResponseDTO);
+
         return ResponseEntity.ok(updatedPostResponseDTO);
     }
 
     // 글 삭제
     @DeleteMapping("/{id}")
-    @Operation(summary = "게시글 삭제", description = "게시글 삭제 API")
+    @Operation(summary = "게시글 삭제", description = "게시글 ID로 특정 게시글 삭제")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다."),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다.")
     })
-    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+    public ResponseEntity<?> deletePost(@Parameter(description = "삭제할 게시글의 ID", example = "1") @PathVariable Long id) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
     }
