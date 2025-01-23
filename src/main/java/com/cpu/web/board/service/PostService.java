@@ -2,6 +2,7 @@ package com.cpu.web.board.service;
 
 import com.cpu.web.board.dto.request.PostRequestDTO;
 import com.cpu.web.board.dto.response.PostResponseDTO;
+import com.cpu.web.board.dto.response.SearchResponseDTO;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.PostRepository;
 import com.cpu.web.member.entity.Member;
@@ -78,7 +79,7 @@ public class PostService {
             throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
         }
 
-        if (!member.get().equals(postRepository.findById(id))){
+        if (!username.equals(postRepository.findById(id).orElseThrow().getMember().getUsername())){
             throw new IllegalArgumentException("수정 권한이 없는 유저입니다: " + username);
         }
 
@@ -101,7 +102,7 @@ public class PostService {
             throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
         }
 
-        if (!member.get().equals(postRepository.findById(id))){
+        if (!username.equals(postRepository.findById(id).orElseThrow().getMember().getUsername())){
             throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + username);
         }
 
@@ -111,7 +112,8 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public List<Post> fullTextSearchByTitle(String title) {
-        return postRepository.findByTitleContaining(title);
+    public List<SearchResponseDTO> searchByTitle(String title) {
+
+        return postRepository.findPostTitle(title);
     }
 }
