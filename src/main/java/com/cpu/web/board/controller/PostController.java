@@ -5,6 +5,7 @@ package com.cpu.web.board.controller;
 import com.cpu.web.board.dto.request.PostRequestDTO;
 import com.cpu.web.board.dto.response.PageResponseDTO;
 import com.cpu.web.board.dto.response.PostResponseDTO;
+import com.cpu.web.board.dto.response.SearchResponseDTO;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -118,7 +119,7 @@ public class PostController {
 
     // 글 제목 검색
     @GetMapping("/search")
-    public List<Post> fullTextSearchByTitle(@RequestParam(value = "title", required = false) String title){
+    public List<SearchResponseDTO> fullTextSearchByTitle(@RequestParam(value = "title", required = false) String title){
         return postService.searchByTitle(title);
     }
 }
