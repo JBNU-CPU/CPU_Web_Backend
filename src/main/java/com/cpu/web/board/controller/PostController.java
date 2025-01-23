@@ -60,7 +60,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResponseDTO.class)))
     })
-    public Page<PostResponseDTO> getAllPosts(@Parameter(description = "페이지 크기 (최대 100)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+    public Page<PostResponseDTO> getAllPosts(@Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
 
         if(page < 0) {
             throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
