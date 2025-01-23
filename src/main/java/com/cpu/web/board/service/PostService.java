@@ -2,6 +2,7 @@ package com.cpu.web.board.service;
 
 import com.cpu.web.board.dto.request.PostRequestDTO;
 import com.cpu.web.board.dto.response.PostResponseDTO;
+import com.cpu.web.board.dto.response.SearchResponseDTO;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.PostRepository;
 import com.cpu.web.member.entity.Member;
@@ -111,9 +112,8 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    public List<Post> searchByTitle(String title) {
-        List<Post> searchResult = postRepository.findByTitleContaining(title);
-        System.out.println("searchResult = " + searchResult);
-        return postRepository.findByTitleContaining(title);
+    public List<SearchResponseDTO> searchByTitle(String title) {
+
+        return postRepository.findPostTitle(title);
     }
 }
