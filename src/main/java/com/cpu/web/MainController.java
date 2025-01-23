@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MainController {
 
     @GetMapping("/")
-    public String mainApi(){
+    public String main(){
         return "Welcome to CPU Server!";
     }
 
