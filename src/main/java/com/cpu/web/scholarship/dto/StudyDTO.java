@@ -9,7 +9,7 @@ import lombok.Setter;
 public class StudyDTO {
     private Long memberId;
     private String studyName;
-    private Study.StudyType studyType;
+    private String studyType; // Enum이 아닌 String으로 변경
     private int maxMembers;
     private String studyDescription;
 
@@ -20,7 +20,7 @@ public class StudyDTO {
     public StudyDTO(Study study) {
         this.memberId = study.getMemberId();
         this.studyName = study.getStudyName();
-        this.studyType = study.getStudyType();
+        this.studyType = study.getStudyType().name(); // Enum → String 변환
         this.maxMembers = study.getMaxMembers();
         this.studyDescription = study.getStudyDescription();
     }
@@ -30,7 +30,7 @@ public class StudyDTO {
         Study study = new Study();
         study.setMemberId(this.memberId);
         study.setStudyName(this.studyName);
-        study.setStudyType(this.studyType);
+        study.setStudyType(Study.StudyType.valueOf(this.studyType.toLowerCase())); // String → Enum 변환
         study.setMaxMembers(this.maxMembers);
         study.setStudyDescription(this.studyDescription);
         return study;

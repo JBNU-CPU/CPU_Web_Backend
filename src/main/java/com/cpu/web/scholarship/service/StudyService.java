@@ -22,10 +22,14 @@ public class StudyService {
     private final MemberStudyRepository memberStudyRepository;
 
     public Study createStudy(StudyDTO studyDTO, Long memberId) {
-        Optional<MemberStudy> memberStudyOpt = memberStudyRepository.findByMember_MemberId(memberId).stream().findFirst();
+        // MemberRepository에서 유저가 존재하는지 확인
+        if (!memberRepository.existsById(memberId)) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        }
+
         String name = studyDTO.getStudyName();
         String description = studyDTO.getStudyDescription();
-        Enum type = studyDTO.getStudyType();
+        String typeStr = studyDTO.getStudyType().toLowerCase().trim(); // 소문자로 변환 후 공백 제거
         int max = studyDTO.getMaxMembers();
 
         if (name == null || name.isEmpty() || name.isBlank()) {
@@ -36,26 +40,46 @@ public class StudyService {
             throw new IllegalArgumentException("설명이 유효하지 않습니다.");
         }
 
-        if (type == null) {
+        if (typeStr == null || typeStr.isEmpty()) {
             throw new IllegalArgumentException("타입이 유효하지 않습니다.");
+        }
+
+        // 유효한 타입인지 확인 후 변환
+        Study.StudyType type;
+        switch (typeStr) {
+            case "study":
+                type = Study.StudyType.study;
+                break;
+            case "session":
+                type = Study.StudyType.session;
+                break;
+            case "project":
+                type = Study.StudyType.project;
+                break;
+            default:
+                throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + typeStr);
         }
 
         if (max <= 0) {
             throw new IllegalArgumentException("최대 인원이 유효하지 않습니다.");
         }
 
-        if (memberStudyOpt.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
+        // 스터디 생성
+        Study study = studyDTO.toStudyEntity();
+        study.setMemberId(memberId);
+        study.setStudyType(type); // 변환된 Enum 값 사용
+        Study savedStudy = studyRepository.save(study);
 
-        MemberStudy memberStudy = memberStudyOpt.get();
-        memberStudy.setIsLeader(true); // 작성자를 팀장으로 설정
+        // MemberStudy에 팀장 정보 추가
+        MemberStudy memberStudy = new MemberStudy();
+        memberStudy.setMember(memberRepository.findById(memberId).get());
+        memberStudy.setStudy(savedStudy);
+        memberStudy.setIsLeader(true);
         memberStudyRepository.save(memberStudy);
 
-        Study study = studyDTO.toStudyEntity();
-        study.setMemberId(memberId); // MemberId 설정
-        return studyRepository.save(study);
+        return savedStudy;
     }
+
 
     public Page<StudyDTO> getAllStudies(int page, int size) {
         Page<Study> studies = studyRepository.findAll(PageRequest.of(page, size));
@@ -82,11 +106,28 @@ public class StudyService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + id));
 
         study.setStudyName(studyDTO.getStudyName());
-        study.setStudyType(studyDTO.getStudyType());
         study.setStudyDescription(studyDTO.getStudyDescription());
         study.setMaxMembers(studyDTO.getMaxMembers());
+
+        // **문제 해결: studyType을 소문자로 변환 후 Enum으로 매핑**
+        String typeStr = studyDTO.getStudyType().toLowerCase().trim();
+        switch (typeStr) {
+            case "study":
+                study.setStudyType(Study.StudyType.study);
+                break;
+            case "session":
+                study.setStudyType(Study.StudyType.session);
+                break;
+            case "project":
+                study.setStudyType(Study.StudyType.project);
+                break;
+            default:
+                throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + studyDTO.getStudyType());
+        }
+
         return new StudyDTO(studyRepository.save(study));
     }
+
 
     public void deleteStudy(Long id, Long memberId) {
         Optional<MemberStudy> memberStudyOpt = memberStudyRepository.findByStudy_StudyIdAndMember_MemberId(id, memberId);
