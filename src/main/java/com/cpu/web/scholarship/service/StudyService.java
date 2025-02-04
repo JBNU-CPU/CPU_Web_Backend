@@ -97,15 +97,21 @@ public class StudyService {
         return studyRepository.findById(id).map(StudyDTO::new);
     }
 
-    public StudyDTO updateStudy(Long id, StudyDTO studyDTO, Long memberId) {
-        Optional<MemberStudy> memberStudyOpt = memberStudyRepository.findByStudy_StudyIdAndMember_MemberId(id, memberId);
+    public StudyDTO updateStudy(Long id, StudyDTO studyDTO) {
+        // 로그인된 사용자 정보 가져오기
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Member> member = memberRepository.findByUsername(username);
 
-        if (memberStudyOpt.isEmpty()) {
-            throw new IllegalArgumentException("수정 권한이 없는 유저입니다: " + memberId);
+        if (member.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
-        MemberStudy memberStudy = memberStudyOpt.get();
-        if (!memberStudy.getIsLeader()) {
+        Long memberId = member.get().getMemberId();
+
+        // 스터디 리더인지 검증
+        Optional<MemberStudy> memberStudyOpt = memberStudyRepository.findByStudy_StudyIdAndMember_MemberId(id, memberId);
+
+        if (memberStudyOpt.isEmpty() || !memberStudyOpt.get().getIsLeader()) {
             throw new IllegalArgumentException("팀장이 아니므로 수정 권한이 없습니다: " + memberId);
         }
 
@@ -116,7 +122,7 @@ public class StudyService {
         study.setStudyDescription(studyDTO.getStudyDescription());
         study.setMaxMembers(studyDTO.getMaxMembers());
 
-        // **문제 해결: studyType을 소문자로 변환 후 Enum으로 매핑**
+        // studyType 변환 처리
         String typeStr = studyDTO.getStudyType().toLowerCase().trim();
         switch (typeStr) {
             case "study":
@@ -136,15 +142,22 @@ public class StudyService {
     }
 
 
-    public void deleteStudy(Long id, Long memberId) {
-        Optional<MemberStudy> memberStudyOpt = memberStudyRepository.findByStudy_StudyIdAndMember_MemberId(id, memberId);
 
-        if (memberStudyOpt.isEmpty()) {
-            throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + memberId);
+    public void deleteStudy(Long id) {
+        // 로그인된 사용자 정보 가져오기
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Member> member = memberRepository.findByUsername(username);
+
+        if (member.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
-        MemberStudy memberStudy = memberStudyOpt.get();
-        if (!memberStudy.getIsLeader()) {
+        Long memberId = member.get().getMemberId();
+
+        // 스터디 리더인지 검증
+        Optional<MemberStudy> memberStudyOpt = memberStudyRepository.findByStudy_StudyIdAndMember_MemberId(id, memberId);
+
+        if (memberStudyOpt.isEmpty() || !memberStudyOpt.get().getIsLeader()) {
             throw new IllegalArgumentException("팀장이 아니므로 삭제 권한이 없습니다: " + memberId);
         }
 
@@ -154,4 +167,5 @@ public class StudyService {
 
         studyRepository.deleteById(id);
     }
+
 }

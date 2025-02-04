@@ -83,8 +83,8 @@ public class StudyController {
             @Parameter(name = "studyType", description = "스터디 타입", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "study"))),
             @Parameter(name = "maxMembers", description = "최대 인원", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "integer", example = "10")))
     })
-    public ResponseEntity<StudyDTO> updateStudy(@PathVariable Long id, @RequestBody StudyDTO studyDTO, @RequestParam Long memberId) {
-        StudyDTO updatedStudyDTO = studyService.updateStudy(id, studyDTO, memberId);
+    public ResponseEntity<StudyDTO> updateStudy(@PathVariable Long id, @RequestBody StudyDTO studyDTO) {
+        StudyDTO updatedStudyDTO = studyService.updateStudy(id, studyDTO);
         return ResponseEntity.ok(updatedStudyDTO);
     }
 
@@ -93,8 +93,9 @@ public class StudyController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<?> deleteStudy(@PathVariable Long id, @RequestParam Long memberId) {
-        studyService.deleteStudy(id, memberId);
+    public ResponseEntity<?> deleteStudy(@PathVariable Long id) {
+        studyService.deleteStudy(id);
         return ResponseEntity.noContent().build();
     }
+
 }
