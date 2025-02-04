@@ -1,5 +1,6 @@
 package com.cpu.web.scholarship.service;
 
+import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import com.cpu.web.scholarship.dto.StudyDTO;
 import com.cpu.web.scholarship.entity.Study;
@@ -9,6 +10,7 @@ import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,30 +23,34 @@ public class StudyService {
     private final MemberRepository memberRepository;
     private final MemberStudyRepository memberStudyRepository;
 
-    public Study createStudy(StudyDTO studyDTO, Long memberId) {
-        // MemberRepository에서 유저가 존재하는지 확인
-        if (!memberRepository.existsById(memberId)) {
+    public Study createStudy(StudyDTO studyDTO) {
+        // 로그인된 사용자 정보 가져오기
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Member> member = memberRepository.findByUsername(username);
+
+        if (member.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
+        // DTO 값 검증
         String name = studyDTO.getStudyName();
         String description = studyDTO.getStudyDescription();
-        String typeStr = studyDTO.getStudyType().toLowerCase().trim(); // 소문자로 변환 후 공백 제거
+        String typeStr = studyDTO.getStudyType().toLowerCase().trim();
         int max = studyDTO.getMaxMembers();
 
-        if (name == null || name.isEmpty() || name.isBlank()) {
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("이름이 유효하지 않습니다.");
         }
 
-        if (description == null || description.isEmpty() || description.isBlank()) {
+        if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("설명이 유효하지 않습니다.");
         }
 
-        if (typeStr == null || typeStr.isEmpty()) {
+        if (typeStr.isEmpty()) {
             throw new IllegalArgumentException("타입이 유효하지 않습니다.");
         }
 
-        // 유효한 타입인지 확인 후 변환
+        // 스터디 타입 변환
         Study.StudyType type;
         switch (typeStr) {
             case "study":
@@ -66,19 +72,20 @@ public class StudyService {
 
         // 스터디 생성
         Study study = studyDTO.toStudyEntity();
-        study.setMemberId(memberId);
-        study.setStudyType(type); // 변환된 Enum 값 사용
+        study.setMemberId(member.get().getMemberId());
+        study.setStudyType(type);
         Study savedStudy = studyRepository.save(study);
 
-        // MemberStudy에 팀장 정보 추가
+        // 팀장 정보 추가
         MemberStudy memberStudy = new MemberStudy();
-        memberStudy.setMember(memberRepository.findById(memberId).get());
+        memberStudy.setMember(member.get());
         memberStudy.setStudy(savedStudy);
         memberStudy.setIsLeader(true);
         memberStudyRepository.save(memberStudy);
 
         return savedStudy;
     }
+
 
 
     public Page<StudyDTO> getAllStudies(int page, int size) {
