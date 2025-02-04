@@ -37,6 +37,10 @@ public class StudyService {
         String description = studyDTO.getStudyDescription();
         String typeStr = studyDTO.getStudyType().toLowerCase().trim();
         int max = studyDTO.getMaxMembers();
+        String techStack = studyDTO.getTechStack();
+        String studyDayStr = studyDTO.getStudyDay().toUpperCase().trim();
+        String location = studyDTO.getLocation();
+        String etc = studyDTO.getEtc();
 
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("이름이 유효하지 않습니다.");
@@ -48,6 +52,18 @@ public class StudyService {
 
         if (typeStr.isEmpty()) {
             throw new IllegalArgumentException("타입이 유효하지 않습니다.");
+        }
+
+        if (techStack == null || techStack.isBlank()) {
+            throw new IllegalArgumentException("기술 스택이 유효하지 않습니다.");
+        }
+
+        if (studyDayStr.isEmpty()) {
+            throw new IllegalArgumentException("진행 요일이 유효하지 않습니다.");
+        }
+
+        if (max <= 0) {
+            throw new IllegalArgumentException("최대 인원이 유효하지 않습니다.");
         }
 
         // 스터디 타입 변환
@@ -66,14 +82,26 @@ public class StudyService {
                 throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + typeStr);
         }
 
-        if (max <= 0) {
-            throw new IllegalArgumentException("최대 인원이 유효하지 않습니다.");
+        // 진행 요일 변환
+        Study.StudyDay studyDay;
+        try {
+            studyDay = Study.StudyDay.valueOf(studyDayStr);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStr);
         }
 
         // 스터디 생성
-        Study study = studyDTO.toStudyEntity();
+        Study study = new Study();
         study.setMemberId(member.get().getMemberId());
+        study.setStudyName(name);
         study.setStudyType(type);
+        study.setMaxMembers(max);
+        study.setStudyDescription(description);
+        study.setTechStack(techStack);
+        study.setStudyDay(studyDay);
+        study.setLocation(location);
+        study.setEtc(etc);
+
         Study savedStudy = studyRepository.save(study);
 
         // 팀장 정보 추가
@@ -85,8 +113,6 @@ public class StudyService {
 
         return savedStudy;
     }
-
-
 
     public Page<StudyDTO> getAllStudies(int page, int size) {
         Page<Study> studies = studyRepository.findAll(PageRequest.of(page, size));
@@ -121,6 +147,9 @@ public class StudyService {
         study.setStudyName(studyDTO.getStudyName());
         study.setStudyDescription(studyDTO.getStudyDescription());
         study.setMaxMembers(studyDTO.getMaxMembers());
+        study.setTechStack(studyDTO.getTechStack());
+        study.setLocation(studyDTO.getLocation());
+        study.setEtc(studyDTO.getEtc());
 
         // studyType 변환 처리
         String typeStr = studyDTO.getStudyType().toLowerCase().trim();
@@ -138,10 +167,16 @@ public class StudyService {
                 throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + studyDTO.getStudyType());
         }
 
+        // 진행 요일 변환
+        String studyDayStr = studyDTO.getStudyDay().toUpperCase().trim();
+        try {
+            study.setStudyDay(Study.StudyDay.valueOf(studyDayStr));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStr);
+        }
+
         return new StudyDTO(studyRepository.save(study));
     }
-
-
 
     public void deleteStudy(Long id) {
         // 로그인된 사용자 정보 가져오기
@@ -167,5 +202,4 @@ public class StudyService {
 
         studyRepository.deleteById(id);
     }
-
 }
