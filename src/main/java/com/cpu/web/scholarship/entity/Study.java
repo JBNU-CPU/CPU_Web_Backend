@@ -27,7 +27,13 @@ public class Study {
     private String studyName;
 
     @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "study_days", joinColumns = @JoinColumn(name = "study_id"))
+    @Column(name = "day", nullable = false)
+    private List<StudyDay> studyDays = new ArrayList<>();
+
     @Column(name = "study_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private StudyType studyType;
 
     @Column(name = "max_members", nullable = false)
@@ -36,18 +42,14 @@ public class Study {
     @Column(name = "study_description", nullable = false)
     private String studyDescription;
 
-    @Column(name = "tech_stack", nullable = false)  // 기술 스택 추가
+    @Column(name = "tech_stack", nullable = false)
     private String techStack;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "study_day", nullable = false)
-    private StudyDay studyDay; // 진행 요일 추가
-
     @Column(name = "location", nullable = false)
-    private String location; // 장소 추가
+    private String location;
 
     @Column(name = "etc")
-    private String etc; // 기타 추가
+    private String etc;
 
     @CreationTimestamp
     private Timestamp createdDate;
@@ -58,15 +60,14 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
     private List<MemberStudy> joinedMember = new ArrayList<>();
 
-    // Enum for study_type
+    // ENUM for study type
     public enum StudyType {
-        session,
-        study,
-        project
+        session, study, project
     }
 
-    // Enum for study_day
+    // ENUM for study days
     public enum StudyDay {
-        Mon, Tue, Wed, Thu, Fri, Sat, Sun
+        MON, TUE, WED, THU, FRI, SAT, SUN
     }
 }
+
