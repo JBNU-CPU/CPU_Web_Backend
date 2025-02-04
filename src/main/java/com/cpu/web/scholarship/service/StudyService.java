@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,7 +39,7 @@ public class StudyService {
         String typeStr = studyDTO.getStudyType().toLowerCase().trim();
         int max = studyDTO.getMaxMembers();
         String techStack = studyDTO.getTechStack();
-        String studyDayStr = studyDTO.getStudyDay().toUpperCase().trim();
+        List<String> studyDayStrs = studyDTO.getStudyDays();
         String location = studyDTO.getLocation();
         String etc = studyDTO.getEtc();
 
@@ -50,7 +51,7 @@ public class StudyService {
             throw new IllegalArgumentException("설명이 유효하지 않습니다.");
         }
 
-        if (typeStr.isEmpty()) {
+        if (typeStr == null || typeStr.isEmpty()) {
             throw new IllegalArgumentException("타입이 유효하지 않습니다.");
         }
 
@@ -58,7 +59,7 @@ public class StudyService {
             throw new IllegalArgumentException("기술 스택이 유효하지 않습니다.");
         }
 
-        if (studyDayStr.isEmpty()) {
+        if (studyDayStrs == null || studyDayStrs.isEmpty()) {
             throw new IllegalArgumentException("진행 요일이 유효하지 않습니다.");
         }
 
@@ -82,12 +83,14 @@ public class StudyService {
                 throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + typeStr);
         }
 
-        // 진행 요일 변환
-        Study.StudyDay studyDay;
+        // 진행 요일 변환 (String 리스트 → ENUM 리스트)
+        List<Study.StudyDay> studyDays;
         try {
-            studyDay = Study.StudyDay.valueOf(studyDayStr);
+            studyDays = studyDayStrs.stream()
+                    .map(day -> Study.StudyDay.valueOf(day.toUpperCase()))
+                    .toList();
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStr);
+            throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStrs);
         }
 
         // 스터디 생성
@@ -98,7 +101,7 @@ public class StudyService {
         study.setMaxMembers(max);
         study.setStudyDescription(description);
         study.setTechStack(techStack);
-        study.setStudyDay(studyDay);
+        study.setStudyDays(studyDays);
         study.setLocation(location);
         study.setEtc(etc);
 
@@ -167,12 +170,18 @@ public class StudyService {
                 throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + studyDTO.getStudyType());
         }
 
-        // 진행 요일 변환
-        String studyDayStr = studyDTO.getStudyDay().toUpperCase().trim();
-        try {
-            study.setStudyDay(Study.StudyDay.valueOf(studyDayStr));
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStr);
+        // 진행 요일 변환 (String 리스트 → ENUM 리스트)
+        List<String> studyDayStrs = studyDTO.getStudyDays();
+        if (studyDayStrs != null && !studyDayStrs.isEmpty()) {
+            List<Study.StudyDay> studyDays;
+            try {
+                studyDays = studyDayStrs.stream()
+                        .map(day -> Study.StudyDay.valueOf(day.toUpperCase()))
+                        .toList();
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStrs);
+            }
+            study.setStudyDays(studyDays); // ✅ 수정 시에도 복수 요일 업데이트 가능
         }
 
         return new StudyDTO(studyRepository.save(study));

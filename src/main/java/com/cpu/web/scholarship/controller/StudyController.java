@@ -39,8 +39,7 @@ public class StudyController {
             @Parameter(name = "studyType", description = "스터디 타입", schema = @Schema(type = "string", example = "study")),
             @Parameter(name = "maxMembers", description = "최대 인원", schema = @Schema(type = "integer", example = "10")),
             @Parameter(name = "techStack", description = "기술 스택", schema = @Schema(type = "string", example = "Java, Spring, React")),
-            @Parameter(name = "studyDay", description = "진행 요일 (월~일)", schema = @Schema(type = "string", example = "Mon")),
-            @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "서울 강남구")),
+            @Parameter(name = "studyDays", description = "진행 요일 (월~일) 리스트", schema = @Schema(type = "array", example = "[\"Mon\", \"Wed\", \"Fri\"]")),            @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "서울 강남구")),
             @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
     })
     public ResponseEntity<StudyDTO> createStudy(@RequestBody StudyDTO studyDTO) {
@@ -85,7 +84,7 @@ public class StudyController {
             @Parameter(name = "studyType", description = "스터디 타입", schema = @Schema(type = "string", example = "study")),
             @Parameter(name = "maxMembers", description = "최대 인원", schema = @Schema(type = "integer", example = "10")),
             @Parameter(name = "techStack", description = "기술 스택", schema = @Schema(type = "string", example = "Java, Spring, React")),
-            @Parameter(name = "studyDay", description = "진행 요일 (월~일)", schema = @Schema(type = "string", example = "Mon")),
+            @Parameter(name = "studyDays", description = "진행 요일 (월~일) 리스트", schema = @Schema(type = "array", example = "[\"Mon\", \"Wed\", \"Fri\"]")),
             @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "서울 강남구")),
             @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
     })
