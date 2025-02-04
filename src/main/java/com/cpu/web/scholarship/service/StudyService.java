@@ -172,17 +172,15 @@ public class StudyService {
 
         // 진행 요일 변환 (String 리스트 → ENUM 리스트)
         List<String> studyDayStrs = studyDTO.getStudyDays();
-        if (studyDayStrs != null && !studyDayStrs.isEmpty()) {
-            List<Study.StudyDay> studyDays;
-            try {
-                studyDays = studyDayStrs.stream()
-                        .map(day -> Study.StudyDay.valueOf(day.toUpperCase()))
-                        .toList();
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStrs);
-            }
-            study.setStudyDays(studyDays); // ✅ 수정 시에도 복수 요일 업데이트 가능
+        List<Study.StudyDay> studyDays;
+        try {
+            studyDays = studyDayStrs.stream()
+                    .map(day -> Study.StudyDay.valueOf(day.toUpperCase()))
+                    .toList();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStrs);
         }
+        study.setStudyDays(studyDays); // ✅ 수정 시에도 복수 요일 업데이트 가능
 
         return new StudyDTO(studyRepository.save(study));
     }
