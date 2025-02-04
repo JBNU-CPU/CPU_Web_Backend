@@ -34,10 +34,14 @@ public class StudyController {
             @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     })
     @Parameters({
-            @Parameter(name = "studyName", description = "스터디 이름", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "알고리즘 스터디"))),
-            @Parameter(name = "studyDescription", description = "스터디 설명", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "알고리즘을 공부하는 스터디입니다."))),
-            @Parameter(name = "studyType", description = "스터디 타입", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "study"))),
-            @Parameter(name = "maxMembers", description = "최대 인원", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "integer", example = "10")))
+            @Parameter(name = "studyName", description = "스터디 이름", schema = @Schema(type = "string", example = "알고리즘 스터디")),
+            @Parameter(name = "studyDescription", description = "스터디 설명", schema = @Schema(type = "string", example = "알고리즘을 공부하는 스터디입니다.")),
+            @Parameter(name = "studyType", description = "스터디 타입", schema = @Schema(type = "string", example = "study")),
+            @Parameter(name = "maxMembers", description = "최대 인원", schema = @Schema(type = "integer", example = "10")),
+            @Parameter(name = "techStack", description = "기술 스택", schema = @Schema(type = "string", example = "Java, Spring, React")),
+            @Parameter(name = "studyDay", description = "진행 요일 (월~일)", schema = @Schema(type = "string", example = "Mon")),
+            @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "서울 강남구")),
+            @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
     })
     public ResponseEntity<StudyDTO> createStudy(@RequestBody StudyDTO studyDTO) {
         Study study = studyService.createStudy(studyDTO);
@@ -47,8 +51,6 @@ public class StudyController {
                 .toUri();
         return ResponseEntity.created(location).body(new StudyDTO(study));
     }
-
-
 
     @GetMapping
     @Operation(summary = "스터디 전체 조회", description = "스터디 전체 조회 API")
@@ -78,10 +80,14 @@ public class StudyController {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     })
     @Parameters({
-            @Parameter(name = "studyName", description = "스터디 이름", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "알고리즘 스터디"))),
-            @Parameter(name = "studyDescription", description = "스터디 설명", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "알고리즘을 공부하는 스터디입니다."))),
-            @Parameter(name = "studyType", description = "스터디 타입", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "study"))),
-            @Parameter(name = "maxMembers", description = "최대 인원", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "integer", example = "10")))
+            @Parameter(name = "studyName", description = "스터디 이름", schema = @Schema(type = "string", example = "알고리즘 스터디")),
+            @Parameter(name = "studyDescription", description = "스터디 설명", schema = @Schema(type = "string", example = "알고리즘을 공부하는 스터디입니다.")),
+            @Parameter(name = "studyType", description = "스터디 타입", schema = @Schema(type = "string", example = "study")),
+            @Parameter(name = "maxMembers", description = "최대 인원", schema = @Schema(type = "integer", example = "10")),
+            @Parameter(name = "techStack", description = "기술 스택", schema = @Schema(type = "string", example = "Java, Spring, React")),
+            @Parameter(name = "studyDay", description = "진행 요일 (월~일)", schema = @Schema(type = "string", example = "Mon")),
+            @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "서울 강남구")),
+            @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
     })
     public ResponseEntity<StudyDTO> updateStudy(@PathVariable Long id, @RequestBody StudyDTO studyDTO) {
         StudyDTO updatedStudyDTO = studyService.updateStudy(id, studyDTO);
@@ -97,5 +103,4 @@ public class StudyController {
         studyService.deleteStudy(id);
         return ResponseEntity.noContent().build();
     }
-
 }
