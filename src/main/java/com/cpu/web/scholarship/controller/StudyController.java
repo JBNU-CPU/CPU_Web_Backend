@@ -39,14 +39,16 @@ public class StudyController {
             @Parameter(name = "studyType", description = "스터디 타입", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "study"))),
             @Parameter(name = "maxMembers", description = "최대 인원", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "integer", example = "10")))
     })
-    public ResponseEntity<StudyDTO> createStudy(@RequestBody StudyDTO studyDTO, @RequestParam Long memberId) {
-        Study study = studyService.createStudy(studyDTO, memberId);
+    public ResponseEntity<StudyDTO> createStudy(@RequestBody StudyDTO studyDTO) {
+        Study study = studyService.createStudy(studyDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(study.getStudyId())
                 .toUri();
         return ResponseEntity.created(location).body(new StudyDTO(study));
     }
+
+
 
     @GetMapping
     @Operation(summary = "스터디 전체 조회", description = "스터디 전체 조회 API")
