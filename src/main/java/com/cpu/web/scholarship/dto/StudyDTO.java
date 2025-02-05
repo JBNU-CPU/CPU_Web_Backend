@@ -9,21 +9,23 @@ import java.util.List;
 @Getter
 @Setter
 public class StudyDTO {
+    private Long id; // ✅ 스터디 ID 추가
     private Long memberId;
     private String studyName;
     private String studyType;
     private int maxMembers;
     private String studyDescription;
     private String techStack;
-    private List<String> studyDays; // ✅ 복수 선택 가능하게 변경
+    private List<String> studyDays;
     private String location;
     private String etc;
 
     // 기본 생성자
     public StudyDTO() {}
 
-    // Study 객체를 받아 DTO 변환
+    // Study 엔티티 → StudyDTO 변환
     public StudyDTO(Study study) {
+        this.id = study.getStudyId();  // ✅ 스터디 ID 매핑
         this.memberId = study.getMemberId();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType().name();
@@ -35,9 +37,10 @@ public class StudyDTO {
         this.etc = study.getEtc();
     }
 
-    // DTO → Study 변환
+    // StudyDTO → Study 변환
     public Study toStudyEntity() {
         Study study = new Study();
+        study.setStudyId(this.id);  // ✅ ID 설정
         study.setMemberId(this.memberId);
         study.setStudyName(this.studyName);
         study.setStudyType(Study.StudyType.valueOf(this.studyType.toLowerCase()));

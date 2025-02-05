@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -174,9 +175,9 @@ public class StudyService {
         List<String> studyDayStrs = studyDTO.getStudyDays();
         List<Study.StudyDay> studyDays;
         try {
-            studyDays = studyDayStrs.stream()
+            studyDays = new ArrayList<>(studyDayStrs.stream()
                     .map(day -> Study.StudyDay.valueOf(day.toUpperCase()))
-                    .toList();
+                    .toList());  // ✅ 변경 가능한 리스트로 변환
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStrs);
         }
