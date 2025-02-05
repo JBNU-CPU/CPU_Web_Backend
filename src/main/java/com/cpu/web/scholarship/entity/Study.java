@@ -27,7 +27,7 @@ public class Study {
     private String studyName;
 
     @Column(name = "is_accepted", nullable = false)
-    private Boolean isAccepted;
+    private Boolean isAccepted = false;
 
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.LAZY)

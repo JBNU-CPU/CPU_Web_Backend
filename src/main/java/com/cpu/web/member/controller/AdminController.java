@@ -87,5 +87,4 @@ public class AdminController {
         adminService.deleteStudy(id);
         return ResponseEntity.noContent().build();
     }
-
 }
