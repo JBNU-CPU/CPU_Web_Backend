@@ -118,9 +118,13 @@ public class StudyService {
         return savedStudy;
     }
 
-    public Page<StudyDTO> getAllStudies(int page, int size) {
-        Page<Study> studies = studyRepository.findAll(PageRequest.of(page, size));
-        return studies.map(StudyDTO::new);
+    public Page<StudyDTO> getAllStudies(int page, int size, String studyType) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        if (studyType != null && !studyType.isEmpty()) {
+            Study.StudyType type = Study.StudyType.valueOf(studyType.toUpperCase());
+            return studyRepository.findByStudyType(type, pageRequest).map(StudyDTO::new);
+        }
+        return studyRepository.findAll(pageRequest).map(StudyDTO::new);
     }
 
     public Optional<StudyDTO> getStudyById(Long id) {

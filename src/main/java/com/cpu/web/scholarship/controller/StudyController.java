@@ -59,8 +59,9 @@ public class StudyController {
     })
     public Page<StudyDTO> getAllStudies(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return studyService.getAllStudies(page, size);
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String studyType) {
+        return studyService.getAllStudies(page, size, studyType);
     }
 
     @GetMapping("/{id}")
