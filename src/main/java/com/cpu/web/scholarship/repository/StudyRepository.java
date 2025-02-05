@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StudyRepository extends JpaRepository<Study,Long> {
     Page<Study> findAll(Pageable pageable);
+    Page<Study> findByStudyType(Study.StudyType studyType, Pageable pageable); // 여기에 추가
+
 }
