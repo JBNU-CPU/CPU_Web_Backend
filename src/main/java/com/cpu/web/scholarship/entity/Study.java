@@ -26,6 +26,9 @@ public class Study {
     @Column(name = "study_name", length = 100, nullable = false)
     private String studyName;
 
+    @Column(name = "is_accepted", nullable = false)
+    private Boolean isAccepted;
+
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "study_days", joinColumns = @JoinColumn(name = "study_id"))

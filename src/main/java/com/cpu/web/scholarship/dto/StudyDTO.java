@@ -11,6 +11,7 @@ import java.util.List;
 public class StudyDTO {
     private Long id; // ✅ 스터디 ID 추가
     private Long memberId;
+    private Boolean isAccepted;
     private String studyName;
     private String studyType;
     private int maxMembers;
@@ -27,6 +28,7 @@ public class StudyDTO {
     public StudyDTO(Study study) {
         this.id = study.getStudyId();  // ✅ 스터디 ID 매핑
         this.memberId = study.getMemberId();
+        this.isAccepted = study.getIsAccepted();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType().name();
         this.maxMembers = study.getMaxMembers();
