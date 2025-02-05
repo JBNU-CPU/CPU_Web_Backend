@@ -143,9 +143,8 @@ public class StudyService {
         Long memberId = member.get().getMemberId();
 
         // 스터디 리더인지 검증
-        Optional<MemberStudy> memberStudyOpt = memberStudyRepository.findByStudy_StudyIdAndMember_MemberId(id, memberId);
-
-        if (memberStudyOpt.isEmpty() || !memberStudyOpt.get().getIsLeader()) {
+        boolean isLeader = memberStudyRepository.existsByStudy_StudyIdAndMember_MemberIdAndIsLeader(id, memberId, true);
+        if (!isLeader) {
             throw new IllegalArgumentException("팀장이 아니므로 수정 권한이 없습니다: " + memberId);
         }
 
@@ -202,10 +201,9 @@ public class StudyService {
         Long memberId = member.get().getMemberId();
 
         // 스터디 리더인지 검증
-        Optional<MemberStudy> memberStudyOpt = memberStudyRepository.findByStudy_StudyIdAndMember_MemberId(id, memberId);
-
-        if (memberStudyOpt.isEmpty() || !memberStudyOpt.get().getIsLeader()) {
-            throw new IllegalArgumentException("팀장이 아니므로 삭제 권한이 없습니다: " + memberId);
+        boolean isLeader = memberStudyRepository.existsByStudy_StudyIdAndMember_MemberIdAndIsLeader(id, memberId, true);
+        if (!isLeader) {
+            throw new IllegalArgumentException("팀장이 아니므로 수정 권한이 없습니다: " + memberId);
         }
 
         if (!studyRepository.existsById(id)) {
