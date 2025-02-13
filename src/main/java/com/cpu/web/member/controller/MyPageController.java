@@ -41,7 +41,6 @@ public class MyPageController {
         System.out.println(username);
         Optional<MemberDTO> myInformationDTO = myPageService.getMyInformation(username);
         return myInformationDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-
     }
 
     // 회원 정보 수정

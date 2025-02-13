@@ -7,6 +7,7 @@ import com.cpu.web.scholarship.dto.StudyDTO;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

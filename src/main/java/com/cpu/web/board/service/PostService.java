@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -94,22 +95,25 @@ public class PostService {
 
     // 글 삭제
     public void deletePost(Long id) {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (member.isEmpty()){
             throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
         }
 
-        if (!username.equals(postRepository.findById(id).orElseThrow().getMember().getUsername())){
+        // 해당 게시글이 존재하는지 확인
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Invalid Post ID: " + id));
+
+        // 관리자이거나 게시글 작성자인 경우 삭제 가능
+        if (isAdmin || username.equals(post.getMember().getUsername())) {
+            postRepository.deleteById(id);
+        } else {
             throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + username);
         }
-
-        if (!postRepository.existsById(id)){
-            throw new EntityNotFoundException("Invalid Post ID: " + id);
-        }
-        postRepository.deleteById(id);
     }
 
     public List<SearchResponseDTO> searchByTitle(String title) {
