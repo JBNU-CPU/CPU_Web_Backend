@@ -34,6 +34,8 @@ public class StudyService {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
+        Long leaderId = member.get().getMemberId(); // ✅ 리더 ID 가져오기
+
         // DTO 값 검증
         String name = studyDTO.getStudyName();
         String description = studyDTO.getStudyDescription();
@@ -96,7 +98,7 @@ public class StudyService {
 
         // 스터디 생성
         Study study = new Study();
-        study.setLeaderId(member.get().getMemberId());
+        study.setLeaderId(leaderId); // ✅ 리더 ID 설정
         study.setStudyName(name);
         study.setStudyType(type);
         study.setMaxMembers(max);
@@ -117,6 +119,7 @@ public class StudyService {
 
         return savedStudy;
     }
+
 
     public Page<StudyDTO> getAllStudies(int page, int size, String studyType) {
         PageRequest pageRequest = PageRequest.of(page, size);
@@ -151,16 +154,16 @@ public class StudyService {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
-        Long memberId = member.get().getMemberId();
+        Long leaderId = member.get().getMemberId(); // ✅ 현재 로그인한 사용자 ID 가져오기
 
-        // 스터디 리더인지 검증
-        boolean isLeader = memberStudyRepository.existsByStudy_StudyIdAndMember_MemberIdAndIsLeader(id, memberId, true);
-        if (!isLeader) {
-            throw new IllegalArgumentException("팀장이 아니므로 수정 권한이 없습니다: " + memberId);
-        }
-
+        // 스터디 찾기
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + id));
+
+        // ✅ 스터디 리더인지 확인
+        if (!study.getLeaderId().equals(leaderId)) {
+            throw new IllegalArgumentException("팀장이 아니므로 수정 권한이 없습니다: " + leaderId);
+        }
 
         study.setStudyName(studyDTO.getStudyName());
         study.setStudyDescription(studyDTO.getStudyDescription());
@@ -185,20 +188,21 @@ public class StudyService {
                 throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + studyDTO.getStudyType());
         }
 
-        // 진행 요일 변환 (String 리스트 → ENUM 리스트)
+        // 진행 요일 변환
         List<String> studyDayStrs = studyDTO.getStudyDays();
         List<Study.StudyDay> studyDays;
         try {
-            studyDays = new ArrayList<>(studyDayStrs.stream()
+            studyDays = studyDayStrs.stream()
                     .map(day -> Study.StudyDay.valueOf(day.toUpperCase()))
-                    .toList());  // ✅ 변경 가능한 리스트로 변환
+                    .toList();
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStrs);
         }
-        study.setStudyDays(studyDays); // ✅ 수정 시에도 복수 요일 업데이트 가능
+        study.setStudyDays(studyDays);
 
         return new StudyDTO(studyRepository.save(study));
     }
+
 
     public void deleteStudy(Long id) {
         // 로그인된 사용자 정보 가져오기
@@ -209,18 +213,18 @@ public class StudyService {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
-        Long memberId = member.get().getMemberId();
+        Long leaderId = member.get().getMemberId(); // ✅ 현재 로그인한 사용자 ID 가져오기
 
-        // 스터디 리더인지 검증
-        boolean isLeader = memberStudyRepository.existsByStudy_StudyIdAndMember_MemberIdAndIsLeader(id, memberId, true);
-        if (!isLeader) {
-            throw new IllegalArgumentException("팀장이 아니므로 수정 권한이 없습니다: " + memberId);
-        }
+        // 스터디 찾기
+        Study study = studyRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + id));
 
-        if (!studyRepository.existsById(id)) {
-            throw new IllegalArgumentException("Invalid Study ID: " + id);
+        // ✅ 스터디 리더인지 확인
+        if (!study.getLeaderId().equals(leaderId)) {
+            throw new IllegalArgumentException("팀장이 아니므로 삭제 권한이 없습니다: " + leaderId);
         }
 
         studyRepository.deleteById(id);
     }
+
 }
