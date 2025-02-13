@@ -84,16 +84,6 @@ public class StudyService {
                 throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + typeStr);
         }
 
-        // 진행 요일 변환 (String 리스트 → ENUM 리스트)
-        List<Study.StudyDay> studyDays;
-        try {
-            studyDays = studyDayStrs.stream()
-                    .map(day -> Study.StudyDay.valueOf(day.toUpperCase()))
-                    .toList();
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStrs);
-        }
-
         // 스터디 생성
         Study study = new Study();
         study.setMemberId(member.get().getMemberId());
@@ -102,7 +92,6 @@ public class StudyService {
         study.setMaxMembers(max);
         study.setStudyDescription(description);
         study.setTechStack(techStack);
-        study.setStudyDays(studyDays);
         study.setLocation(location);
         study.setEtc(etc);
 
@@ -173,18 +162,6 @@ public class StudyService {
             default:
                 throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + studyDTO.getStudyType());
         }
-
-        // 진행 요일 변환 (String 리스트 → ENUM 리스트)
-        List<String> studyDayStrs = studyDTO.getStudyDays();
-        List<Study.StudyDay> studyDays;
-        try {
-            studyDays = new ArrayList<>(studyDayStrs.stream()
-                    .map(day -> Study.StudyDay.valueOf(day.toUpperCase()))
-                    .toList());  // ✅ 변경 가능한 리스트로 변환
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 진행 요일입니다: " + studyDayStrs);
-        }
-        study.setStudyDays(studyDays); // ✅ 수정 시에도 복수 요일 업데이트 가능
 
         return new StudyDTO(studyRepository.save(study));
     }

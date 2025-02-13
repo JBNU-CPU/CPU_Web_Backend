@@ -29,12 +29,6 @@ public class Study {
     @Column(name = "is_accepted", nullable = false)
     private Boolean isAccepted = false;
 
-    @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "study_days", joinColumns = @JoinColumn(name = "study_id"))
-    @Column(name = "day", nullable = false)
-    private List<StudyDay> studyDays = new ArrayList<>();
-
     @Column(name = "study_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private StudyType studyType;
@@ -63,14 +57,10 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
     private List<MemberStudy> joinedMember = new ArrayList<>();
 
+
     // ENUM for study type
     public enum StudyType {
         session, study, project
-    }
-
-    // ENUM for study days
-    public enum StudyDay {
-        MON, TUE, WED, THU, FRI, SAT, SUN
     }
 }
 
