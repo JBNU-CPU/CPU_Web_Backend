@@ -96,7 +96,7 @@ public class StudyService {
 
         // 스터디 생성
         Study study = new Study();
-        study.setMemberId(member.get().getMemberId());
+        study.setLeaderId(member.get().getMemberId());
         study.setStudyName(name);
         study.setStudyType(type);
         study.setMaxMembers(max);
@@ -128,8 +128,19 @@ public class StudyService {
     }
 
     public Optional<StudyDTO> getStudyById(Long id) {
-        return studyRepository.findById(id).map(StudyDTO::new);
+        // ✅ 스터디 정보 가져오기
+        Optional<Study> study = studyRepository.findById(id);
+        if (study.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // ✅ 해당 스터디에 참여 중인 멤버 정보 가져오기
+        List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
+
+        // ✅ StudyDTO 변환
+        return Optional.of(new StudyDTO(study.get(), memberStudies));
     }
+
 
     public StudyDTO updateStudy(Long id, StudyDTO studyDTO) {
         // 로그인된 사용자 정보 가져오기

@@ -20,8 +20,8 @@ public class Study {
     @Column(name = "study_id", nullable = false, unique = true)
     private Long studyId;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @Column(name = "leader_id", nullable = false)
+    private Long leaderId;
 
     @Column(name = "study_name", length = 100, nullable = false)
     private String studyName;

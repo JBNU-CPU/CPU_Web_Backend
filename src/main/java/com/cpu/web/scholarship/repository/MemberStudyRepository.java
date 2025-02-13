@@ -3,6 +3,7 @@ package com.cpu.web.scholarship.repository;
 import com.cpu.web.scholarship.entity.MemberStudy;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberStudyRepository extends JpaRepository<MemberStudy, Long> {
@@ -14,4 +15,8 @@ public interface MemberStudyRepository extends JpaRepository<MemberStudy, Long> 
 
     // 특정 멤버의 신청 정보 조회
     Optional<MemberStudy> findByStudy_StudyIdAndMember_MemberId(Long studyId, Long memberId);
+
+    // 특정 스터디에 속한 모든 멤버 조회
+    List<MemberStudy> findByStudy_StudyId(Long studyId);
+
 }
