@@ -24,6 +24,7 @@ public class StudyResponseDTO {
 
     public StudyResponseDTO(){}
 
+    // TODO: DB에 List<String> 형태로 저장되어 있는 studyDays 필드 파싱해서 List<{요일, 시작시간, 종료시간}>으로 만들기
     // entity => dto
     public StudyResponseDTO(Study study) {
         this.studyId = study.getStudyId();
