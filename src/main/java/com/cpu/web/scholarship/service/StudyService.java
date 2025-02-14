@@ -95,7 +95,7 @@ public class StudyService {
         }
 
         Study updatedStudy = studyRequestDTO.toStudyEntity(member.get());
-
+        updatedStudy.setStudyId(study.getStudyId());
         // studyType 변환 처리
         String typeStr = studyRequestDTO.getStudyType().toLowerCase().trim();
         switch (typeStr) {
