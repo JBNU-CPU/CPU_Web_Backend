@@ -43,8 +43,6 @@ public class StudyService {
         int max = studyRequestDTO.getMaxMembers();
         String techStack = studyRequestDTO.getTechStack();
         List<StudyRequestDTO.StudyScheduleDTO> studyDays = studyRequestDTO.getStudyDays();
-        String location = studyRequestDTO.getLocation();
-        String etc = studyRequestDTO.getEtc();
 
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("이름이 유효하지 않습니다.");
@@ -86,23 +84,8 @@ public class StudyService {
                 throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + typeStr);
         }
 
-        // 스터디 생성
-        Study study = studyRequestDTO.toStudyEntity();
-//        study.setLeaderId(leaderId); // 리더 ID 설정
-//        study.setStudyName(name);
-//        study.setStudyType(type);
-//        study.setMaxMembers(max);
-//        study.setStudyDescription(description);
-//        study.setTechStack(techStack);
-//        study.setLocation(location);
-//        study.setEtc(etc);
-//
-//        // studyDays 변환
-//        List<String> scheduleStrings = studyRequestDTO.getStudyDays()
-//                .stream()
-//                .map(StudyRequestDTO.StudyScheduleDTO::toScheduleString)
-//                .collect(Collectors.toList());
-
+        // 스터디 생성 및 저장
+        Study study = studyRequestDTO.toStudyEntity(member.get());
         Study savedStudy = studyRepository.save(study);
 
         // 매핑 테이블에 팀장 정보 추가

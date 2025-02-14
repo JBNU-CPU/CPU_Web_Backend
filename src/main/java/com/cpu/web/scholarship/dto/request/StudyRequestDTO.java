@@ -1,5 +1,6 @@
 package com.cpu.web.scholarship.dto.request;
 
+import com.cpu.web.member.entity.Member;
 import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
 import lombok.Getter;
@@ -45,7 +46,7 @@ public class StudyRequestDTO {
         }
     }
     
-    public Study toStudyEntity() {
+    public Study toStudyEntity(Member member) {
         Study study = new Study();
         study.setStudyName(this.studyName);
         study.setStudyType(Study.StudyType.valueOf(this.studyType.toLowerCase()));
@@ -54,6 +55,7 @@ public class StudyRequestDTO {
         study.setTechStack(this.techStack);
         study.setLocation(this.location);
         study.setEtc(this.etc);
+        study.setLeaderId(member.getMemberId());
         
         // studyDays 타입 List<StudyScheduleDTO> -> List<String> 변환 
         if(this.studyDays != null) {
