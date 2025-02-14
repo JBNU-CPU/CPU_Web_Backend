@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @Setter
 public class StudyResponseDTO {
     private Long studyId;
+    private Boolean isAccepted;
     private String studyName;
     private Study.StudyType studyType;
     private int maxMembers;
@@ -31,6 +32,7 @@ public class StudyResponseDTO {
     // entity => dto (스터디 참여 멤버 정보 없음)
     public StudyResponseDTO(Study study) {
         this.studyId = study.getStudyId();
+        this.isAccepted = study.getIsAccepted();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -46,6 +48,7 @@ public class StudyResponseDTO {
     // entity => dto (스터디 참여 멤버 정보 있음)
     public StudyResponseDTO(Study study, List<MemberStudy> memberStudies) {
         this.studyId = study.getStudyId();
+        this.isAccepted = study.getIsAccepted();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
