@@ -25,7 +25,7 @@ public class MemberStudy {
     private Boolean isLeader;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = true)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
