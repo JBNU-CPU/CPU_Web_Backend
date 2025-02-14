@@ -91,6 +91,7 @@ public class StudyService {
         // 매핑 테이블에 팀장 정보 추가
         MemberStudy memberStudy = new MemberStudy();
         memberStudy.setMember(member.get());
+        System.out.println(member.get());
         memberStudy.setStudy(savedStudy);
         memberStudy.setIsLeader(true);
         memberStudyRepository.save(memberStudy);
