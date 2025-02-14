@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class StudyResponseDTO {
     private Long leaderId;
     private Timestamp createDate;
     private List<String> studyDays; // 스터디 요일 및 시간 리스트
-    private List<MemberStudy> memberStudies;
+    private List<MemberStudyDTO> memberStudies;
 
     public StudyResponseDTO(){}
 
@@ -55,7 +56,9 @@ public class StudyResponseDTO {
         this.leaderId = study.getLeaderId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
-        this.memberStudies = memberStudies;
+        this.memberStudies = memberStudies.stream()
+                .map(MemberStudyDTO::new)
+                .collect(Collectors.toList());
     }
 
 }

@@ -1,6 +1,7 @@
 package com.cpu.web.scholarship.entity;
 
 import com.cpu.web.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,10 +27,12 @@ public class MemberStudy {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = true)
+    @JsonIgnore
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id", nullable = false)
+    @JsonIgnore
     private Study study;
 
 }
