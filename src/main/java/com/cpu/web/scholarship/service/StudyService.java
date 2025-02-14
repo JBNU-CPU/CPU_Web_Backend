@@ -73,6 +73,18 @@ public class StudyService {
         // 멤버 정보가 정상적으로 들어가는지 확인
         System.out.println("MemberStudy에 추가될 멤버아이디 = " + managedLeader.getMemberId());
 
+        if (leader == null) {
+            throw new IllegalArgumentException("leader 객체가 null입니다.");
+        }
+        if (leader.getMemberId() == null) {
+            throw new IllegalArgumentException("leader ID가 null입니다.");
+        }
+        if (leader.getClass() != Member.class) {
+            throw new IllegalArgumentException("leader 객체 타입이 Member가 아닙니다.");
+        }
+        System.out.println("MemberStudy에 추가될 멤버아이디 = " + leader.getMemberId());
+
+
         memberStudyRepository.save(memberStudy);
 
         return savedStudy;
