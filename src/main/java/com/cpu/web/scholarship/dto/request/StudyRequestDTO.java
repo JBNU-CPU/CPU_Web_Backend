@@ -1,7 +1,6 @@
 package com.cpu.web.scholarship.dto.request;
 
 import com.cpu.web.member.entity.Member;
-import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,10 +27,10 @@ public class StudyRequestDTO {
         private Long memberId;
         private Boolean isLeader;
 
-        public MemberInfo(MemberStudy memberStudy) {
-            this.memberId = memberStudy.getMember().getMemberId();
-            this.isLeader = memberStudy.getIsLeader();
-        }
+//        public MemberInfo(MemberStudy memberStudy) {
+//            this.memberId = memberStudy.getMember().getMemberId();
+//            this.isLeader = memberStudy.getIsLeader();
+//        }
     }
 
     @Getter
