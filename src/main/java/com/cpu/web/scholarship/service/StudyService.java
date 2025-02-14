@@ -26,12 +26,17 @@ public class StudyService {
 
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("로그인된 사용자명: " + username);
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (member.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
-        System.out.println(member.get().getUsername());
+
+        // 리더 ID 가져오기
+        Member leader = member.get();
+        System.out.println("leader = " + leader);
+
         // DTO 값 검증
         String name = studyRequestDTO.getStudyName();
         String description = studyRequestDTO.getStudyDescription();
@@ -81,14 +86,16 @@ public class StudyService {
         }
 
         // 스터디 생성 및 저장
-        Study study = studyRequestDTO.toStudyEntity(member.get());
+        Study study = studyRequestDTO.toStudyEntity(leader);
         Study savedStudy = studyRepository.save(study);
 
         // 매핑 테이블에 팀장 정보 추가
         MemberStudy memberStudy = new MemberStudy();
-        memberStudy.setMember(member.get());
+        memberStudy.setMember(leader);
         memberStudy.setStudy(savedStudy);
         memberStudy.setIsLeader(true);
+
+        System.out.println("MemberStudy에 추가될 멤버아이디 = " + leader.getMemberId());
         memberStudyRepository.save(memberStudy);
 
         return savedStudy;
