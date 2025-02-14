@@ -10,8 +10,8 @@ import com.cpu.web.scholarship.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +22,7 @@ public class StudyService {
     private final MemberRepository memberRepository;
     private final MemberStudyRepository memberStudyRepository;
 
+    @Transactional
     public Study createStudy(StudyRequestDTO studyRequestDTO) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -42,12 +43,8 @@ public class StudyService {
                 .orElseThrow(() -> new IllegalArgumentException("리더 ID가 존재하지 않습니다. leader: " + leader));
 
         System.out.println("leader = " + leader);
-        System.out.println("leader ID = " + leader.getMemberId());
+        System.out.println("leader ID = " + leaderId);
 
-        // DTO 값 검증
-        if (studyRequestDTO.getStudyName() == null || studyRequestDTO.getStudyName().isBlank()) {
-            throw new IllegalArgumentException("이름이 유효하지 않습니다.");
-        }
 
         // 스터디 생성 및 저장
         Study study = studyRequestDTO.toStudyEntity(leader);
@@ -56,6 +53,9 @@ public class StudyService {
         // 강제 flush로 즉시 DB 반영
         studyRepository.flush();
         System.out.println("Study 저장 완료, leader ID = " + savedStudy.getLeaderId());
+        if (savedStudy.getLeaderId() == null) {
+            throw new IllegalArgumentException("Study의 leader_id가 null입니다.");
+        }
 
         // 매핑 테이블에 팀장 정보 추가
         MemberStudy memberStudy = new MemberStudy();
