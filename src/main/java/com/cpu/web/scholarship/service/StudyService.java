@@ -65,15 +65,15 @@ public class StudyService {
         if (study.isEmpty()) {
             return Optional.empty();
         }
-//
-//        // ✅ 해당 스터디에 참여 중인 멤버 정보 가져오기
-//        List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
+
+        // ✅ 해당 스터디에 참여 중인 멤버 정보 가져오기
+        List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
 
         // ✅ StudyDTO 변환
-        return Optional.of(new StudyResponseDTO(study.get()));
+        return Optional.of(new StudyResponseDTO(study.get(), memberStudies));
     }
-//
-//
+
+    // 스터디 수정
 //    public StudyRequestDTO updateStudy(Long id, StudyRequestDTO studyRequestDTO) {
 //        // 로그인된 사용자 정보 가져오기
 //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -119,8 +119,8 @@ public class StudyService {
 //
 //        return new StudyRequestDTO(studyRepository.save(study));
 //    }
-//
-//
+
+    // 스터디 삭제
 //    public void deleteStudy(Long id) {
 //        // 로그인된 사용자 정보 가져오기
 //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
