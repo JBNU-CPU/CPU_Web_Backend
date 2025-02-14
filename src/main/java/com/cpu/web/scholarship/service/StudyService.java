@@ -23,7 +23,6 @@ public class StudyService {
     private final MemberStudyRepository memberStudyRepository;
 
     public Study createStudy(StudyRequestDTO studyRequestDTO) {
-
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println("로그인된 사용자명: " + username);
@@ -35,54 +34,19 @@ public class StudyService {
 
         // 리더 ID 가져오기
         Member leader = member.get();
+        if (leader == null || leader.getMemberId() == null) {
+            throw new IllegalArgumentException("리더 정보가 올바르지 않습니다. leader = " + leader);
+        }
+
+        Long leaderId = Optional.ofNullable(leader.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("리더 ID가 존재하지 않습니다. leader: " + leader));
+
         System.out.println("leader = " + leader);
+        System.out.println("leader ID = " + leader.getMemberId());
 
         // DTO 값 검증
-        String name = studyRequestDTO.getStudyName();
-        String description = studyRequestDTO.getStudyDescription();
-        String typeStr = studyRequestDTO.getStudyType().toLowerCase().trim();
-        int max = studyRequestDTO.getMaxMembers();
-        String techStack = studyRequestDTO.getTechStack();
-        List<StudyRequestDTO.StudyScheduleDTO> studyDays = studyRequestDTO.getStudyDays();
-
-        if (name == null || name.isBlank()) {
+        if (studyRequestDTO.getStudyName() == null || studyRequestDTO.getStudyName().isBlank()) {
             throw new IllegalArgumentException("이름이 유효하지 않습니다.");
-        }
-
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("설명이 유효하지 않습니다.");
-        }
-
-        if (typeStr == null || typeStr.isEmpty()) {
-            throw new IllegalArgumentException("타입이 유효하지 않습니다.");
-        }
-
-        if (techStack == null || techStack.isBlank()) {
-            throw new IllegalArgumentException("기술 스택이 유효하지 않습니다.");
-        }
-
-        if (studyDays == null || studyDays.isEmpty()) {
-            throw new IllegalArgumentException("진행 요일이 유효하지 않습니다.");
-        }
-
-        if (max <= 0) {
-            throw new IllegalArgumentException("최대 인원이 유효하지 않습니다.");
-        }
-
-        // 스터디 타입 변환
-        Study.StudyType type;
-        switch (typeStr) {
-            case "study":
-                type = Study.StudyType.study;
-                break;
-            case "session":
-                type = Study.StudyType.session;
-                break;
-            case "project":
-                type = Study.StudyType.project;
-                break;
-            default:
-                throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + typeStr);
         }
 
         // 스터디 생성 및 저장
@@ -99,7 +63,9 @@ public class StudyService {
         memberStudy.setStudy(savedStudy);
         memberStudy.setIsLeader(true);
 
+        // 멤버 정보가 정상적으로 들어가는지 확인
         System.out.println("MemberStudy에 추가될 멤버아이디 = " + leader.getMemberId());
+
         memberStudyRepository.save(memberStudy);
 
         return savedStudy;
