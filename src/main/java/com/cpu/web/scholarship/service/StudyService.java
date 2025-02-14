@@ -7,6 +7,7 @@ import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import com.cpu.web.scholarship.repository.StudyRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,11 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final MemberRepository memberRepository;
     private final MemberStudyRepository memberStudyRepository;
+    private final EntityManager entityManager;
 
     @Transactional
     public Study createStudy(StudyRequestDTO studyRequestDTO) {
+
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println("로그인된 사용자명: " + username);
@@ -43,33 +46,38 @@ public class StudyService {
                 .orElseThrow(() -> new IllegalArgumentException("리더 ID가 존재하지 않습니다. leader: " + leader));
 
         System.out.println("leader = " + leader);
-        System.out.println("leader ID = " + leaderId);
-
+        System.out.println("leader ID = " + leader.getMemberId());
 
         // 스터디 생성 및 저장
         Study study = studyRequestDTO.toStudyEntity(leader);
         Study savedStudy = studyRepository.save(study);
 
-//        // 강제 flush로 즉시 DB 반영
-//        studyRepository.flush();
-//        System.out.println("Study 저장 완료, leader ID = " + savedStudy.getLeaderId());
-//        if (savedStudy.getLeaderId() == null) {
-//            throw new IllegalArgumentException("Study의 leader_id가 null입니다.");
-//        }
-//
-//        // 매핑 테이블에 팀장 정보 추가
-//        MemberStudy memberStudy = new MemberStudy();
-//        memberStudy.setMember(leader);
-//        memberStudy.setStudy(savedStudy);
-//        memberStudy.setIsLeader(true);
-//
-//        // 멤버 정보가 정상적으로 들어가는지 확인
-//        System.out.println("MemberStudy에 추가될 멤버아이디 = " + leader.getMemberId());
-//
-//        memberStudyRepository.save(memberStudy);
+        // 강제 flush로 즉시 DB 반영
+        studyRepository.flush();
+        System.out.println("Study 저장 완료, leader ID = " + savedStudy.getLeaderId());
+
+        if (savedStudy.getLeaderId() == null) {
+            throw new IllegalArgumentException("Study의 leader_id가 null입니다.");
+        }
+
+        // ✅ leader를 `EntityManager`를 통해 관리 상태로 변경
+        Member managedLeader = entityManager.merge(leader);
+        System.out.println("Managed leader ID = " + managedLeader.getMemberId());
+
+        // 매핑 테이블에 팀장 정보 추가
+        MemberStudy memberStudy = new MemberStudy();
+        memberStudy.setMember(managedLeader); // ✅ `managedLeader` 사용
+        memberStudy.setStudy(savedStudy);
+        memberStudy.setIsLeader(true);
+
+        // 멤버 정보가 정상적으로 들어가는지 확인
+        System.out.println("MemberStudy에 추가될 멤버아이디 = " + managedLeader.getMemberId());
+
+        memberStudyRepository.save(memberStudy);
 
         return savedStudy;
     }
+
 //
 //
 //    public Page<StudyRequestDTO> getAllStudies(int page, int size, String studyType) {
