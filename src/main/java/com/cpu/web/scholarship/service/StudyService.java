@@ -64,15 +64,6 @@ public class StudyService {
         Member managedLeader = entityManager.merge(leader);
         System.out.println("Managed leader ID = " + managedLeader.getMemberId());
 
-        // 매핑 테이블에 팀장 정보 추가
-        MemberStudy memberStudy = new MemberStudy();
-        memberStudy.setMember(managedLeader); // ✅ `managedLeader` 사용
-        memberStudy.setStudy(savedStudy);
-        memberStudy.setIsLeader(true);
-
-        // 멤버 정보가 정상적으로 들어가는지 확인
-        System.out.println("MemberStudy에 추가될 멤버아이디 = " + managedLeader.getMemberId());
-
         if (leader == null) {
             throw new IllegalArgumentException("leader 객체가 null입니다.");
         }
@@ -83,6 +74,16 @@ public class StudyService {
             throw new IllegalArgumentException("leader 객체 타입이 Member가 아닙니다.");
         }
         System.out.println("MemberStudy에 추가될 멤버아이디 = " + leader.getMemberId());
+
+
+        // 매핑 테이블에 팀장 정보 추가
+        MemberStudy memberStudy = new MemberStudy();
+        memberStudy.setMember(managedLeader); // ✅ `managedLeader` 사용
+        memberStudy.setStudy(savedStudy);
+        memberStudy.setIsLeader(true);
+
+        // 멤버 정보가 정상적으로 들어가는지 확인
+        System.out.println("MemberStudy에 추가될 멤버아이디 = " + managedLeader.getMemberId());
 
 
         memberStudyRepository.save(memberStudy);
