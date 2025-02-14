@@ -48,6 +48,11 @@ public class Study {
     @Column(name = "etc")
     private String etc;
 
+    @ElementCollection
+    @CollectionTable(name = "study_schedule", joinColumns = @JoinColumn(name = "study_id"))
+    @Column(name = "schedule_entry")
+    private List<String> studyDays = new ArrayList<>();
+
     @CreationTimestamp
     private Timestamp createdDate;
 

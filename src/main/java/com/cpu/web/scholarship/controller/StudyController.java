@@ -1,6 +1,7 @@
 package com.cpu.web.scholarship.controller;
 
-import com.cpu.web.scholarship.dto.StudyDTO;
+import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
+import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.service.StudyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,65 +44,65 @@ public class StudyController {
             @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "중앙도서관 그룹학습실")),
             @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
     })
-    public ResponseEntity<StudyDTO> createStudy(@RequestBody StudyDTO studyDTO) {
-        Study study = studyService.createStudy(studyDTO);
+    public ResponseEntity<StudyResponseDTO> createStudy(@RequestBody StudyRequestDTO studyRequestDTO) {
+        Study study = studyService.createStudy(studyRequestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(study.getStudyId())
                 .toUri();
-        return ResponseEntity.created(location).body(new StudyDTO(study));
+        return ResponseEntity.created(location).body(new StudyResponseDTO());
     }
-
-    @GetMapping
-    @Operation(summary = "스터디 전체 조회", description = "스터디 전체 조회 API")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    })
-    public Page<StudyDTO> getAllStudies(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String studyType) {
-        return studyService.getAllStudies(page, size, studyType);
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "스터디 개별 조회", description = "스터디 개별 조회 API")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json"))
-    })
-    public ResponseEntity<StudyDTO> getStudyById(@PathVariable Long id) {
-        Optional<StudyDTO> studyDTO = studyService.getStudyById(id);
-        return studyDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-
-    @PutMapping("/{id}")
-    @Operation(summary = "스터디 수정", description = "스터디 수정 API")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    })
-    @Parameters({
-            @Parameter(name = "studyName", description = "스터디 이름", schema = @Schema(type = "string", example = "알고리즘 스터디")),
-            @Parameter(name = "studyDescription", description = "스터디 설명", schema = @Schema(type = "string", example = "알고리즘을 공부하는 스터디입니다.")),
-            @Parameter(name = "studyType", description = "스터디 타입", schema = @Schema(type = "string", example = "study")),
-            @Parameter(name = "maxMembers", description = "최대 인원", schema = @Schema(type = "integer", example = "10")),
-            @Parameter(name = "techStack", description = "기술 스택", schema = @Schema(type = "string", example = "Java, Spring, React")),
-            @Parameter(name = "studyDays", description = "진행 요일 (월~일) 리스트", schema = @Schema(type = "array", example = "[\"MON\", \"WED\", \"FRI\"]")),
-            @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "중앙도서관 그룹학습실")),
-            @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
-    })
-    public ResponseEntity<StudyDTO> updateStudy(@PathVariable Long id, @RequestBody StudyDTO studyDTO) {
-        StudyDTO updatedStudyDTO = studyService.updateStudy(id, studyDTO);
-        return ResponseEntity.ok(updatedStudyDTO);
-    }
-
-    @DeleteMapping("/{id}")
-    @Operation(summary = "스터디 삭제", description = "스터디 삭제 API")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    })
-    public ResponseEntity<?> deleteStudy(@PathVariable Long id) {
-        studyService.deleteStudy(id);
-        return ResponseEntity.noContent().build();
-    }
+//
+//    @GetMapping
+//    @Operation(summary = "스터디 전체 조회", description = "스터디 전체 조회 API")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+//    })
+//    public Page<StudyRequestDTO> getAllStudies(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(required = false) String studyType) {
+//        return studyService.getAllStudies(page, size, studyType);
+//    }
+//
+//    @GetMapping("/{id}")
+//    @Operation(summary = "스터디 개별 조회", description = "스터디 개별 조회 API")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+//            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json"))
+//    })
+//    public ResponseEntity<StudyRequestDTO> getStudyById(@PathVariable Long id) {
+//        Optional<StudyRequestDTO> studyDTO = studyService.getStudyById(id);
+//        return studyDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+//    }
+//
+//    @PutMapping("/{id}")
+//    @Operation(summary = "스터디 수정", description = "스터디 수정 API")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+//    })
+//    @Parameters({
+//            @Parameter(name = "studyName", description = "스터디 이름", schema = @Schema(type = "string", example = "알고리즘 스터디")),
+//            @Parameter(name = "studyDescription", description = "스터디 설명", schema = @Schema(type = "string", example = "알고리즘을 공부하는 스터디입니다.")),
+//            @Parameter(name = "studyType", description = "스터디 타입", schema = @Schema(type = "string", example = "study")),
+//            @Parameter(name = "maxMembers", description = "최대 인원", schema = @Schema(type = "integer", example = "10")),
+//            @Parameter(name = "techStack", description = "기술 스택", schema = @Schema(type = "string", example = "Java, Spring, React")),
+//            @Parameter(name = "studyDays", description = "진행 요일 (월~일) 리스트", schema = @Schema(type = "array", example = "[\"MON\", \"WED\", \"FRI\"]")),
+//            @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "중앙도서관 그룹학습실")),
+//            @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
+//    })
+//    public ResponseEntity<StudyRequestDTO> updateStudy(@PathVariable Long id, @RequestBody StudyRequestDTO studyRequestDTO) {
+//        StudyRequestDTO updatedStudyRequestDTO = studyService.updateStudy(id, studyRequestDTO);
+//        return ResponseEntity.ok(updatedStudyRequestDTO);
+//    }
+//
+//    @DeleteMapping("/{id}")
+//    @Operation(summary = "스터디 삭제", description = "스터디 삭제 API")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+//    })
+//    public ResponseEntity<?> deleteStudy(@PathVariable Long id) {
+//        studyService.deleteStudy(id);
+//        return ResponseEntity.noContent().build();
+//    }
 }
