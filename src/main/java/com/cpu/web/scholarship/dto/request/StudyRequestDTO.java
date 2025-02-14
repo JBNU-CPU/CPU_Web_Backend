@@ -19,19 +19,6 @@ public class StudyRequestDTO {
     private String location;
     private String etc;
     private List<StudyScheduleDTO> studyDays; // 스터디 요일 및 시간 리스트
-    private List<MemberInfo> members; // 참여 멤버 리스트
-
-    @Getter
-    @Setter
-    public static class MemberInfo {
-        private Long memberId;
-        private Boolean isLeader;
-
-//        public MemberInfo(MemberStudy memberStudy) {
-//            this.memberId = memberStudy.getMember().getMemberId();
-//            this.isLeader = memberStudy.getIsLeader();
-//        }
-    }
 
     @Getter
     @Setter
