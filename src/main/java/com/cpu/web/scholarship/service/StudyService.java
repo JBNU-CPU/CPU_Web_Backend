@@ -25,6 +25,7 @@ public class StudyService {
     private final MemberRepository memberRepository;
     private final MemberStudyRepository memberStudyRepository;
 
+    // 스터디 개설
     public Study createStudy(StudyRequestDTO studyRequestDTO) {
 
         // 로그인된 사용자 정보 가져오기
@@ -47,6 +48,7 @@ public class StudyService {
         return savedStudy;
     }
 
+    // 스터디 전체 조회
     public Page<StudyResponseDTO> getAllStudies(int page, int size, String studyType) {
         PageRequest pageRequest = PageRequest.of(page, size);
         if (studyType != null && !studyType.isEmpty()) {
@@ -56,18 +58,19 @@ public class StudyService {
         return studyRepository.findAll(pageRequest).map(StudyResponseDTO::new);
     }
 
+    // 스터디 개별 조회
     public Optional<StudyResponseDTO> getStudyById(Long id) {
         // 스터디 정보 가져오기
         Optional<Study> study = studyRepository.findById(id);
         if (study.isEmpty()) {
             return Optional.empty();
         }
-
-        // ✅ 해당 스터디에 참여 중인 멤버 정보 가져오기
-        List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
+//
+//        // ✅ 해당 스터디에 참여 중인 멤버 정보 가져오기
+//        List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
 
         // ✅ StudyDTO 변환
-        return Optional.of(new StudyResponseDTO(study.get(), memberStudies));
+        return Optional.of(new StudyResponseDTO(study.get()));
     }
 //
 //
