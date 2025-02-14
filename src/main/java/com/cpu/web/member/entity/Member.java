@@ -2,6 +2,7 @@ package com.cpu.web.member.entity;
 
 import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.entity.Post;
+import com.cpu.web.scholarship.entity.MemberStudy;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,8 +54,8 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Comment> commentList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-//    private List<MemberStudy> joinedStudyList = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberStudy> joinedStudyList = new ArrayList<>();
 
     public enum Role {
         ROLE_GUEST,

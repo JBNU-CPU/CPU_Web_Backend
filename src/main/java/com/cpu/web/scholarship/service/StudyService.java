@@ -3,7 +3,9 @@ package com.cpu.web.scholarship.service;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
+import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
+import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import com.cpu.web.scholarship.repository.StudyRepository;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final MemberRepository memberRepository;
+    private final MemberStudyRepository memberStudyRepository;
     private final EntityManager entityManager;
 
     @Transactional
@@ -73,17 +76,17 @@ public class StudyService {
         System.out.println("MemberStudy에 추가될 멤버아이디 = " + leader.getMemberId());
 
 
-//        // 매핑 테이블에 팀장 정보 추가
-//        MemberStudy memberStudy = new MemberStudy();
-//        memberStudy.setMember(managedLeader); // ✅ `managedLeader` 사용
-//        memberStudy.setStudy(savedStudy);
-//        memberStudy.setIsLeader(true);
-//
-//        // 멤버 정보가 정상적으로 들어가는지 확인
-//        System.out.println("MemberStudy에 추가될 멤버아이디 = " + managedLeader.getMemberId());
-//
-//
-//        memberStudyRepository.save(memberStudy);
+        // 매핑 테이블에 팀장 정보 추가
+        MemberStudy memberStudy = new MemberStudy();
+        memberStudy.setMember(managedLeader); // ✅ `managedLeader` 사용
+        memberStudy.setStudy(savedStudy);
+        memberStudy.setIsLeader(true);
+
+        // 멤버 정보가 정상적으로 들어가는지 확인
+        System.out.println("MemberStudy에 추가될 멤버아이디 = " + managedLeader.getMemberId());
+
+
+        memberStudyRepository.save(memberStudy);
 
         return savedStudy;
     }
