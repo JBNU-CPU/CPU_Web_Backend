@@ -50,23 +50,23 @@ public class StudyService {
         Study study = studyRequestDTO.toStudyEntity(leader);
         Study savedStudy = studyRepository.save(study);
 
-        // 강제 flush로 즉시 DB 반영
-        studyRepository.flush();
-        System.out.println("Study 저장 완료, leader ID = " + savedStudy.getLeaderId());
-        if (savedStudy.getLeaderId() == null) {
-            throw new IllegalArgumentException("Study의 leader_id가 null입니다.");
-        }
-
-        // 매핑 테이블에 팀장 정보 추가
-        MemberStudy memberStudy = new MemberStudy();
-        memberStudy.setMember(leader);
-        memberStudy.setStudy(savedStudy);
-        memberStudy.setIsLeader(true);
-
-        // 멤버 정보가 정상적으로 들어가는지 확인
-        System.out.println("MemberStudy에 추가될 멤버아이디 = " + leader.getMemberId());
-
-        memberStudyRepository.save(memberStudy);
+//        // 강제 flush로 즉시 DB 반영
+//        studyRepository.flush();
+//        System.out.println("Study 저장 완료, leader ID = " + savedStudy.getLeaderId());
+//        if (savedStudy.getLeaderId() == null) {
+//            throw new IllegalArgumentException("Study의 leader_id가 null입니다.");
+//        }
+//
+//        // 매핑 테이블에 팀장 정보 추가
+//        MemberStudy memberStudy = new MemberStudy();
+//        memberStudy.setMember(leader);
+//        memberStudy.setStudy(savedStudy);
+//        memberStudy.setIsLeader(true);
+//
+//        // 멤버 정보가 정상적으로 들어가는지 확인
+//        System.out.println("MemberStudy에 추가될 멤버아이디 = " + leader.getMemberId());
+//
+//        memberStudyRepository.save(memberStudy);
 
         return savedStudy;
     }
