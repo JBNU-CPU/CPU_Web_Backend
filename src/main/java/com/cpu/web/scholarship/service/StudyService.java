@@ -11,7 +11,6 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -22,23 +21,13 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final MemberRepository memberRepository;
     private final MemberStudyRepository memberStudyRepository;
-    private final EntityManager entityManager;
 
     public Study createStudy(StudyRequestDTO studyRequestDTO) {
 
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Member> member = memberRepository.findByUsername(username);
-
-        if (member.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
-
-        // 리더 ID 가져오기
-        Member leader = member.get();
-        if (leader == null || leader.getMemberId() == null) {
-            throw new IllegalArgumentException("리더 정보가 올바르지 않습니다. leader = " + leader);
-        }
+        Member leader = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
         // 스터디 생성 및 저장
         Study study = studyRequestDTO.toStudyEntity(leader);
@@ -46,7 +35,7 @@ public class StudyService {
 
         // 매핑 테이블에 팀장 정보 추가
         MemberStudy memberStudy = new MemberStudy();
-        memberStudy.setMember(leader); // ✅ `managedLeader` 사용
+        memberStudy.setMember(leader);
         memberStudy.setStudy(savedStudy);
         memberStudy.setIsLeader(true);
 

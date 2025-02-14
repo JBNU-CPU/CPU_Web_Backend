@@ -50,7 +50,7 @@ public class StudyController {
                 .path("/{id}")
                 .buildAndExpand(study.getStudyId())
                 .toUri();
-        return ResponseEntity.created(location).body(new StudyResponseDTO());
+        return ResponseEntity.created(location).body(new StudyResponseDTO(study));
     }
 //
 //    @GetMapping

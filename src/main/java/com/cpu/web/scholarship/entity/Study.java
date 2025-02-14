@@ -26,7 +26,7 @@ public class Study {
     @Column(name = "study_name", length = 100, nullable = false)
     private String studyName;
 
-    @Column(name = "is_accepted", nullable = false)
+    @Column(name = "is_accepted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isAccepted = false;
 
     @Column(name = "study_type", nullable = false)
