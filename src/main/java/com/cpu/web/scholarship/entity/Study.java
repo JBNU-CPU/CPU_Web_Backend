@@ -59,8 +59,8 @@ public class Study {
     @UpdateTimestamp
     private Timestamp updatedDate;
 
-//    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
-//    private List<MemberStudy> joinedMember = new ArrayList<>();
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
+    private List<MemberStudy> joinedMember = new ArrayList<>();
 
 
     // ENUM for study type
