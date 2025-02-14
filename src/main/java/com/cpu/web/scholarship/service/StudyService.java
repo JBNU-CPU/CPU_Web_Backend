@@ -89,6 +89,10 @@ public class StudyService {
         Study study = studyRequestDTO.toStudyEntity(leader);
         Study savedStudy = studyRepository.save(study);
 
+        // 강제 flush로 즉시 DB 반영
+        studyRepository.flush();
+        System.out.println("Study 저장 완료, leader ID = " + savedStudy.getLeaderId());
+
         // 매핑 테이블에 팀장 정보 추가
         MemberStudy memberStudy = new MemberStudy();
         memberStudy.setMember(leader);
