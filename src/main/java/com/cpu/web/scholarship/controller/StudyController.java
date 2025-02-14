@@ -52,29 +52,28 @@ public class StudyController {
                 .toUri();
         return ResponseEntity.created(location).body(new StudyResponseDTO(study));
     }
-//
-//    @GetMapping
-//    @Operation(summary = "스터디 전체 조회", description = "스터디 전체 조회 API")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-//    })
-//    public Page<StudyRequestDTO> getAllStudies(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size,
-//            @RequestParam(required = false) String studyType) {
-//        return studyService.getAllStudies(page, size, studyType);
-//    }
-//
-//    @GetMapping("/{id}")
-//    @Operation(summary = "스터디 개별 조회", description = "스터디 개별 조회 API")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
-//            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json"))
-//    })
-//    public ResponseEntity<StudyRequestDTO> getStudyById(@PathVariable Long id) {
-//        Optional<StudyRequestDTO> studyDTO = studyService.getStudyById(id);
-//        return studyDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-//    }
+
+    @GetMapping
+    @Operation(summary = "스터디 전체 조회", description = "스터디 전체 조회 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    })
+    public Page<StudyResponseDTO> getAllStudies(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String studyType) {
+        return studyService.getAllStudies(page, size, studyType);
+    }
+    @GetMapping("/{id}")
+    @Operation(summary = "스터디 개별 조회", description = "스터디 개별 조회 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<StudyResponseDTO> getStudyById(@PathVariable Long id) {
+        Optional<StudyResponseDTO> studyDTO = studyService.getStudyById(id);
+        return studyDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
 //
 //    @PutMapping("/{id}")
 //    @Operation(summary = "스터디 수정", description = "스터디 수정 API")

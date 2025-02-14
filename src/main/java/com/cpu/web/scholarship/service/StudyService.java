@@ -3,15 +3,18 @@ package com.cpu.web.scholarship.service;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
+import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import com.cpu.web.scholarship.repository.StudyRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,30 +47,28 @@ public class StudyService {
         return savedStudy;
     }
 
-//
-//
-//    public Page<StudyRequestDTO> getAllStudies(int page, int size, String studyType) {
-//        PageRequest pageRequest = PageRequest.of(page, size);
-//        if (studyType != null && !studyType.isEmpty()) {
-//            Study.StudyType type = Study.StudyType.valueOf(studyType.toLowerCase());
-//            return studyRepository.findByStudyType(type, pageRequest).map(StudyRequestDTO::new);
-//        }
-//        return studyRepository.findAll(pageRequest).map(StudyRequestDTO::new);
-//    }
-//
-//    public Optional<StudyRequestDTO> getStudyById(Long id) {
-//        // ✅ 스터디 정보 가져오기
-//        Optional<Study> study = studyRepository.findById(id);
-//        if (study.isEmpty()) {
-//            return Optional.empty();
-//        }
-//
-//        // ✅ 해당 스터디에 참여 중인 멤버 정보 가져오기
-//        List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
-//
-//        // ✅ StudyDTO 변환
-//        return Optional.of(new StudyRequestDTO(study.get(), memberStudies));
-//    }
+    public Page<StudyResponseDTO> getAllStudies(int page, int size, String studyType) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        if (studyType != null && !studyType.isEmpty()) {
+            Study.StudyType type = Study.StudyType.valueOf(studyType.toLowerCase());
+            return studyRepository.findByStudyType(type, pageRequest).map(StudyResponseDTO::new);
+        }
+        return studyRepository.findAll(pageRequest).map(StudyResponseDTO::new);
+    }
+
+    public Optional<StudyResponseDTO> getStudyById(Long id) {
+        // 스터디 정보 가져오기
+        Optional<Study> study = studyRepository.findById(id);
+        if (study.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // ✅ 해당 스터디에 참여 중인 멤버 정보 가져오기
+        List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
+
+        // ✅ StudyDTO 변환
+        return Optional.of(new StudyResponseDTO(study.get(), memberStudies));
+    }
 //
 //
 //    public StudyRequestDTO updateStudy(Long id, StudyRequestDTO studyRequestDTO) {

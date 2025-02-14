@@ -1,5 +1,6 @@
 package com.cpu.web.scholarship.dto.response;
 
+import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,11 +22,12 @@ public class StudyResponseDTO {
     private Long leaderId;
     private Timestamp createDate;
     private List<String> studyDays; // 스터디 요일 및 시간 리스트
+    private List<MemberStudy> memberStudies;
 
     public StudyResponseDTO(){}
 
     // TODO: DB에 List<String> 형태로 저장되어 있는 studyDays 필드 파싱해서 List<{요일, 시작시간, 종료시간}>으로 만들기
-    // entity => dto
+    // entity => dto (스터디 참여 멤버 정보 없음)
     public StudyResponseDTO(Study study) {
         this.studyId = study.getStudyId();
         this.studyName = study.getStudyName();
@@ -38,6 +40,22 @@ public class StudyResponseDTO {
         this.leaderId = study.getLeaderId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
+    }
+
+    // entity => dto (스터디 참여 멤버 정보 있음)
+    public StudyResponseDTO(Study study, List<MemberStudy> memberStudies) {
+        this.studyId = study.getStudyId();
+        this.studyName = study.getStudyName();
+        this.studyType = study.getStudyType();
+        this.maxMembers = study.getMaxMembers();
+        this.studyDescription = study.getStudyDescription();
+        this.techStack = study.getTechStack();
+        this.location = study.getLocation();
+        this.etc = study.getEtc();
+        this.leaderId = study.getLeaderId();
+        this.createDate = study.getCreatedDate();
+        this.studyDays = study.getStudyDays();
+        this.memberStudies = memberStudies;
     }
 
 }
