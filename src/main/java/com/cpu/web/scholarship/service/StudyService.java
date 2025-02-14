@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +31,7 @@ public class StudyService {
         if (member.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
-
-        // 리더 ID 가져오기
-        Long leaderId = member.get().getMemberId(); 
-
+        System.out.println(member.get().getUsername());
         // DTO 값 검증
         String name = studyRequestDTO.getStudyName();
         String description = studyRequestDTO.getStudyDescription();
@@ -91,7 +87,6 @@ public class StudyService {
         // 매핑 테이블에 팀장 정보 추가
         MemberStudy memberStudy = new MemberStudy();
         memberStudy.setMember(member.get());
-        System.out.println(member.get());
         memberStudy.setStudy(savedStudy);
         memberStudy.setIsLeader(true);
         memberStudyRepository.save(memberStudy);
