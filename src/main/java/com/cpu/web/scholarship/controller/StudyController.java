@@ -33,7 +33,7 @@ public class StudyController {
     @PostMapping
     @Operation(summary = "스터디 생성", description = "스터디 생성 API")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyRequestDTO.class)))
+            @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyResponseDTO.class)))
     })
     public ResponseEntity<StudyResponseDTO> createStudy(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
