@@ -44,8 +44,7 @@ public class PostController {
                     description = "게시글 작성 데이터",
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostRequestDTO.class))
-            )@RequestBody PostRequestDTO postRequestDTO
-    ) {
+            ) @RequestBody PostRequestDTO postRequestDTO) {
         Post post = postService.createPost(postRequestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/post/{id}")
@@ -60,13 +59,13 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResponseDTO.class)))
     })
-    public Page<PostResponseDTO> getAllPosts(@Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+    public Page<PostResponseDTO> getAllPosts(@Parameter(description = "페이지 번호 (0 이상)", example = "0") @RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10") @RequestParam(defaultValue = "10") int size) {
 
-        if(page < 0) {
+        if (page < 0) {
             throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
         }
 
-        if(size <= 0 || size >100) {
+        if (size <= 0 || size > 100) {
             throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
         }
 
@@ -92,10 +91,9 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 게시글입니다.", content = @Content(mediaType = "application/json"))
     })
-    public  ResponseEntity<PostResponseDTO> updatePost(
+    public ResponseEntity<PostResponseDTO> updatePost(
             @Parameter(description = "수정할 게시글의 ID", example = "1")
             @PathVariable Long id,
-
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "수정할 게시글 데이터", required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
@@ -119,7 +117,7 @@ public class PostController {
 
     // 글 제목 검색
     @GetMapping("/search")
-    public List<SearchResponseDTO> fullTextSearchByTitle(@RequestParam(value = "title", required = false) String title){
+    public List<SearchResponseDTO> fullTextSearchByTitle(@RequestParam(value = "title", required = false) String title) {
         return postService.searchByTitle(title);
     }
 }

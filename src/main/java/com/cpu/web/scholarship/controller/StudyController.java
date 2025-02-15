@@ -1,5 +1,6 @@
 package com.cpu.web.scholarship.controller;
 
+import com.cpu.web.board.dto.response.PostResponseDTO;
 import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
 import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import com.cpu.web.scholarship.entity.Study;
@@ -32,19 +33,14 @@ public class StudyController {
     @PostMapping
     @Operation(summary = "스터디 생성", description = "스터디 생성 API")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyRequestDTO.class)))
     })
-    @Parameters({
-            @Parameter(name = "studyName", description = "스터디 이름", schema = @Schema(type = "string", example = "알고리즘 스터디")),
-            @Parameter(name = "studyDescription", description = "스터디 설명", schema = @Schema(type = "string", example = "알고리즘을 공부하는 스터디입니다.")),
-            @Parameter(name = "studyType", description = "스터디 타입", schema = @Schema(type = "string", example = "study")),
-            @Parameter(name = "maxMembers", description = "최대 인원", schema = @Schema(type = "integer", example = "10")),
-            @Parameter(name = "techStack", description = "기술 스택", schema = @Schema(type = "string", example = "Java, Spring, React")),
-            @Parameter(name = "studyDays", description = "진행 요일 (월~일) 리스트", schema = @Schema(type = "array", example = "[\"MON\", \"WED\", \"FRI\"]")),
-            @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "중앙도서관 그룹학습실")),
-            @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
-    })
-    public ResponseEntity<StudyResponseDTO> createStudy(@RequestBody StudyRequestDTO studyRequestDTO) {
+    public ResponseEntity<StudyResponseDTO> createStudy(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "스터디 개설 데이터",
+                    required = true,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyRequestDTO.class))
+            ) @RequestBody StudyRequestDTO studyRequestDTO) {
         Study study = studyService.createStudy(studyRequestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -54,23 +50,37 @@ public class StudyController {
     }
 
     @GetMapping
-    @Operation(summary = "스터디 전체 조회", description = "스터디 전체 조회 API")
+    @Operation(summary = "스터디 전체 조회", description = "페이지네이션된 스터디 리스트 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyResponseDTO.class)))
     })
     public Page<StudyResponseDTO> getAllStudies(
+            @Parameter(description = "페이지 번호 (0 이상)", example = "0")
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기 (최대 100)", example = "10")
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String studyType) {
+            @Parameter(description = "조회할 스터디 타입", example = "session")
+            @RequestParam(required = false) String studyType
+    ) {
+
+        if (page < 0) {
+            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
+        }
+
+        if (size <= 0 || size > 100) {
+            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
+        }
+
         return studyService.getAllStudies(page, size, studyType);
     }
+
     @GetMapping("/{id}")
     @Operation(summary = "스터디 개별 조회", description = "스터디 개별 조회 API")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<StudyResponseDTO> getStudyById(@PathVariable Long id) {
+    public ResponseEntity<StudyResponseDTO> getStudyById(@Parameter(description = "조회할 스터디 ID", example = "1") @PathVariable Long id) {
         Optional<StudyResponseDTO> studyDTO = studyService.getStudyById(id);
         return studyDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
@@ -78,19 +88,16 @@ public class StudyController {
     @PutMapping("/{id}")
     @Operation(summary = "스터디 수정", description = "스터디 수정 API")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json"))
     })
-    @Parameters({
-            @Parameter(name = "studyName", description = "스터디 이름", schema = @Schema(type = "string", example = "알고리즘 스터디")),
-            @Parameter(name = "studyDescription", description = "스터디 설명", schema = @Schema(type = "string", example = "알고리즘을 공부하는 스터디입니다.")),
-            @Parameter(name = "studyType", description = "스터디 타입", schema = @Schema(type = "string", example = "study")),
-            @Parameter(name = "maxMembers", description = "최대 인원", schema = @Schema(type = "integer", example = "10")),
-            @Parameter(name = "techStack", description = "기술 스택", schema = @Schema(type = "string", example = "Java, Spring, React")),
-            @Parameter(name = "studyDays", description = "진행 요일 (월~일) 리스트", schema = @Schema(type = "array", example = "[\"MON\", \"WED\", \"FRI\"]")),
-            @Parameter(name = "location", description = "스터디 장소", schema = @Schema(type = "string", example = "중앙도서관 그룹학습실")),
-            @Parameter(name = "etc", description = "기타 정보", schema = @Schema(type = "string", example = "초보자 환영"))
-    })
-    public ResponseEntity<StudyResponseDTO> updateStudy(@PathVariable Long id, @RequestBody StudyRequestDTO studyRequestDTO) {
+    public ResponseEntity<StudyResponseDTO> updateStudy(
+            @Parameter(description = "수정할 스터디 ID", example = "1")
+            @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "수정할 스터디 수정 데이터", required = true,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyRequestDTO.class))
+            ) @RequestBody StudyRequestDTO studyRequestDTO) {
         StudyResponseDTO updatedStudyRequestDTO = studyService.updateStudy(id, studyRequestDTO);
         return ResponseEntity.ok(updatedStudyRequestDTO);
     }

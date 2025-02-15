@@ -46,9 +46,13 @@ public class AdminController {
 
     // 특정 권한 가진 유저 전체 조회
     @GetMapping("/user/{role}")
-    @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
-    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    public Page<MemberResponseDTO> getUsersByRole(@PathVariable String role, @Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+    @Operation(summary = "특정 권한 유저 조회", description = "특정 권한 유저 API")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDTO.class)))
+            }
+    )
+    public Page<MemberResponseDTO> getUsersByRole(@Parameter(description = "조회할 권한", example = "admin") @PathVariable String role, @Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
 
         if(page < 0) {
             throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
@@ -64,9 +68,13 @@ public class AdminController {
     
     // 유저 권한 변경
     @PutMapping("/user/{id}")
-    @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
-    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    public ResponseEntity<MemberResponseDTO> updateRole(@PathVariable Long id, @RequestParam String role) {
+    @Operation(summary = "유저 권한 변경", description = "유저 권한 변경 API")
+    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDTO.class)))
+    public ResponseEntity<MemberResponseDTO> updateRole(
+            @Parameter(description = "수정할 유저의 ID", example = "1")
+            @PathVariable Long id,
+            @Parameter(description = "수정할 권한", example = "admin")
+            @RequestParam String role) {
         if (role.equals("admin") || role.equals("member") || role.equals("guest")) {
             MemberResponseDTO updateMemberDTO = adminService.updateRole(id, role);
             return ResponseEntity.ok(updateMemberDTO);
@@ -78,7 +86,7 @@ public class AdminController {
     @DeleteMapping("/user/{id}")
     @Operation(summary = "유저 삭제", description = "유저 삭제 API")
     @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@Parameter(description = "삭제할 유저의 ID", example = "1")@PathVariable Long id) {
         adminService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
