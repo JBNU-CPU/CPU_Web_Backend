@@ -20,7 +20,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByEmail(String email);        // 이미 존재하는 이메일인지 확인
 
     // 특정 ROLE 조회
-    List<Member> findByRole(String role);
+    List<Member> findByRole(Member.Role role);
     
     @Transactional
     void deleteByUsername(String username);

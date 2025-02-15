@@ -12,12 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.cpu.web.member.entity.Member.Role.ROLE_ADMIN;
+import static com.cpu.web.member.entity.Member.Role;
+import static com.cpu.web.member.entity.Member.Role.*;
 
 @Service
 @RequiredArgsConstructor
 public class AdminService {
-
+//    관리자로 로그인 -> 매니지먼트 -> 유저관리 -> 승인
     private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
 
@@ -30,16 +31,17 @@ public class AdminService {
 
     // 특정 권한 유저 전체 조회
     public List<MemberDTO> getUsersByRole(String role) {
+        Role enumRole;
         if (role.equals("admin")){
-            role = "ROLE_ADMIN";
+            enumRole = ROLE_ADMIN;
         }else if (role.equals("guest")){
-            role = "ROLE_GUEST";
+            enumRole = ROLE_GUEST;
         }else if (role.equals("member")){
-            role = "ROLE_MEMBER";
+            enumRole = ROLE_MEMBER;
         }else{
             throw new IllegalArgumentException("유효하지 않은 권한입니다.");
         }
-        return memberRepository.findByRole(role).stream()
+        return memberRepository.findByRole(enumRole).stream()
                 .map(MemberDTO::new)
                 .collect(Collectors.toList());
     };
