@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class StudyResponseDTO {
-    private Long studyId;
+    private Long id;
     private Boolean isAccepted;
     private String studyName;
     private Study.StudyType studyType;
@@ -31,7 +31,7 @@ public class StudyResponseDTO {
     // TODO: DB에 List<String> 형태로 저장되어 있는 studyDays 필드 파싱해서 List<{요일, 시작시간, 종료시간}>으로 만들기
     // entity => dto (스터디 참여 멤버 정보 없음)
     public StudyResponseDTO(Study study) {
-        this.studyId = study.getStudyId();
+        this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
@@ -47,7 +47,7 @@ public class StudyResponseDTO {
 
     // entity => dto (스터디 참여 멤버 정보 있음)
     public StudyResponseDTO(Study study, List<MemberStudy> memberStudies) {
-        this.studyId = study.getStudyId();
+        this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
