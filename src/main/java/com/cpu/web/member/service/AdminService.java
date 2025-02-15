@@ -54,7 +54,7 @@ public class AdminService {
             case "member" -> ROLE_MEMBER;
             default -> throw new IllegalArgumentException("유효하지 않은 권한입니다.");
         };
-
+        member.setRole(enumRole);
         Member updatedMember = memberRepository.save(member);
         return new MemberDTO(updatedMember);
     }
