@@ -1,13 +1,14 @@
-package com.cpu.web.member.dto;
+package com.cpu.web.member.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class MyPageEditDTO {
+public class SignupDTO {
+    private String username;
+    private String password;
     private String nickName;
     private String personName;
     private String email;
-    private String password;
 }

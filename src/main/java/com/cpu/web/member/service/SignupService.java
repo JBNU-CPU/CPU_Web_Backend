@@ -1,6 +1,6 @@
 package com.cpu.web.member.service;
 
-import com.cpu.web.member.dto.SignupDTO;
+import com.cpu.web.member.dto.response.SignupDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.entity.Member.Role;
 import com.cpu.web.member.exception.DuplicateResourceException;

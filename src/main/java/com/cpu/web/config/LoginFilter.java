@@ -1,6 +1,6 @@
 package com.cpu.web.config;
 
-import com.cpu.web.member.dto.LoginDTO;
+import com.cpu.web.member.dto.request.LoginDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;

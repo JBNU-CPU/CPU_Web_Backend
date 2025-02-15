@@ -1,8 +1,8 @@
 package com.cpu.web.member.service;
 
-import com.cpu.web.member.dto.CheckDTO;
-import com.cpu.web.member.dto.MyPageEditDTO;
-import com.cpu.web.member.dto.NewPasswordDTO;
+import com.cpu.web.member.dto.request.CheckDTO;
+import com.cpu.web.member.dto.request.MyPageEditDTO;
+import com.cpu.web.member.dto.request.NewPasswordDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;

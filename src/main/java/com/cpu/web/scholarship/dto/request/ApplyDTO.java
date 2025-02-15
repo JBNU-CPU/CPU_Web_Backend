@@ -1,4 +1,4 @@
-package com.cpu.web.scholarship.dto;
+package com.cpu.web.scholarship.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

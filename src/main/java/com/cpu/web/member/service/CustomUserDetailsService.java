@@ -1,6 +1,6 @@
 package com.cpu.web.member.service;
 
-import com.cpu.web.member.dto.CustomMember;
+import com.cpu.web.member.dto.request.CustomMember;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

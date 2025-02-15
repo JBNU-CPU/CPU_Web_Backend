@@ -1,12 +1,11 @@
-package com.cpu.web.member.dto;
+package com.cpu.web.member.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginDTO {
-
+public class NewPasswordDTO {
     private String username;
     private String password;
 }
