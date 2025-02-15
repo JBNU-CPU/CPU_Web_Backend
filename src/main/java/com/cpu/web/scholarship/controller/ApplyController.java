@@ -18,7 +18,7 @@ public class ApplyController {
     private final ApplyService applyService;
 
     // ✅ 스터디 신청
-    @PostMapping
+    @PostMapping("/{studyId}")
     @Operation(summary = "스터디 신청", description = "스터디에 참여 신청을 합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "신청 성공"),
