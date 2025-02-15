@@ -1,9 +1,9 @@
 package com.cpu.web.member.service;
 
 import com.cpu.web.member.dto.CheckDTO;
-import com.cpu.web.member.dto.MemberDTO;
 import com.cpu.web.member.dto.MyPageEditDTO;
 import com.cpu.web.member.dto.NewPasswordDTO;
+import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +21,11 @@ public class MyPageService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     // 내 정보 조회
-    public Optional<MemberDTO> getMyInformation(String username) {
-        return memberRepository.findByUsername(username).map(MemberDTO::new);
+    public Optional<MemberResponseDTO> getMyInformation(String username) {
+        return memberRepository.findByUsername(username).map(MemberResponseDTO::new);
     }
 
-    public MemberDTO updateMember(MyPageEditDTO myPageEditDTO, String username) {
+    public MemberResponseDTO updateMember(MyPageEditDTO myPageEditDTO, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
         member.setNickName(myPageEditDTO.getNickName());
@@ -33,7 +33,7 @@ public class MyPageService {
         member.setPersonName(myPageEditDTO.getPersonName());
         member.setEmail(myPageEditDTO.getEmail());
         Member updatedMember = memberRepository.save(member);
-        return new MemberDTO(updatedMember);
+        return new MemberResponseDTO(updatedMember);
     }
 
     // 비밀번호 찾기를 위한 아이디 및 이메일 검증

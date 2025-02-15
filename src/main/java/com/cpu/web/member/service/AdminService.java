@@ -1,6 +1,5 @@
 package com.cpu.web.member.service;
 
-import com.cpu.web.member.dto.MemberDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;

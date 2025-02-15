@@ -1,9 +1,9 @@
 package com.cpu.web.member.controller;
 
 import com.cpu.web.member.dto.CheckDTO;
-import com.cpu.web.member.dto.MemberDTO;
 import com.cpu.web.member.dto.MyPageEditDTO;
 import com.cpu.web.member.dto.NewPasswordDTO;
+import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.service.MyPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,11 +35,9 @@ public class MyPageController {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 유저에 접근하였습니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<MemberDTO> getMyInformation(){
-        System.out.println("mypage controller user request ------------");
+    public ResponseEntity<MemberResponseDTO> getMyInformation(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println(username);
-        Optional<MemberDTO> myInformationDTO = myPageService.getMyInformation(username);
+        Optional<MemberResponseDTO> myInformationDTO = myPageService.getMyInformation(username);
         return myInformationDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -55,9 +53,9 @@ public class MyPageController {
             @Parameter(name = "personName", description = "이름", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "홍길동"))),
             @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "email", example = "user@example.com")))
     })
-    public ResponseEntity<MemberDTO> updateMember(@RequestBody MyPageEditDTO myPageEditDTO){
+    public ResponseEntity<MemberResponseDTO> updateMember(@RequestBody MyPageEditDTO myPageEditDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        MemberDTO updatedMemberDTO = myPageService.updateMember(myPageEditDTO, username);
+        MemberResponseDTO updatedMemberDTO = myPageService.updateMember(myPageEditDTO, username);
         return ResponseEntity.ok(updatedMemberDTO);
     }
 
