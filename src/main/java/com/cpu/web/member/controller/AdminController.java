@@ -39,7 +39,7 @@ public class AdminController {
     @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     public ResponseEntity<MemberDTO> updateRole(@PathVariable Long id, @RequestParam String role) {
-        if (role.equals("ROLE_ADMIN") || role.equals("ROLE_MEMBER")) {
+        if (role.equals("admin") || role.equals("member") || role.equals("guest")) {
             MemberDTO updateMemberDTO = adminService.updateRole(id, role);
             return ResponseEntity.ok(updateMemberDTO);
         }

@@ -31,16 +31,12 @@ public class AdminService {
 
     // 특정 권한 유저 전체 조회
     public List<MemberDTO> getUsersByRole(String role) {
-        Role enumRole;
-        if (role.equals("admin")){
-            enumRole = ROLE_ADMIN;
-        }else if (role.equals("guest")){
-            enumRole = ROLE_GUEST;
-        }else if (role.equals("member")){
-            enumRole = ROLE_MEMBER;
-        }else{
-            throw new IllegalArgumentException("유효하지 않은 권한입니다.");
-        }
+        Role enumRole = switch (role) {
+            case "admin" -> ROLE_ADMIN;
+            case "guest" -> ROLE_GUEST;
+            case "member" -> ROLE_MEMBER;
+            default -> throw new IllegalArgumentException("유효하지 않은 권한입니다.");
+        };
         return memberRepository.findByRole(enumRole).stream()
                 .map(MemberDTO::new)
                 .collect(Collectors.toList());
@@ -52,12 +48,12 @@ public class AdminService {
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다: " + id));
 
         // 문자열로 받은 권한을 Role enum으로 변환
-        try {
-            Member.Role newRole = Member.Role.valueOf(role);  // 문자열을 Role enum으로 변환
-            member.setRole(newRole);  // Role 설정
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 권한입니다: " + role);
-        }
+        Role enumRole = switch (role) {
+            case "admin" -> ROLE_ADMIN;
+            case "guest" -> ROLE_GUEST;
+            case "member" -> ROLE_MEMBER;
+            default -> throw new IllegalArgumentException("유효하지 않은 권한입니다.");
+        };
 
         Member updatedMember = memberRepository.save(member);
         return new MemberDTO(updatedMember);
