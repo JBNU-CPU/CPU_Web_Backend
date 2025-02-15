@@ -48,7 +48,18 @@ public class AdminController {
     @GetMapping("/user/{role}")
     @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    public Page<MemberResponseDTO> getUsersByRole(@PathVariable String role, int page, int size) {return adminService.getUsersByRole(role, page, size);}
+    public Page<MemberResponseDTO> getUsersByRole(@PathVariable String role, @Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+
+        if(page < 0) {
+            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
+        }
+
+        if(size <= 0 || size >100) {
+            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
+        }
+
+        return adminService.getUsersByRole(role, page, size);
+    }
 
     
     // 유저 권한 변경
