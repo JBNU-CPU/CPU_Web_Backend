@@ -1,12 +1,16 @@
 package com.cpu.web.member.controller;
 
 import com.cpu.web.member.dto.MemberDTO;
+import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.service.AdminService;
 import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,16 +19,24 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
+@Tag(name = "Admin", description = "관리자 API")
 public class AdminController {
 
     private final AdminService adminService;
 
     // 전체 유저 조회
     @GetMapping("/user/all")
-    @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
+    @Operation(summary = "전체 유저 조회", description = "페이지네이션된 유저 리스트 조회")
     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    public List<MemberDTO> getAllUsers() {
-        return adminService.getAllUser();
+    public Page<MemberResponseDTO> getAllUsers(@Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+        if(page < 0) {
+            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
+        }
+
+        if(size <= 0 || size >100) {
+            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
+        }
+        return adminService.getAllUser(page, size);
     }
 
     // 특정 권한 가진 유저 전체 조회

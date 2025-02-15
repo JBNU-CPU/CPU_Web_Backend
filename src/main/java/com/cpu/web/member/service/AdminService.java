@@ -1,12 +1,15 @@
 package com.cpu.web.member.service;
 
 import com.cpu.web.member.dto.MemberDTO;
+import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,19 +21,19 @@ import static com.cpu.web.member.entity.Member.Role.*;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
-//    관리자로 로그인 -> 매니지먼트 -> 유저관리 -> 승인
     private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
 
     // 전체 유저 조회
-    public List<MemberDTO> getAllUser() {
-        return memberRepository.findAll().stream()
-                .map(MemberDTO::new)
-                .collect(Collectors.toList());
+    public Page<MemberResponseDTO> getAllUser(int page, int size) {
+        Page<Member> members = memberRepository.findAll(PageRequest.of(page, size));
+        return members.map(MemberResponseDTO::new);
     }
 
     // 특정 권한 유저 전체 조회
     public List<MemberDTO> getUsersByRole(String role) {
+
+        // 문자열로 받은 권한을 Role enum으로 변환
         Role enumRole = switch (role) {
             case "admin" -> ROLE_ADMIN;
             case "guest" -> ROLE_GUEST;

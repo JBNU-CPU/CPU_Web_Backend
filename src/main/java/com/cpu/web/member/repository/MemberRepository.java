@@ -2,12 +2,17 @@ package com.cpu.web.member.repository;
 
 import com.cpu.web.member.entity.Member;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
+
+    // 페이지네이션 전체 유저 조회
+    Page<Member> findAll(Pageable pageable);
 
     // ID (username) 중복 체크 및 검색
     boolean existsByUsername(String username);  // 이미 존재하는 아이디인지 확인
