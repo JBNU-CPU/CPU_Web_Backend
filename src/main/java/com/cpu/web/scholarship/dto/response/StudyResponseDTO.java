@@ -21,6 +21,9 @@ public class StudyResponseDTO {
     @Schema(description = "등록 여부", example = "true")
     private Boolean isAccepted;
 
+    @Schema(description = "개설자명", example = "개설자명")
+    private String leaderName;
+
     @Schema(description = "스터디명", example = "자바를 잡아라!")
     private String studyName;
 
@@ -64,6 +67,7 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
+        this.leaderName = study.getLeaderName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
