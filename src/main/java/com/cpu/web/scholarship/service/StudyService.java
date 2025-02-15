@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -118,8 +119,9 @@ public class StudyService {
 
     // 스터디 삭제
     public void deleteStudy(Long id) {
-        // 로그인된 사용자 정보 가져오기
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (member.isEmpty()) {
@@ -132,9 +134,11 @@ public class StudyService {
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + id));
 
-        // ✅ 스터디 리더인지 확인
-        if (!study.getLeaderId().equals(leaderId)) {
-            throw new IllegalArgumentException("팀장이 아니므로 삭제 권한이 없습니다: " + leaderId);
+        // 관리자이거나 스터디 개설자인 경우 삭제 가능
+        if (isAdmin || username.equals(study.getLeaderName())) {
+            studyRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + username);
         }
 
         studyRepository.deleteById(id);
