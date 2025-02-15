@@ -24,8 +24,8 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
-
     private final MemberRepository memberRepository;
+
     // 글 생성
     public Post createPost(PostRequestDTO postRequestDTO) {
 
@@ -52,8 +52,8 @@ public class PostService {
             throw new IllegalArgumentException("내용이 유효하지 않습니다.");
         }
 
-        if (member.isEmpty()){
-           throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+        if (member.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
         Post post = postRequestDTO.toPostEntity(member.get());
@@ -76,17 +76,17 @@ public class PostService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Member> member = memberRepository.findByUsername(username);
 
-        if (member.isEmpty()){
+        if (member.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
         }
 
-        if (!username.equals(postRepository.findById(id).orElseThrow().getMember().getUsername())){
+        if (!username.equals(postRepository.findById(id).orElseThrow().getMember().getUsername())) {
             throw new IllegalArgumentException("수정 권한이 없는 유저입니다: " + username);
         }
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid Post ID: " + id));
-        
+
         post.setTitle(postResponseDTO.getTitle());
         post.setContent(postResponseDTO.getContent());
         Post updatedPost = postRepository.save(post);
@@ -100,7 +100,7 @@ public class PostService {
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
         Optional<Member> member = memberRepository.findByUsername(username);
 
-        if (member.isEmpty()){
+        if (member.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
         }
 

@@ -84,6 +84,7 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, List<MemberStudy> memberStudies) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
+        this.leaderName = study.getLeaderName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
