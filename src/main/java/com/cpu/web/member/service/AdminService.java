@@ -10,6 +10,7 @@ import com.cpu.web.scholarship.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class AdminService {
     }
 
     // 특정 권한 유저 전체 조회
-    public List<MemberDTO> getUsersByRole(String role) {
+    public Page<MemberResponseDTO> getUsersByRole(String role, int page, int size) {
 
         // 문자열로 받은 권한을 Role enum으로 변환
         Role enumRole = switch (role) {
@@ -40,13 +41,12 @@ public class AdminService {
             case "member" -> ROLE_MEMBER;
             default -> throw new IllegalArgumentException("유효하지 않은 권한입니다.");
         };
-        return memberRepository.findByRole(enumRole).stream()
-                .map(MemberDTO::new)
-                .collect(Collectors.toList());
+        Page<Member> members =  memberRepository.findByRole(enumRole, PageRequest.of(page, size));
+        return members.map(MemberResponseDTO::new);
     };
     
     // 특정 유저 권한 수정
-    public MemberDTO updateRole(Long id, String role) {
+    public MemberResponseDTO updateRole(Long id, String role) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다: " + id));
 
@@ -59,7 +59,7 @@ public class AdminService {
         };
         member.setRole(enumRole);
         Member updatedMember = memberRepository.save(member);
-        return new MemberDTO(updatedMember);
+        return new MemberResponseDTO(updatedMember);
     }
 
     // 유저 삭제

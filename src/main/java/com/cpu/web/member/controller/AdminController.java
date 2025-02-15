@@ -1,13 +1,14 @@
 package com.cpu.web.member.controller;
 
-import com.cpu.web.member.dto.MemberDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.service.AdminService;
 import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,11 @@ public class AdminController {
     // 전체 유저 조회
     @GetMapping("/user/all")
     @Operation(summary = "전체 유저 조회", description = "페이지네이션된 유저 리스트 조회")
-    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDTO.class)))
+            }
+    )
     public Page<MemberResponseDTO> getAllUsers(@Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
         if(page < 0) {
             throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
@@ -43,16 +48,16 @@ public class AdminController {
     @GetMapping("/user/{role}")
     @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    public List<MemberDTO> getUsersByRole(@PathVariable String role) {return adminService.getUsersByRole(role);}
+    public Page<MemberResponseDTO> getUsersByRole(@PathVariable String role, int page, int size) {return adminService.getUsersByRole(role, page, size);}
 
     
     // 유저 권한 변경
     @PutMapping("/user/{id}")
     @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-    public ResponseEntity<MemberDTO> updateRole(@PathVariable Long id, @RequestParam String role) {
+    public ResponseEntity<MemberResponseDTO> updateRole(@PathVariable Long id, @RequestParam String role) {
         if (role.equals("admin") || role.equals("member") || role.equals("guest")) {
-            MemberDTO updateMemberDTO = adminService.updateRole(id, role);
+            MemberResponseDTO updateMemberDTO = adminService.updateRole(id, role);
             return ResponseEntity.ok(updateMemberDTO);
         }
         throw new IllegalArgumentException("유효하지 않은 권한을 부여하였습니다.");
