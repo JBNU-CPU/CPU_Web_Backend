@@ -30,7 +30,7 @@ public class ApplyController {
     }
 
     // ✅ 스터디 신청 취소
-    @DeleteMapping
+    @DeleteMapping("/{studyId}")
     @Operation(summary = "스터디 신청 취소", description = "스터디 신청을 취소합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "취소 성공"),
