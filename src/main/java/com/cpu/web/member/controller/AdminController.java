@@ -20,13 +20,20 @@ public class AdminController {
     private final AdminService adminService;
 
     // 전체 유저 조회
-    @GetMapping("/user")
+    @GetMapping("/user/all")
     @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     public List<MemberDTO> getAllUsers() {
         return adminService.getAllUser();
     }
 
+    // 특정 권한 가진 유저 전체 조회
+    @GetMapping("/user/{role}")
+    @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")
+    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    public List<MemberDTO> getUsersByRole(@PathVariable String role) {return adminService.getUsersByRole(role);}
+
+    
     // 유저 권한 변경
     @PutMapping("/user/{id}")
     @Operation(summary = "전체 유저 조회", description = "전체 유저 조회 API")

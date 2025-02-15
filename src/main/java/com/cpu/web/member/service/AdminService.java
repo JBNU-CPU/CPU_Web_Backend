@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.cpu.web.member.entity.Member.Role.ROLE_ADMIN;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -26,6 +28,22 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
+    // 특정 권한 유저 전체 조회
+    public List<MemberDTO> getUsersByRole(String role) {
+        if (role.equals("admin")){
+            role = "ROLE_ADMIN";
+        }else if (role.equals("guest")){
+            role = "ROLE_GUEST";
+        }else if (role.equals("member")){
+            role = "ROLE_MEMBER";
+        }else{
+            throw new IllegalArgumentException("유효하지 않은 권한입니다.");
+        }
+        return memberRepository.findByRole(role).stream()
+                .map(MemberDTO::new)
+                .collect(Collectors.toList());
+    };
+    
     // 특정 유저 권한 수정
     public MemberDTO updateRole(Long id, String role) {
         Member member = memberRepository.findById(id)
@@ -85,4 +103,5 @@ public class AdminService {
         }
         studyRepository.deleteById(id);
     }
+
 }

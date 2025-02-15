@@ -4,6 +4,7 @@ import com.cpu.web.member.entity.Member;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -18,6 +19,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 이메일 중복 체크
     boolean existsByEmail(String email);        // 이미 존재하는 이메일인지 확인
 
+    // 특정 ROLE 조회
+    List<Member> findByRole(String role);
+    
     @Transactional
     void deleteByUsername(String username);
 }
