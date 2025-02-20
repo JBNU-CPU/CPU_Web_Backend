@@ -9,7 +9,6 @@ import com.cpu.web.scholarship.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +16,8 @@ import java.util.stream.Collectors;
 
 import static com.cpu.web.member.entity.Member.Role;
 import static com.cpu.web.member.entity.Member.Role.*;
+import static com.cpu.web.scholarship.entity.Study.StudyType;
+import static com.cpu.web.scholarship.entity.Study.StudyType.*;
 
 @Service
 @RequiredArgsConstructor
@@ -71,11 +72,24 @@ public class AdminService {
 
 
     // 전체 스터디 조회
-    public List<StudyResponseDTO> getAllStudy() {
-        return studyRepository.findAll().stream()
-                .map(StudyResponseDTO::new)
-                .collect(Collectors.toList());
+    public Page<StudyResponseDTO> getAllStudy(int page, int size) {
+        Page<Study> studies = studyRepository.findAll(PageRequest.of(page, size));
+        return studies.map(StudyResponseDTO::new);
     }
+
+    // 특정 타입 스터디 전체 조회
+    public Page<StudyResponseDTO> getStudiesByStudyType(String studyType, int page, int size) {
+
+        // 문자열로 받은 권한을 Role enum으로 변환
+        StudyType enumStudyType = switch (studyType) {
+            case "session" -> session;
+            case "study" -> study;
+            case "project" -> project;
+            default -> throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다..");
+        };
+        Page<Study> studies =  studyRepository.findByStudyType(enumStudyType, PageRequest.of(page, size));
+        return studies.map(StudyResponseDTO::new);
+    };
 
     // 스터디 등록
     public StudyResponseDTO acceptStudy(Long id) {

@@ -64,7 +64,6 @@ public class AdminController {
         return adminService.getUsersByRole(role, page, size);
     }
 
-    
     // 유저 권한 변경
     @PutMapping("/user/{id}")
     @Operation(summary = "유저 권한 변경", description = "유저 권한 변경 API")
@@ -88,6 +87,46 @@ public class AdminController {
     public ResponseEntity<?> deleteUser(@Parameter(description = "삭제할 유저의 ID", example = "1")@PathVariable Long id) {
         adminService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 전체 스터디 조회
+    @GetMapping("/study/all")
+    @Operation(summary = "전체 유저 조회", description = "페이지네이션된 유저 리스트 조회")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDTO.class)))
+            }
+    )
+    public Page<StudyResponseDTO> getAllStudies(@Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+        if(page < 0) {
+            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
+        }
+
+        if(size <= 0 || size >100) {
+            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
+        }
+        return adminService.getAllStudy(page, size);
+    }
+
+    // 특정 스터디 타입 스터디 전체 조회
+    @GetMapping("/user/{studyType}")
+    @Operation(summary = "특정 권한 유저 조회", description = "특정 권한 유저 API")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyResponseDTO.class)))
+            }
+    )
+    public Page<StudyResponseDTO> getStudiesByStudyType(@Parameter(description = "조회할 권한(admin or member or guest)", example = "admin") @PathVariable String studyType, @Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+
+        if(page < 0) {
+            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
+        }
+
+        if(size <= 0 || size >100) {
+            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
+        }
+
+        return adminService.getStudiesByStudyType(studyType, page, size);
     }
 
     // 스터디 등록
