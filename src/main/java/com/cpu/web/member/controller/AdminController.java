@@ -109,7 +109,7 @@ public class AdminController {
     }
 
     // 특정 스터디 타입 스터디 전체 조회
-    @GetMapping("/user/{studyType}")
+    @GetMapping("/study/{studyType}")
     @Operation(summary = "특정 권한 유저 조회", description = "특정 권한 유저 API")
     @ApiResponses(
             value = {
