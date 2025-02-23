@@ -1,6 +1,7 @@
 package com.cpu.web.scholarship.repository;
 
 import com.cpu.web.scholarship.entity.MemberStudy;
+import com.cpu.web.scholarship.entity.Study;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -20,6 +21,6 @@ public interface MemberStudyRepository extends JpaRepository<MemberStudy, Long> 
     List<MemberStudy> findByStudy_StudyId(Long studyId);
     
     // 스터디 신청 인원 수 조회
-    long countByStudy(Long studyId);
+    long countByStudy(Study study);
 
 }

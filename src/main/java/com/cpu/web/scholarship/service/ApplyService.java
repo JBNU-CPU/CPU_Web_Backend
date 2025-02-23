@@ -50,7 +50,7 @@ public class ApplyService {
         }
         
         // 정원이 초과됏는지 확인
-        long currentCount = memberStudyRepository.countByStudy(studyId);
+        long currentCount = memberStudyRepository.countByStudy(study);
         if (currentCount >= study.getMaxMembers()){
             throw new RuntimeException("이미 최대 인원이 찼습니다.");
         }
