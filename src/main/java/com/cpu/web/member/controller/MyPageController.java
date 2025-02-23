@@ -4,6 +4,7 @@ import com.cpu.web.member.dto.request.CheckDTO;
 import com.cpu.web.member.dto.request.MyPageEditDTO;
 import com.cpu.web.member.dto.request.NewPasswordDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
+import com.cpu.web.member.dto.response.StudyOverviewDTO;
 import com.cpu.web.member.service.MyPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -98,5 +100,21 @@ public class MyPageController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         myPageService.withdraw(username);
         return ResponseEntity.noContent().build();
+    }
+
+    // 내가 참여하고 있는 스터디 목록 조회
+    @GetMapping("/studies")
+    @Operation(summary = "참여중인 스터디 조회", description = "로그인한 사용자가 참여하고 있는 스터디 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "스터디 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyOverviewDTO.class))),
+            @ApiResponse(responseCode = "404", description = "스터디 목록이 존재하지 않습니다.", content = @Content)
+    })
+    public ResponseEntity<List<StudyOverviewDTO>> getMyStudies() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<StudyOverviewDTO> studies = myPageService.getMyStudies(username);
+        if (studies.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(studies);
     }
 }
