@@ -4,14 +4,19 @@ import com.cpu.web.member.dto.request.CheckDTO;
 import com.cpu.web.member.dto.request.MyPageEditDTO;
 import com.cpu.web.member.dto.request.NewPasswordDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
+import com.cpu.web.member.dto.response.StudyOverviewDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
+import com.cpu.web.scholarship.entity.MemberStudy;
+import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +63,17 @@ public class MyPageService {
             throw new IllegalArgumentException("존재하지 않는 아이디입니다: " + username);
         }
         memberRepository.deleteByUsername(username);
+    }
+
+    private final MemberStudyRepository memberStudyRepository;
+
+    // 내가 참여하고 있는 스터디 목록 조회
+    public List<StudyOverviewDTO> getMyStudies(String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        List<MemberStudy> memberStudies = memberStudyRepository.findByMember_MemberId(member.getMemberId());
+        return memberStudies.stream()
+                .map(memberStudy -> new StudyOverviewDTO(memberStudy.getStudy()))
+                .collect(Collectors.toList());
     }
 }
