@@ -18,5 +18,8 @@ public interface MemberStudyRepository extends JpaRepository<MemberStudy, Long> 
 
     // 특정 스터디에 속한 모든 멤버 조회
     List<MemberStudy> findByStudy_StudyId(Long studyId);
+    
+    // 스터디 신청 인원 수 조회
+    long countByStudy(Long studyId);
 
 }

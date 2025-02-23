@@ -48,6 +48,12 @@ public class ApplyService {
         if (isLeader) {
             throw new IllegalArgumentException("스터디 리더는 신청할 수 없습니다.");
         }
+        
+        // 정원이 초과됏는지 확인
+        long currentCount = memberStudyRepository.countByStudy(studyId);
+        if (currentCount >= study.getMaxMembers()){
+            throw new RuntimeException("이미 최대 인원이 찼습니다.");
+        }
 
         // 신청 정보 저장 (isLeader = false)
         MemberStudy memberStudy = new MemberStudy();
