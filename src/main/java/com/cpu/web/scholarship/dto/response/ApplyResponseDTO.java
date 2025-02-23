@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-public class MemberStudyDTO {
+public class ApplyResponseDTO {
     private Long memberStudyId;
     private Boolean isLeader;
     private Timestamp joinDate;
@@ -16,7 +16,7 @@ public class MemberStudyDTO {
     private String nickName;
     private String email;
 
-    public MemberStudyDTO(MemberStudy memberStudy) {
+    public ApplyResponseDTO(MemberStudy memberStudy) {
         this.memberStudyId = memberStudy.getMemberStudyId();
         this.isLeader = memberStudy.getIsLeader();
         this.joinDate = memberStudy.getJoinDate();

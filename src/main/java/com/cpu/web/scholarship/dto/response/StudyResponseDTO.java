@@ -58,7 +58,7 @@ public class StudyResponseDTO {
     private List<String> studyDays; // 스터디 요일 및 시간 리스트
 
     @Schema(description = "스터디 참여자", example = "1")
-    private List<MemberStudyDTO> memberStudies;
+    private List<ApplyResponseDTO> memberStudies;
 
     public StudyResponseDTO(){}
 
@@ -96,7 +96,7 @@ public class StudyResponseDTO {
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
         this.memberStudies = memberStudies.stream()
-                .map(MemberStudyDTO::new)
+                .map(ApplyResponseDTO::new)
                 .collect(Collectors.toList());
     }
 

@@ -52,7 +52,7 @@ public class StudyService {
 
     // 스터디 전체 조회
     public Page<StudyResponseDTO> getAllStudies(int page, int size, String studyType) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("studyId"));
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("studyId").descending());
         if (studyType != null && !studyType.isEmpty()) {
             Study.StudyType type = Study.StudyType.valueOf(studyType.toLowerCase());
             return studyRepository.findByStudyType(type, pageRequest).map(StudyResponseDTO::new);
