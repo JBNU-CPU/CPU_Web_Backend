@@ -2,24 +2,27 @@ package com.cpu.web.event;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class EventService {
 
     private final EventRepository eventRepository;
-    
+
+    @Transactional
     public Event createScore(EventRequestDTO eventRequestDTO) {
 
-        if (eventRepository.existsByUserId(eventRequestDTO.getUserId())){ // 이미 등록한 유저 점수 더 높을 경우 갱신
-            Event event = eventRepository.findByUserId(eventRequestDTO.getUserId());
-            if(eventRequestDTO.getScore() > event.getScore()){
+        Event event = eventRepository.findByUserId(eventRequestDTO.getUserId());
+
+        if (event != null) { // 기존 데이터가 있는 경우
+            if (eventRequestDTO.getScore() > event.getScore()) { // 새로운 점수가 더 높다면 업데이트
                 event.setScore(eventRequestDTO.getScore());
-                return eventRepository.save(eventRequestDTO.toEventEntity());
-            }else{
-                return event;
+                return eventRepository.save(event);
+            } else {
+                return event; // 기존 값을 유지
             }
-        }else{ // 신규 등록
+        } else { // 새로운 데이터 삽입
             return eventRepository.save(eventRequestDTO.toEventEntity());
         }
     }
