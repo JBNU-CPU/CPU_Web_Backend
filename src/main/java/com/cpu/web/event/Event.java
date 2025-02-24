@@ -11,12 +11,12 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "event_id", nullable = false, unique = true)
+    @Column(name = "event_id")
     private Long eventId;
 
-    @Column(name = "user_id", nullable = false, unique = true)
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(name = "score", nullable = false, unique = true)
+    @Column(name = "score", nullable = false)
     private Integer score;
 }
