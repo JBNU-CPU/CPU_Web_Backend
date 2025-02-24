@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -25,5 +27,13 @@ public class EventService {
         } else { // 새로운 데이터 삽입
             return eventRepository.save(eventRequestDTO.toEventEntity());
         }
+    }
+
+    public void getScores() {
+    }
+
+    public List<EventResponseDTO> getAllScores() {
+        List<Event> scores = eventRepository.findAll();
+        return (List<EventResponseDTO>) scores.stream().map(EventResponseDTO::new);
     }
 }

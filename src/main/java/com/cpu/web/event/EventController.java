@@ -1,10 +1,10 @@
 package com.cpu.web.event;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,8 +15,13 @@ public class EventController {
 
     // 이벤트 점수 등록
     @PostMapping
-    public void createPost(@RequestBody EventRequestDTO eventRequestDTO){
+    public void createScore(@RequestBody EventRequestDTO eventRequestDTO){
         eventService.createScore(eventRequestDTO);
-        System.out.println("eventRequestDTO.getUserId() = " + eventRequestDTO.getUserId());
+    }
+    
+    // 이벤트 점수 전체 조회
+    @GetMapping
+    public List<EventResponseDTO> getScores(){
+        return eventService.getAllScores();
     }
 }
