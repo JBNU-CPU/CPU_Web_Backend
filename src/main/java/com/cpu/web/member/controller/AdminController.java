@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -152,6 +153,7 @@ public class AdminController {
     @Operation(summary = "스터디 삭제", description = "스터디 삭제 API")
     @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     public ResponseEntity<?> deleteStudy(@PathVariable Long id) {
+        System.out.println("로그인 유저 (스터디 삭제 부분) = " + SecurityContextHolder.getContext().getAuthentication().getName());
         adminService.deleteStudy(id);
         return ResponseEntity.noContent().build();
     }
