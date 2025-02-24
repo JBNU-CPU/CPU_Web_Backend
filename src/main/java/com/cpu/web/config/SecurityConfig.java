@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
@@ -58,7 +59,7 @@ public class SecurityConfig {
         );
 
         http.securityContext(securityContext -> securityContext
-                .requireExplicitSave(false)  // SecurityContext를 자동으로 세션에 저장
+                .securityContextRepository(new HttpSessionSecurityContextRepository()) // 세션을 통해 SecurityContext 유지
         );
 
         LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), memberRepository);
