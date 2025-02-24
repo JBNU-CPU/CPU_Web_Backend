@@ -39,7 +39,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         System.out.println(request);
         System.out.println("adsfasdfadsfasdfdsfsdfasdf ------");
-        
+
         LoginDTO loginDTO = new LoginDTO();
 
         try {
@@ -68,6 +68,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         // 로그인 성공 메시지 로그에 출력
         System.out.println("login success");
         System.out.println(authentication.getName());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // SecurityContext 설정
         // 새 SecurityContext를 생성하고 인증 정보를 설정
@@ -112,7 +114,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
 
         System.out.println("login fail");
-        
+
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 }
