@@ -54,7 +54,11 @@ public class SecurityConfig {
         http.formLogin(login -> login.disable());
 
         http.sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+        );
+
+        http.securityContext(securityContext -> securityContext
+                .requireExplicitSave(false)  // SecurityContext를 자동으로 세션에 저장
         );
 
         LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), memberRepository);
@@ -68,4 +72,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
