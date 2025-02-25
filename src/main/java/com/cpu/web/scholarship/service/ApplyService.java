@@ -22,11 +22,13 @@ public class ApplyService {
     private final MemberRepository memberRepository;
 
     // ✅ 스터디 신청
-    @Transactional
     public void applyStudy(Long studyId) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("현재 로그인한 사용자 (스터디 신청)" + username);
         Optional<Member> member = memberRepository.findByUsername(username);
+        
+        
         if (member.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
