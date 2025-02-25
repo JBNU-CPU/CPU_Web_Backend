@@ -129,7 +129,7 @@ public class StudyService {
         }
 
         Long leaderId = member.get().getMemberId(); // ✅ 현재 로그인한 사용자 ID 가져오기
-
+        System.out.println("스터디 삭제 username = " + username);
         // 스터디 찾기
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + id));
