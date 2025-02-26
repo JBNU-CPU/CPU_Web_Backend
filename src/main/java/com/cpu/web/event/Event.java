@@ -19,4 +19,7 @@ public class Event {
 
     @Column(name = "score", nullable = false)
     private Integer score;
+
+    @Column(name = "nickname")
+    private String nickname;
 }

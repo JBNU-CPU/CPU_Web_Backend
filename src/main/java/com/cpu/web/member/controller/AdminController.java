@@ -146,13 +146,4 @@ public class AdminController {
         StudyResponseDTO updateStudyRequestDTO =  adminService.unacceptStudy(id);
         return ResponseEntity.ok(updateStudyRequestDTO);
     }
-
-//    // 스터디 삭제
-//    @DeleteMapping("/study/{id}")
-//    @Operation(summary = "스터디 삭제", description = "스터디 삭제 API")
-//    @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
-//    public ResponseEntity<?> deleteStudy(@PathVariable Long id) {
-//        adminService.deleteStudy(id);
-//        return ResponseEntity.noContent().build();
-//    }
 }
