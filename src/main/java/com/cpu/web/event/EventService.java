@@ -1,6 +1,7 @@
 package com.cpu.web.event;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +34,11 @@ public class EventService {
     public void getScores() {
     }
 
+    // 점수가 높은 순으로 정렬하여 조회
     public List<EventResponseDTO> getAllScores() {
-        return eventRepository.findAll() // DB에서 모든 Event 조회
-                .stream()
-                .map(EventResponseDTO::new) // Event -> EventResponseDTO 변환
-                .collect(Collectors.toList()); // List<EventResponseDTO>로 변환하여 반환
+        List<Event> events = eventRepository.findAll(Sort.by(Sort.Direction.DESC, "score")); // score 기준 내림차순 정렬
+        return events.stream()
+                .map(EventResponseDTO::new)
+                .collect(Collectors.toList());
     }
 }
