@@ -12,10 +12,12 @@ public class StudyOverviewDTO {
     private Long id;
     private String name;
     private String studyType;
+    private Boolean isAccepted;
 
     public StudyOverviewDTO(Study study) {
         this.id = study.getStudyId();
         this.name = study.getStudyName();
         this.studyType = study.getStudyType().name();
+        this.isAccepted = study.getIsAccepted();
     }
 }

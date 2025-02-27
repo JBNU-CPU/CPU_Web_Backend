@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,10 +32,10 @@ public class Post {
     private String content;
 
     @CreationTimestamp
-    private Timestamp createDate;
+    private LocalDateTime createDate;
 
     @UpdateTimestamp
-    private Timestamp updateDate;//
+    private LocalDateTime updateDate;//
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

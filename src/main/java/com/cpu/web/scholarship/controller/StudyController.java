@@ -1,13 +1,11 @@
 package com.cpu.web.scholarship.controller;
 
-import com.cpu.web.board.dto.response.PostResponseDTO;
 import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
 import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.service.StudyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

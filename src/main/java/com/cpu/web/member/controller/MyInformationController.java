@@ -5,7 +5,7 @@ import com.cpu.web.member.dto.request.MyPageEditDTO;
 import com.cpu.web.member.dto.request.NewPasswordDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.dto.response.StudyOverviewDTO;
-import com.cpu.web.member.service.MyPageService;
+import com.cpu.web.member.service.MyInformationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -26,9 +26,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 @Tag(name = "Member", description = "회원 API")
-public class MyPageController {
+public class MyInformationController {
 
-    private final MyPageService myPageService;
+    private final MyInformationService myInformationService;
     
     // 내 정보 조회
     @GetMapping()
@@ -39,7 +39,7 @@ public class MyPageController {
     })
     public ResponseEntity<MemberResponseDTO> getMyInformation(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<MemberResponseDTO> myInformationDTO = myPageService.getMyInformation(username);
+        Optional<MemberResponseDTO> myInformationDTO = myInformationService.getMyInformation(username);
         return myInformationDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -57,26 +57,11 @@ public class MyPageController {
     })
     public ResponseEntity<MemberResponseDTO> updateMember(@RequestBody MyPageEditDTO myPageEditDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        MemberResponseDTO updatedMemberDTO = myPageService.updateMember(myPageEditDTO, username);
+        MemberResponseDTO updatedMemberDTO = myInformationService.updateMember(myPageEditDTO, username);
         return ResponseEntity.ok(updatedMemberDTO);
     }
-
-    // 아이디 및 이메일 검증
-    @GetMapping("/check")
-    @Operation(summary = "회원 정보 수정", description = "회원 정보 수정 API")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
-    })
-    @Parameters({
-            @Parameter(name = "username", description = "아이디", schema = @Schema(type = "String", minLength = 5, maxLength = 9, example = "202018556")),
-            @Parameter(name = "email", description = "이메일")
-    })
-    public ResponseEntity<?> checkIdAndEmail(@RequestBody CheckDTO checkDTO){
-        Boolean isChecked = myPageService.checkIdAndEmail(checkDTO);
-        return ResponseEntity.ok(isChecked);
-    }
     
-    // 비밀번호 찾기
+    // 비밀번호 재설정
     @PostMapping("/password")
     @Operation(summary = "비밀번호 찾기", description = "비밀번호 재설정")
     @ApiResponses(value = {
@@ -86,7 +71,7 @@ public class MyPageController {
             @Parameter(name = "password", description = "비밀번호")
     })
     public ResponseEntity<?> setNewPassword(@RequestBody NewPasswordDTO newPasswordDTO){
-        myPageService.setNewPassword(newPasswordDTO);
+        myInformationService.setNewPassword(newPasswordDTO);
         return ResponseEntity.ok().build();
     }
     
@@ -98,23 +83,33 @@ public class MyPageController {
     })
     public ResponseEntity<?> withdraw(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        myPageService.withdraw(username);
+        myInformationService.withdraw(username);
         return ResponseEntity.noContent().build();
     }
 
-    // 내가 참여하고 있는 스터디 목록 조회
-    @GetMapping("/studies")
-    @Operation(summary = "참여중인 스터디 조회", description = "로그인한 사용자가 참여하고 있는 스터디 목록을 조회합니다.")
+    // 참여 스터디 목록
+    @GetMapping("/joined-studies")
+    @Operation(summary = "참여 중인 스터디 조회", description = "사용자의 스터디 참여 목록을 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "스터디 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyOverviewDTO.class))),
-            @ApiResponse(responseCode = "404", description = "스터디 목록이 존재하지 않습니다.", content = @Content)
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<List<StudyOverviewDTO>> getMyStudies() {
+    public ResponseEntity<List<StudyOverviewDTO>> getMyJoinedStudies() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<StudyOverviewDTO> studies = myPageService.getMyStudies(username);
-        if (studies.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(studies);
+        List<StudyOverviewDTO> joinedStudies = myInformationService.getMyJoinedStudies(username);
+        return ResponseEntity.ok(joinedStudies);
     }
+
+    // 개설 스터디 목록
+    @GetMapping("/opened-studies")
+    @Operation(summary = "개설한 스터디 조회", description = "사용자의 스터디 개설 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<List<StudyOverviewDTO>> getMyLedStudies() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<StudyOverviewDTO> ledStudies = myInformationService.getMyLedStudies(username);
+        return ResponseEntity.ok(ledStudies);
+    }
+    
+
 }
