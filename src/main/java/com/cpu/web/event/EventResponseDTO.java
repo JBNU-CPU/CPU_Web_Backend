@@ -15,6 +15,6 @@ public class EventResponseDTO {
     public EventResponseDTO(Event event){
         userId = event.getUserId();
         score = event.getScore();
-        nickName = event.getNickname();
+        nickName = event.getNickName();
     }
 }
