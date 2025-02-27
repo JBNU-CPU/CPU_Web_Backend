@@ -1,6 +1,6 @@
 package com.cpu.web.board.dto.response;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
-public record SearchResponseDTO(Long id, Boolean isNotice, String title, Timestamp createTime) {
+public record SearchResponseDTO(Long id, Boolean isNotice, String title, LocalDateTime createTime) {
 }
