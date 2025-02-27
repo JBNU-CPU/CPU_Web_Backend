@@ -9,7 +9,7 @@ public class EventRequestDTO {
     private String userId;
     private Integer score;
     private String nickName;
-
+    //
     public Event toEventEntity(){
         Event event = new Event();
         event.setUserId(userId);
