@@ -46,8 +46,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((auth) -> auth
 
-                .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**", "/study", "/post", "/event", "/api/**", "/study/apply/**").permitAll()  // 이메일 인증 경로 허용
-                .requestMatchers("/study/**", "/post/**", "/comment", "/comment/**").hasAnyRole("MEMBER", "ADMIN")
+                .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**", "/study", "/post", "/event").permitAll()  // 이메일 인증 경로 허용
+                .requestMatchers("/study/**", "/study/apply/**","/post/**", "/comment", "/comment/**").hasAnyRole("MEMBER", "ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
         );
