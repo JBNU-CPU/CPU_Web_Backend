@@ -21,5 +21,5 @@ public class Event {
     private Integer score;
 
     @Column(name = "nickname")
-    private String nickname;
+    private String nickName;
 }

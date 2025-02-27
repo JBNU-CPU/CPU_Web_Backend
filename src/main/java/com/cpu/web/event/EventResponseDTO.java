@@ -8,13 +8,13 @@ import lombok.Setter;
 public class EventResponseDTO {
     private String userId;
     private Integer score;
-    private String nickname;
+    private String nickName;
     public EventResponseDTO(){
 
     }
     public EventResponseDTO(Event event){
         userId = event.getUserId();
         score = event.getScore();
-        nickname = event.getNickname();
+        nickName = event.getNickname();
     }
 }
