@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +40,10 @@ public class Member {
     private String email;
 
     @CreationTimestamp
-    private Timestamp createDate;
+    private LocalDateTime createDate;
 
     @UpdateTimestamp
-    private Timestamp updateDate;
+    private LocalDateTime updateDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
