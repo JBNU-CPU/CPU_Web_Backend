@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,8 +17,8 @@ public class MemberResponseDTO {
     private Member.Role role;  // Role enum 타입으로 변경
     private String personName;
     private String email;
-    private Timestamp createDate;
-    private Timestamp updateDate;
+    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
 
     // entity => dto 변환
     public MemberResponseDTO(Member member) {

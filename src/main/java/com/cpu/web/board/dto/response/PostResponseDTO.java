@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,7 +26,7 @@ public class PostResponseDTO {
     private String content;
 
     @Schema(description = "작성일", example = "2025-01-22T11:45:33.183+00:00")
-    private Timestamp createDate;
+    private LocalDateTime createDate;
 
     @Schema(description = "작성자 ID", example = "1")
     private Long memberId;
