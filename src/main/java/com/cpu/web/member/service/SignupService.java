@@ -22,6 +22,11 @@ public class SignupService {
         if (memberRepository.existsByUsername(signupDTO.getUsername())) {
             throw new DuplicateResourceException("이미 존재하는 아이디입니다.");
         }
+        
+        // ID 형식 체크
+        if (!signupDTO.getUsername().matches("^20\\d{7}$")) {
+            throw new IllegalArgumentException("ID는 '20'으로 시작하는 9자리 숫자여야 합니다.");
+        }
 
         // 닉네임 중복 여부 체크
         if (memberRepository.existsByNickName(signupDTO.getNickName())) {
