@@ -30,7 +30,6 @@ public class PostService {
     public Post createPost(PostRequestDTO postRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("현재 로그인한 사용자 (글 신청)" + username);
         Optional<Member> member = memberRepository.findByUsername(username);
         String title = postRequestDTO.getTitle();
         String content = postRequestDTO.getContent();

@@ -1,5 +1,7 @@
 package com.cpu.web.config;
 
+import com.cpu.web.exception.security.CustomAccessDeniedHandler;
+import com.cpu.web.exception.security.CustomAuthenticationEntryPoint;
 import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -62,6 +64,11 @@ public class SecurityConfig {
                 .hasRole("ADMIN") // 관리자 전용 경로
                 .anyRequest()
                 .authenticated()
+        );
+
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 401 Unauthorized 처리
+                .accessDeniedHandler(new CustomAccessDeniedHandler()) // 403 Forbidden 처리
         );
 
         http.formLogin(login -> login.disable());
