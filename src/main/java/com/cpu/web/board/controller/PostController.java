@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -66,10 +65,12 @@ public class PostController {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResponseDTO.class)))
     })
     public Page<PostResponseDTO> getAllPosts(
-        @Parameter(description = "페이지 번호 (0 이상)", example = "0")
-        @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
-        @Parameter(description = "페이지 크기 (최대 100)", example = "10")
-        @RequestParam(defaultValue = "10") @Min(value = 1, message = "페이지 크기는 최소 1 이상이어야 합니다.") @Max(value = 100, message = "페이지 크기는 최대 100까지 가능합니다.") int size) {
+            @Parameter(description = "페이지 번호 (0 이상)", example = "0")
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
+
+            @Parameter(description = "페이지 크기 (최대 100)", example = "10")
+            @RequestParam(defaultValue = "10") @Min(value = 1, message = "페이지 크기는 최소 1 이상이어야 합니다.")
+            @Max(value = 100, message = "페이지 크기는 최대 100까지 가능합니다.") int size) {
 
         return postService.getAllPosts(page, size);
     }
