@@ -98,9 +98,14 @@ public class StudyService {
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + id));
 
-        // ✅ 스터디 리더인지 확인
+        // 스터디 리더인지 확인
         if (!study.getLeaderId().equals(leaderId)) {
             throw new IllegalArgumentException("팀장이 아니므로 수정 권한이 없습니다: " + leaderId);
+        }
+
+        // 스터디 등록 시 수정 불가
+        if(study.getIsAccepted()){
+            throw new IllegalArgumentException("스터디가 등록되었으므로 수정할 수 없습니다.");
         }
 
         Study updatedStudy = studyRequestDTO.toStudyEntity(member.get());
