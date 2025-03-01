@@ -33,6 +33,9 @@ public class StudyResponseDTO {
     @Schema(description = "스터디 최대 인원", example = "8")
     private int maxMembers;
 
+    @Schema(description = "현재 참여 인원 수", example = "5")
+    private Long currentCount;
+
     @Schema(description = "스터디 설명", example = "자바 공부해서 취뽀해봅시다.")
     private String studyDescription;
 
@@ -64,6 +67,7 @@ public class StudyResponseDTO {
 
     // TODO: DB에 List<String> 형태로 저장되어 있는 studyDays 필드 파싱해서 List<{요일, 시작시간, 종료시간}>으로 만들기
     // entity => dto (스터디 참여 멤버 정보 없음)
+    // ✅ 기존 기본 생성자
     public StudyResponseDTO(Study study) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
@@ -78,16 +82,36 @@ public class StudyResponseDTO {
         this.leaderId = study.getLeaderId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
+        this.currentCount = 0L; // ✅ 기본값 추가
     }
 
-    // entity => dto (스터디 참여 멤버 정보 있음)
-    public StudyResponseDTO(Study study, List<MemberStudy> memberStudies) {
+    // entity => dto (스터디 참여 멤버 정보 없음, 현재 참여 인원수 포함)
+    public StudyResponseDTO(Study study, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
         this.leaderName = study.getLeaderName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
+        this.currentCount = currentCount;
+        this.studyDescription = study.getStudyDescription();
+        this.techStack = study.getTechStack();
+        this.location = study.getLocation();
+        this.etc = study.getEtc();
+        this.leaderId = study.getLeaderId();
+        this.createDate = study.getCreatedDate();
+        this.studyDays = study.getStudyDays();
+    }
+
+    // entity => dto (스터디 참여 멤버 정보 있음)
+    public StudyResponseDTO(Study study, List<MemberStudy> memberStudies, Long currentCount) {
+        this.id = study.getStudyId();
+        this.isAccepted = study.getIsAccepted();
+        this.leaderName = study.getLeaderName();
+        this.studyName = study.getStudyName();
+        this.studyType = study.getStudyType();
+        this.maxMembers = study.getMaxMembers();
+        this.currentCount = currentCount;
         this.studyDescription = study.getStudyDescription();
         this.techStack = study.getTechStack();
         this.location = study.getLocation();

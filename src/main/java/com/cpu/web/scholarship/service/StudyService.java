@@ -55,24 +55,31 @@ public class StudyService {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("studyId").descending());
         if (studyType != null && !studyType.isEmpty()) {
             Study.StudyType type = Study.StudyType.valueOf(studyType.toLowerCase());
-            return studyRepository.findByStudyType(type, pageRequest).map(StudyResponseDTO::new);
+            return studyRepository.findByStudyType(type, pageRequest)
+                    .map(study -> {
+                        Long currentCount = memberStudyRepository.countByStudy(study); // ✅ 참여자 수 조회
+                        return new StudyResponseDTO(study, currentCount); // ✅ DTO에 추가
+                    });
         }
-        return studyRepository.findAll(pageRequest).map(StudyResponseDTO::new);
+        return studyRepository.findAll(pageRequest)
+                .map(study -> {
+                    Long currentCount = memberStudyRepository.countByStudy(study); // ✅ 참여자 수 조회
+                    return new StudyResponseDTO(study, currentCount); // ✅ DTO에 추가
+                });
     }
 
     // 스터디 개별 조회
     public Optional<StudyResponseDTO> getStudyById(Long id) {
-        // 스터디 정보 가져오기
-        Optional<Study> study = studyRepository.findById(id);
-        if (study.isEmpty()) {
+        Optional<Study> studyOpt = studyRepository.findById(id);
+        if (studyOpt.isEmpty()) {
             return Optional.empty();
         }
 
-        // ✅ 해당 스터디에 참여 중인 멤버 정보 가져오기
+        Study study = studyOpt.get();
         List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
+        Long currentCount = memberStudyRepository.countByStudy(study); // ✅ 참여자 수 조회
 
-        // ✅ StudyDTO 변환
-        return Optional.of(new StudyResponseDTO(study.get(), memberStudies));
+        return Optional.of(new StudyResponseDTO(study, memberStudies, currentCount)); // ✅ DTO에 추가
     }
 
     // 스터디 수정
