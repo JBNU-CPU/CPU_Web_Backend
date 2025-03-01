@@ -1,5 +1,6 @@
 package com.cpu.web.scholarship.service;
 
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,7 +35,7 @@ public class StudyService {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Member leader = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
         // 스터디 생성 및 저장
         Study study = studyRequestDTO.toStudyEntity(leader);
@@ -86,30 +88,29 @@ public class StudyService {
     public StudyResponseDTO updateStudy(Long id, StudyRequestDTO studyRequestDTO) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Member> member = memberRepository.findByUsername(username);
 
-        if (member.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
-        Long leaderId = member.get().getMemberId(); // ✅ 현재 로그인한 사용자 ID 가져오기
+        Long leaderId = member.getMemberId(); // ✅ 현재 로그인한 사용자 ID 가져오기
 
         // 스터디 찾기
         Study study = studyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + id));
+                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 스터디 리더인지 확인
         if (!study.getLeaderId().equals(leaderId)) {
-            throw new IllegalArgumentException("팀장이 아니므로 수정 권한이 없습니다: " + leaderId);
+            throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + leaderId, HttpStatus.FORBIDDEN);
         }
 
         // 스터디 등록 시 수정 불가
         if(study.getIsAccepted()){
-            throw new IllegalArgumentException("스터디가 등록되었으므로 수정할 수 없습니다.");
+            throw new CustomException("스터디가 등록되었으므로 수정할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        Study updatedStudy = studyRequestDTO.toStudyEntity(member.get());
+        Study updatedStudy = studyRequestDTO.toStudyEntity(member);
         updatedStudy.setStudyId(study.getStudyId());
+
         // studyType 변환 처리
         String typeStr = studyRequestDTO.getStudyType().toLowerCase().trim();
         switch (typeStr) {
@@ -123,7 +124,7 @@ public class StudyService {
                 updatedStudy.setStudyType(Study.StudyType.project);
                 break;
             default:
-                throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다: " + studyRequestDTO.getStudyType());
+                throw new CustomException("유효하지 않은 스터디 타입입니다: " + studyRequestDTO.getStudyType(), HttpStatus.BAD_REQUEST);
         }
 
         return new StudyResponseDTO(studyRepository.save(updatedStudy));
@@ -134,23 +135,18 @@ public class StudyService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
-        Optional<Member> member = memberRepository.findByUsername(username);
 
-        if (member.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
-        Long leaderId = member.get().getMemberId(); // ✅ 현재 로그인한 사용자 ID 가져오기
-        System.out.println("스터디 삭제 username = " + username);
-        // 스터디 찾기
         Study study = studyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid study ID: " + id));
+                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 관리자이거나 스터디 개설자인 경우 삭제 가능
         if (isAdmin || username.equals(study.getLeaderName())) {
             studyRepository.deleteById(id);
         } else {
-            throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + username);
+            throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
         }
 
         studyRepository.deleteById(id);
