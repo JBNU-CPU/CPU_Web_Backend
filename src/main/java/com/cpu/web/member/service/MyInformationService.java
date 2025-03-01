@@ -1,5 +1,6 @@
 package com.cpu.web.member.service;
 
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.dto.request.CheckDTO;
 import com.cpu.web.member.dto.request.MyPageEditDTO;
 import com.cpu.web.member.dto.request.NewPasswordDTO;
@@ -11,6 +12,7 @@ import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +36,7 @@ public class MyInformationService {
 
     public MemberResponseDTO updateMember(MyPageEditDTO myPageEditDTO, String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
         member.setNickName(myPageEditDTO.getNickName());
         member.setPassword(bCryptPasswordEncoder.encode(myPageEditDTO.getPassword()));
         member.setPersonName(myPageEditDTO.getPersonName());
@@ -45,14 +47,14 @@ public class MyInformationService {
 
     public void setNewPassword(NewPasswordDTO newPasswordDTO) {
         Member member = memberRepository.findByUsername(newPasswordDTO.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다: " + newPasswordDTO.getUsername()));
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
         member.setPassword(bCryptPasswordEncoder.encode(newPasswordDTO.getPassword()));
         memberRepository.save(member);
     }
 
     public void withdraw(String username) {
         if(!memberRepository.existsByUsername(username)){
-            throw new IllegalArgumentException("존재하지 않는 아이디입니다: " + username);
+            throw new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED);
         }
         memberRepository.deleteByUsername(username);
     }
@@ -60,7 +62,7 @@ public class MyInformationService {
     // 내가 참여한 스터디 목록 조회
     public List<StudyOverviewDTO> getMyJoinedStudies(String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
 
         return memberStudyRepository.findByMemberAndIsLeaderFalse(member).stream()
                 .map(ms -> {
@@ -74,7 +76,7 @@ public class MyInformationService {
     // 내가 개설한 스터디 목록 조회
     public List<StudyOverviewDTO> getMyLedStudies(String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
 
         return memberStudyRepository.findByMemberAndIsLeaderTrue(member).stream()
                 .map(ms -> {

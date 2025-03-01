@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,7 +56,7 @@ public class MyInformationController {
             @Parameter(name = "personName", description = "이름", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "홍길동"))),
             @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "email", example = "user@example.com")))
     })
-    public ResponseEntity<MemberResponseDTO> updateMember(@RequestBody MyPageEditDTO myPageEditDTO){
+    public ResponseEntity<MemberResponseDTO> updateMember(@RequestBody @Valid MyPageEditDTO myPageEditDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberResponseDTO updatedMemberDTO = myInformationService.updateMember(myPageEditDTO, username);
         return ResponseEntity.ok(updatedMemberDTO);
