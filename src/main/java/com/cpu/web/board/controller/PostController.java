@@ -15,6 +15,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +48,7 @@ public class PostController {
                     description = "게시글 작성 데이터",
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostRequestDTO.class))
-            ) @RequestBody PostRequestDTO postRequestDTO) {
+            )  @RequestBody @Valid PostRequestDTO postRequestDTO) {
         Post post = postService.createPost(postRequestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/post/{id}")
@@ -59,15 +63,7 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResponseDTO.class)))
     })
-    public Page<PostResponseDTO> getAllPosts(@Parameter(description = "페이지 번호 (0 이상)", example = "0") @RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10") @RequestParam(defaultValue = "10") int size) {
-
-        if (page < 0) {
-            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
-        }
-
-        if (size <= 0 || size > 100) {
-            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
-        }
+    public Page<PostResponseDTO> getAllPosts(@Parameter(description = "페이지 번호 (0 이상)", example = "0") @RequestParam(defaultValue = "0") @Min(1) int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10") @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
 
         return postService.getAllPosts(page, size);
     }

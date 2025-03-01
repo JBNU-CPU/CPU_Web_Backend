@@ -31,26 +31,6 @@ public class PostService {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Member> member = memberRepository.findByUsername(username);
-        String title = postRequestDTO.getTitle();
-        String content = postRequestDTO.getContent();
-
-        // 제목 유효한지
-        if (title == null) {
-            throw new IllegalArgumentException("제목이 유효하지 않습니다.");
-        } else if (title.isEmpty()) {
-            throw new IllegalArgumentException("제목이 유효하지 않습니다.");
-        } else if (title.isBlank()) {
-            throw new IllegalArgumentException("제목이 유효하지 않습니다.");
-        }
-
-        // 내용 유효한지
-        if (content == null) {
-            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
-        } else if (content.isEmpty()) {
-            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
-        } else if (content.isBlank()) {
-            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
-        }
 
         if (member.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
