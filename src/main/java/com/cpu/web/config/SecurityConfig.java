@@ -4,6 +4,8 @@ import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,6 +40,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
+        hierarchy.setHierarchy("ROLE_ADMIN > ROLE_MEMBER \n ROLE_MEMBER > ROLE_GUEST");
+        return hierarchy;
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable);
@@ -45,11 +54,14 @@ public class SecurityConfig {
 
 
         http.authorizeHttpRequests((auth) -> auth
-
-                .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**", "/study", "/post", "/event").permitAll()  // 이메일 인증 경로 허용
-                .requestMatchers("/study/**", "/study/apply/**","/post/**", "/comment", "/comment/**").hasAnyRole("MEMBER", "ADMIN")
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**", "/study", "/post", "/event")
+                .permitAll() // 비회원 접근 허용 경로
+                .requestMatchers("/study/**", "/study/apply/**", "/post/**", "/comment/**")
+                .hasAnyRole("MEMBER") // 게시글 조회/작성은 MEMBER 이상만 가능
+                .requestMatchers("/admin/**")
+                .hasRole("ADMIN") // 관리자 전용 경로
+                .anyRequest()
+                .authenticated()
         );
 
         http.formLogin(login -> login.disable());
