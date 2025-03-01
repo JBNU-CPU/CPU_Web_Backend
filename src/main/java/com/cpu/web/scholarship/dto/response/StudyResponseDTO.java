@@ -21,7 +21,10 @@ public class StudyResponseDTO {
     @Schema(description = "등록 여부", example = "true")
     private Boolean isAccepted;
 
-    @Schema(description = "개설자명", example = "개설자명")
+    @Schema(description = "개설자 아이디", example = "202018556")
+    private String leaderUserName;
+
+    @Schema(description = "개설자 이름", example = "박도현")
     private String leaderName;
 
     @Schema(description = "스터디명", example = "자바를 잡아라!")
@@ -71,6 +74,7 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
+        this.leaderUserName = study.getLeaderUserName();
         this.leaderName = study.getLeaderName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
@@ -89,6 +93,7 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
+        this.leaderUserName = study.getLeaderUserName();
         this.leaderName = study.getLeaderName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
@@ -107,6 +112,7 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, List<MemberStudy> memberStudies, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
+        this.leaderUserName = study.getLeaderUserName();
         this.leaderName = study.getLeaderName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();

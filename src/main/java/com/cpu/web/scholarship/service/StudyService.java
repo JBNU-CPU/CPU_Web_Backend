@@ -143,13 +143,9 @@ public class StudyService {
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 관리자이거나 스터디 개설자인 경우 삭제 가능
-        if (isAdmin || username.equals(study.getLeaderName())) {
-            System.out.println("username = " + username);
-            System.out.println("study.getLeaderName = " + study.getLeaderName());
+        if (isAdmin || username.equals(study.getLeaderUserName())) {
             studyRepository.deleteById(id);
         } else {
-            System.out.println("username = " + username);
-            System.out.println("study.getLeaderName = " + study.getLeaderName());
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
         }
 

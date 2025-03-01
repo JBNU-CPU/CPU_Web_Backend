@@ -25,6 +25,9 @@ public class Study {
     @Column(name = "leader_id", nullable = false)
     private Long leaderId;
 
+    @Column(name = "leader_username", nullable = false)
+    private String leaderUserName;
+
     @Column(name = "leader_name", nullable = false)
     private String leaderName;
 
