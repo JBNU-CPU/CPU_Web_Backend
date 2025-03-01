@@ -8,6 +8,7 @@ import com.cpu.web.member.dto.response.StudyOverviewDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import com.cpu.web.scholarship.entity.MemberStudy;
+import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,10 +21,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MyPageService {
+public class MyInformationService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final MemberStudyRepository memberStudyRepository;
 
     // 내 정보 조회
     public Optional<MemberResponseDTO> getMyInformation(String username) {
@@ -41,16 +43,6 @@ public class MyPageService {
         return new MemberResponseDTO(updatedMember);
     }
 
-    // 비밀번호 찾기를 위한 아이디 및 이메일 검증
-    public boolean checkIdAndEmail(CheckDTO checkDTO) {
-        Optional<Member> member = memberRepository.findByUsername(checkDTO.getUsername());
-        if(member.isEmpty()){
-            return false;
-        }else{
-            return Objects.equals(member.get().getEmail(), checkDTO.getEmail());
-        }
-    }
-
     public void setNewPassword(NewPasswordDTO newPasswordDTO) {
         Member member = memberRepository.findByUsername(newPasswordDTO.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다: " + newPasswordDTO.getUsername()));
@@ -65,17 +57,32 @@ public class MyPageService {
         memberRepository.deleteByUsername(username);
     }
 
-    private final MemberStudyRepository memberStudyRepository;
-
-    // 참여 스터디 목록 조회
-    public List<StudyOverviewDTO> getMyStudies(String username) {
+    // 내가 참여한 스터디 목록 조회
+    public List<StudyOverviewDTO> getMyJoinedStudies(String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
-        List<MemberStudy> memberStudies = memberStudyRepository.findByMember_MemberId(member.getMemberId());
-        return memberStudies.stream()
-                .map(memberStudy -> new StudyOverviewDTO(memberStudy.getStudy()))
+
+        return memberStudyRepository.findByMemberAndIsLeaderFalse(member).stream()
+                .map(ms -> {
+                    Study study = ms.getStudy();
+                    Long currentCount = memberStudyRepository.countByStudy(study); // 여기서 스터디 인원 수 조회
+                    return new StudyOverviewDTO(study, currentCount); // DTO 생성자에 넘겨줌
+                })
                 .collect(Collectors.toList());
     }
-    
-    // 개설 스터디 목록 조회
+
+    // 내가 개설한 스터디 목록 조회
+    public List<StudyOverviewDTO> getMyLedStudies(String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+
+        return memberStudyRepository.findByMemberAndIsLeaderTrue(member).stream()
+                .map(ms -> {
+                    Study study = ms.getStudy();
+                    Long currentCount = memberStudyRepository.countByStudy(study); // 여기서 스터디 인원 수 조회
+                    return new StudyOverviewDTO(study, currentCount); // DTO 생성자에 넘겨줌
+                })
+                .collect(Collectors.toList());
+    }
+
 }

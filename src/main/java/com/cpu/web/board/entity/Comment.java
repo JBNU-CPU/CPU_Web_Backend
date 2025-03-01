@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,10 +24,10 @@ public class Comment {
     private String content;
 
     @CreationTimestamp
-    private Timestamp postDate;
+    private LocalDateTime postDate;
 
     @UpdateTimestamp
-    private Timestamp updateDate;
+    private LocalDateTime updateDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
