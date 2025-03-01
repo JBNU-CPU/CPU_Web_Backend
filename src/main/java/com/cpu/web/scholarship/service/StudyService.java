@@ -144,6 +144,8 @@ public class StudyService {
 
         // 관리자이거나 스터디 개설자인 경우 삭제 가능
         if (isAdmin || username.equals(study.getLeaderName())) {
+            System.out.println("username = " + username);
+            System.out.println("study.getLeaderName = " + study.getLeaderName());
             studyRepository.deleteById(id);
         } else {
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
