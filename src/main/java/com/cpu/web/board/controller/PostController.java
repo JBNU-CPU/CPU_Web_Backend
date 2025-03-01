@@ -22,6 +22,7 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,6 +32,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/post")
 @Tag(name = "Board", description = "게시판 API")
 public class PostController {
@@ -63,7 +65,11 @@ public class PostController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageResponseDTO.class)))
     })
-    public Page<PostResponseDTO> getAllPosts(@Parameter(description = "페이지 번호 (0 이상)", example = "0") @RequestParam(defaultValue = "0") @Min(0) int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10") @RequestParam(defaultValue = "10") @Min(0) @Max(100) int size) {
+    public Page<PostResponseDTO> getAllPosts(
+        @Parameter(description = "페이지 번호 (0 이상)", example = "0")
+        @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
+        @Parameter(description = "페이지 크기 (최대 100)", example = "10")
+        @RequestParam(defaultValue = "10") @Min(value = 1, message = "페이지 크기는 최소 1 이상이어야 합니다.") @Max(value = 100, message = "페이지 크기는 최대 100까지 가능합니다.") int size) {
 
         return postService.getAllPosts(page, size);
     }
@@ -93,7 +99,7 @@ public class PostController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "수정할 게시글 데이터", required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
-            ) @RequestBody PostResponseDTO postResponseDTO) {
+            ) @RequestBody @Valid PostResponseDTO postResponseDTO) {
         PostResponseDTO updatedPostResponseDTO = postService.updatePost(id, postResponseDTO);
 
         return ResponseEntity.ok(updatedPostResponseDTO);
