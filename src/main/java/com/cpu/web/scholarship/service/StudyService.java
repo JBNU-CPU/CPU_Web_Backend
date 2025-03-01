@@ -146,6 +146,8 @@ public class StudyService {
         if (isAdmin || username.equals(study.getLeaderUserName())) {
             studyRepository.deleteById(id);
         } else {
+            System.out.println("username = " + username);
+            System.out.println("study.getLeaderUserName() = " + study.getLeaderUserName());
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
         }
 
