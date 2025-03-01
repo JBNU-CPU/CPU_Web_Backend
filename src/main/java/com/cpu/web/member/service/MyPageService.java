@@ -67,7 +67,7 @@ public class MyPageService {
 
     private final MemberStudyRepository memberStudyRepository;
 
-    // 내가 참여하고 있는 스터디 목록 조회
+    // 참여 스터디 목록 조회
     public List<StudyOverviewDTO> getMyStudies(String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
@@ -76,4 +76,6 @@ public class MyPageService {
                 .map(memberStudy -> new StudyOverviewDTO(memberStudy.getStudy()))
                 .collect(Collectors.toList());
     }
+    
+    // 개설 스터디 목록 조회
 }

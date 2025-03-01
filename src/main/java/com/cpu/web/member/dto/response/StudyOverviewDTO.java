@@ -12,6 +12,7 @@ public class StudyOverviewDTO {
     private Long id;
     private String name;
     private String studyType;
+    private String isLeader;
 
     public StudyOverviewDTO(Study study) {
         this.id = study.getStudyId();
