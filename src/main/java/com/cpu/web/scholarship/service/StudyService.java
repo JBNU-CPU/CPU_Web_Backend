@@ -148,6 +148,8 @@ public class StudyService {
             System.out.println("study.getLeaderName = " + study.getLeaderName());
             studyRepository.deleteById(id);
         } else {
+            System.out.println("username = " + username);
+            System.out.println("study.getLeaderName = " + study.getLeaderName());
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
         }
 
