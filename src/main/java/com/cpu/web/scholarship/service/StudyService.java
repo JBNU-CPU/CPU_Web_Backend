@@ -59,29 +59,25 @@ public class StudyService {
             Study.StudyType type = Study.StudyType.valueOf(studyType.toLowerCase());
             return studyRepository.findByStudyType(type, pageRequest)
                     .map(study -> {
-                        Long currentCount = memberStudyRepository.countByStudy(study); // ✅ 참여자 수 조회
-                        return new StudyResponseDTO(study, currentCount); // ✅ DTO에 추가
+                        Long currentCount = memberStudyRepository.countByStudy(study);
+                        return new StudyResponseDTO(study, currentCount);
                     });
         }
         return studyRepository.findAll(pageRequest)
                 .map(study -> {
-                    Long currentCount = memberStudyRepository.countByStudy(study); // ✅ 참여자 수 조회
-                    return new StudyResponseDTO(study, currentCount); // ✅ DTO에 추가
+                    Long currentCount = memberStudyRepository.countByStudy(study);
+                    return new StudyResponseDTO(study, currentCount);
                 });
     }
 
     // 스터디 개별 조회
     public Optional<StudyResponseDTO> getStudyById(Long id) {
-        Optional<Study> studyOpt = studyRepository.findById(id);
-        if (studyOpt.isEmpty()) {
-            return Optional.empty();
-        }
+        Study study = studyRepository.findById(id).orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
-        Study study = studyOpt.get();
         List<MemberStudy> memberStudies = memberStudyRepository.findByStudy_StudyId(id);
-        Long currentCount = memberStudyRepository.countByStudy(study); // ✅ 참여자 수 조회
+        Long currentCount = memberStudyRepository.countByStudy(study);
 
-        return Optional.of(new StudyResponseDTO(study, memberStudies, currentCount)); // ✅ DTO에 추가
+        return Optional.of(new StudyResponseDTO(study, memberStudies, currentCount));
     }
 
     // 스터디 수정
@@ -92,7 +88,7 @@ public class StudyService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
-        Long leaderId = member.getMemberId(); // ✅ 현재 로그인한 사용자 ID 가져오기
+        Long leaderId = member.getMemberId();
 
         // 스터디 찾기
         Study study = studyRepository.findById(id)
@@ -146,8 +142,6 @@ public class StudyService {
         if (isAdmin || username.equals(study.getLeaderUserName())) {
             studyRepository.deleteById(id);
         } else {
-            System.out.println("username = " + username);
-            System.out.println("study.getLeaderUserName() = " + study.getLeaderUserName());
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
         }
 

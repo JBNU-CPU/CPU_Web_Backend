@@ -105,14 +105,15 @@ public class AdminController {
                     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDTO.class)))
             }
     )
-    public Page<StudyResponseDTO> getAllStudies(@Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
-        if(page < 0) {
-            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
-        }
+    public Page<StudyResponseDTO> getAllStudies(
+            @Parameter(description = "페이지 번호 (0 이상)", example = "0")
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
 
-        if(size <= 0 || size >100) {
-            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
-        }
+            @Parameter(description = "페이지 크기 (최대 100)", example = "10")
+            @RequestParam(defaultValue = "10") @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
+            @Max(value = 100, message = "페이지 크기는 최대 100까지 가능합니다.") int size
+    ) {
+
         return adminService.getAllStudy(page, size);
     }
 
@@ -124,15 +125,17 @@ public class AdminController {
                     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyResponseDTO.class)))
             }
     )
-    public Page<StudyResponseDTO> getStudiesByStudyType(@Parameter(description = "조회할 권한(admin or member or guest)", example = "admin") @PathVariable String studyType, @Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+    public Page<StudyResponseDTO> getStudiesByStudyType(
+            @Parameter(description = "조회할 권한(admin or member or guest)", example = "admin") @PathVariable String studyType,
 
-        if(page < 0) {
-            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
-        }
+            @Parameter(description = "페이지 번호 (0 이상)", example = "0")
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
 
-        if(size <= 0 || size >100) {
-            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
-        }
+            @Parameter(description = "페이지 크기 (최대 100)", example = "10")
+            @RequestParam(defaultValue = "10")
+            @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
+            @Max(value = 100, message = "페이지 크기는 최대 100까지 가능합니다.") int size) {
 
         return adminService.getStudiesByStudyType(studyType, page, size);
     }

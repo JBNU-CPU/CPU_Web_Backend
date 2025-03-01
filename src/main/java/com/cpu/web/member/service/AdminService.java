@@ -50,14 +50,14 @@ public class AdminService {
     // 특정 유저 권한 수정
     public MemberResponseDTO updateRole(Long id, String role) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다: " + id));
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
 
         // 문자열로 받은 권한을 Role enum으로 변환
         Role enumRole = switch (role) {
             case "admin" -> ROLE_ADMIN;
             case "guest" -> ROLE_GUEST;
             case "member" -> ROLE_MEMBER;
-            default -> throw new IllegalArgumentException("유효하지 않은 권한입니다.");
+            default -> throw new CustomException("유효하지 않은 권한입니다.", HttpStatus.FORBIDDEN);
         };
         member.setRole(enumRole);
         Member updatedMember = memberRepository.save(member);
@@ -67,7 +67,7 @@ public class AdminService {
     // 유저 삭제
     public void deleteUser(Long id) {
         if (!memberRepository.existsById(id)){
-            throw new IllegalArgumentException("유저가 존재하지 않습니다.: " + id);
+            throw new CustomException("유저가 존재하지 않습니다.: " + id, HttpStatus.NOT_FOUND);
         }
         memberRepository.deleteById(id);
     }
@@ -87,7 +87,7 @@ public class AdminService {
             case "session" -> session;
             case "study" -> study;
             case "project" -> project;
-            default -> throw new IllegalArgumentException("유효하지 않은 스터디 타입입니다..");
+            default -> throw new CustomException("유효하지 않은 스터디 타입입니다.", HttpStatus.BAD_REQUEST);
         };
         Page<Study> studies =  studyRepository.findByStudyType(enumStudyType, PageRequest.of(page, size));
         return studies.map(StudyResponseDTO::new);
@@ -96,7 +96,7 @@ public class AdminService {
     // 스터디 등록
     public StudyResponseDTO acceptStudy(Long id) {
         Study study = studyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다: " + id));
+                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
         study.setIsAccepted(true);
         Study updatedStudy = studyRepository.save(study);
         return new StudyResponseDTO(updatedStudy);
@@ -105,19 +105,10 @@ public class AdminService {
     // 스터디 등록 취소
     public StudyResponseDTO unacceptStudy(Long id) {
         Study study = studyRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("스터디가 존재하지 않습니다: " + id));
+                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
         study.setIsAccepted(false);
         Study updatedStudy = studyRepository.save(study);
         return new StudyResponseDTO(updatedStudy);
-    }
-
-    // 스터디 삭제
-
-    public void deleteStudy(Long id) {
-        if (!studyRepository.existsById(id)){
-            throw new IllegalArgumentException("유저가 존재하지 않습니다.: " + id);
-        }
-        studyRepository.deleteById(id);
     }
 
 }
