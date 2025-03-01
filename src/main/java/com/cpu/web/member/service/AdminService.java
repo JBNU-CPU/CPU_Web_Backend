@@ -1,5 +1,6 @@
 package com.cpu.web.member.service;
 
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
@@ -9,6 +10,7 @@ import com.cpu.web.scholarship.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,7 +41,7 @@ public class AdminService {
             case "admin" -> ROLE_ADMIN;
             case "guest" -> ROLE_GUEST;
             case "member" -> ROLE_MEMBER;
-            default -> throw new IllegalArgumentException("유효하지 않은 권한입니다.");
+            default -> throw new CustomException("유효하지 않은 권한입니다.", HttpStatus.BAD_REQUEST);
         };
         Page<Member> members =  memberRepository.findByRole(enumRole, PageRequest.of(page, size));
         return members.map(MemberResponseDTO::new);

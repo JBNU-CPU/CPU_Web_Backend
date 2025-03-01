@@ -5,6 +5,7 @@ import com.cpu.web.board.dto.response.PostResponseDTO;
 import com.cpu.web.board.dto.response.SearchResponseDTO;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.PostRepository;
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,13 +32,10 @@ public class PostService {
     public Post createPost(PostRequestDTO postRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Member> member = memberRepository.findByUsername(username);
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
-        if (member.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
-
-        Post post = postRequestDTO.toPostEntity(member.get());
+        Post post = postRequestDTO.toPostEntity(member);
         return postRepository.save(post);
     }
 
@@ -54,18 +53,15 @@ public class PostService {
     // 글 수정
     public PostResponseDTO updatePost(Long id, PostResponseDTO postResponseDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Member> member = memberRepository.findByUsername(username);
-
-        if (member.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
-        }
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
 
         if (!username.equals(postRepository.findById(id).orElseThrow().getMember().getUsername())) {
-            throw new IllegalArgumentException("수정 권한이 없는 유저입니다: " + username);
+            throw new CustomException("수정 권한이 없는 유저입니다: " + username, HttpStatus.FORBIDDEN);
         }
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Post ID: " + id));
+                .orElseThrow(() -> new CustomException("게시글이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         post.setTitle(postResponseDTO.getTitle());
         post.setContent(postResponseDTO.getContent());
@@ -78,21 +74,18 @@ public class PostService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
-        Optional<Member> member = memberRepository.findByUsername(username);
-
-        if (member.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
-        }
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
 
         // 해당 게시글이 존재하는지 확인
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Invalid Post ID: " + id));
+                .orElseThrow(() -> new CustomException("게시글이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 관리자이거나 게시글 작성자인 경우 삭제 가능
         if (isAdmin || username.equals(post.getMember().getUsername())) {
             postRepository.deleteById(id);
         } else {
-            throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + username);
+            throw new CustomException("삭제 권한이 없는 유저입니다: " + username, HttpStatus.FORBIDDEN);
         }
     }
 

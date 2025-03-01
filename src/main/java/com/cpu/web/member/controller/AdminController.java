@@ -1,5 +1,6 @@
 package com.cpu.web.member.controller;
 
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
 import com.cpu.web.member.service.AdminService;
 import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
@@ -10,14 +11,19 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/admin")
 @Tag(name = "Admin", description = "관리자 API")
 public class AdminController {
@@ -32,14 +38,14 @@ public class AdminController {
                     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDTO.class)))
             }
     )
-    public Page<MemberResponseDTO> getAllUsers(@Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
-        if(page < 0) {
-            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
-        }
+    public Page<MemberResponseDTO> getAllUsers(
+        @Parameter(description = "페이지 번호 (0 이상)", example = "0")
+        @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
 
-        if(size <= 0 || size >100) {
-            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
-        }
+        @Parameter(description = "페이지 크기 (최대 100)", example = "10")
+        @RequestParam(defaultValue = "10") @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
+        @Max(value = 100, message = "페이지 크기는 최대 100까지 가능합니다.") int size) {
+
         return adminService.getAllUser(page, size);
     }
 
@@ -51,15 +57,16 @@ public class AdminController {
                     @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemberResponseDTO.class)))
             }
     )
-    public Page<MemberResponseDTO> getUsersByRole(@Parameter(description = "조회할 권한(admin or member or guest)", example = "admin") @PathVariable String role, @Parameter(description = "페이지 번호 (0 이상)", example = "0")@RequestParam(defaultValue = "0") int page, @Parameter(description = "페이지 크기 (최대 100)", example = "10")@RequestParam(defaultValue = "10") int size) {
+    public Page<MemberResponseDTO> getUsersByRole(
+            @Parameter(description = "조회할 권한(admin or member or guest)", example = "admin")
+            @PathVariable String role,
 
-        if(page < 0) {
-            throw new IllegalArgumentException("페이지 번호는 0 이상이어야 합니다.");
-        }
+            @Parameter(description = "페이지 번호 (0 이상)", example = "0")
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
 
-        if(size <= 0 || size >100) {
-            throw new IllegalArgumentException("페이지 크기는 1에서 100 사이여야 합니다.");
-        }
+            @Parameter(description = "페이지 크기 (최대 100)", example = "10")
+            @RequestParam(defaultValue = "10") @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.")
+            @Max(value = 100, message = "페이지 크기는 최대 100까지 가능합니다.") int size) {
 
         return adminService.getUsersByRole(role, page, size);
     }
@@ -71,13 +78,14 @@ public class AdminController {
     public ResponseEntity<MemberResponseDTO> updateRole(
             @Parameter(description = "수정할 유저의 ID", example = "1")
             @PathVariable Long id,
+
             @Parameter(description = "수정할 권한(admin or member or guest)", example = "admin")
             @RequestParam String role) {
         if (role.equals("admin") || role.equals("member") || role.equals("guest")) {
             MemberResponseDTO updateMemberDTO = adminService.updateRole(id, role);
             return ResponseEntity.ok(updateMemberDTO);
         }
-        throw new IllegalArgumentException("유효하지 않은 권한을 부여하였습니다.");
+        throw new CustomException("유효하지 않은 권한을 부여하였습니다.", HttpStatus.BAD_REQUEST);
     }
 
     // 유저 삭제
