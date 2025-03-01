@@ -48,7 +48,7 @@ public class PostController {
                     description = "게시글 작성 데이터",
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostRequestDTO.class))
-            )  @RequestBody @Valid PostRequestDTO postRequestDTO) {
+            )  @RequestBody PostRequestDTO postRequestDTO) {
         Post post = postService.createPost(postRequestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/post/{id}")
