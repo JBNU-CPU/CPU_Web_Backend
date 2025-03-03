@@ -85,10 +85,6 @@ public class SecurityConfig {
         loginFilter.setFilterProcessesUrl("/loginProc");
         http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
-        http.logout((logout) -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/"));
-
         return http.build();
     }
 }
