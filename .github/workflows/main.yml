@@ -33,23 +33,28 @@ jobs:
           name: jar-file  # 아티팩트 이름
           path: build/libs/web-0.0.1-SNAPSHOT.jar  # 빌드된 JAR 파일 경로
 
-      - name: Create private key file
-        run: |  # SSH 프라이빗 키 파일 생성
-          echo "${{ secrets.EC2_KEY }}" > private_key.pem  # GitHub Secrets에서 가져온 SSH 키를 파일로 저장
-          chmod 600 private_key.pem  # 프라이빗 키 파일에 적절한 권한 설정
+      # sshpass 사용을 위해 설치
+      - name: Install sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
 
       - name: Test SSH connection
-        run: |  # SSH 연결을 테스트
-          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo SSH connection successful"
-          # EC2 인스턴스에 SSH로 접속하여 연결이 성공하면 "SSH connection successful" 메시지 출력
+        run: |
+          sshpass -p "${{ secrets.SERVER_PASS }}" ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo SSH connection successful"
 
       - name: Deploy to EC2
         run: |  # EC2에 애플리케이션 배포
           echo "Copying JAR file to EC2..."
-          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar
+          sshpass -p "${{ secrets.SERVER_PASS }}" scp -o StrictHostKeyChecking=no \
+            build/libs/web-0.0.1-SNAPSHOT.jar \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/cpu/my-app/web-0.0.1-SNAPSHOT.jar
 
-          echo "Deploying new application on EC2..."
-          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          echo "Deploying new application on server..."
+          sshpass -p "${{ secrets.SERVER_PASS }}" ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          
             echo "Stopping current Java application..."
             PID=$(pgrep -f 'java -jar')
             if [ -n "$PID" ]; then
@@ -63,8 +68,12 @@ jobs:
             export SPRING_DATASOURCE_URL=${{ secrets.RDS_URL }}
             export SPRING_DATASOURCE_USERNAME=${{ secrets.RDS_USERNAME }}
             export SPRING_DATASOURCE_PASSWORD=${{ secrets.RDS_PASSWORD }}
-            nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds > /home/ubuntu/cpu/app.log 2>&1 &
+            
+            nohup java -jar /home/cpu/my-app/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds \
+              > /home/cpu/my-app/app.log 2>&1 &
             NEW_PID=$(pgrep -f 'java -jar')
+          
+          
           
             if [ -n "$NEW_PID" ]; then
               echo "New application started with PID $NEW_PID"
@@ -73,8 +82,4 @@ jobs:
               tail -n 50 /home/ubuntu/cpu/app.log
               exit 1
             fi
-          EOF
-
-      - name: Remove private key file
-        run: |  # 작업이 끝난 후 프라이빗 키 파일 삭제
-          rm -f private_key.pem
+            EOF

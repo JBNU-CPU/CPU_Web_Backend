@@ -28,7 +28,7 @@ public class EventController {
     
     // 이벤트 코드 등록
     @PostMapping("/eventcode")
-    public String updateEventCode(@RequestParam String eventCode ){
+    public String updateEventCode(@RequestParam String eventCode){
         this.eventCode = eventCode;
         return "Updated!";
     }
