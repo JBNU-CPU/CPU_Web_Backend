@@ -37,10 +37,10 @@ jobs:
       - name: Deploy to Ubuntu server
         run: |
           echo "Copying JAR file to Ubuntu Server..."
-          sshpass -p "${{ secrets.server_pass }}" scp -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.server_user }}@${{ secrets.server_host }}:/home/${{ secrets.server_user }}/web-0.0.1-SNAPSHOT.jar
+          sshpass -p "${{ secrets.server_pass }}" scp -P 2222 -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.server_user }}@${{ secrets.server_host }}:/home/${{ secrets.server_user }}/web-0.0.1-SNAPSHOT.jar
 
           echo "Deploying application on Ubuntu Server..."
-          sshpass -p "${{ secrets.server_pass }}" ssh -o StrictHostKeyChecking=no ${{ secrets.server_user }}@${{ secrets.server_host }} << 'EOF'
+          sshpass -p "${{ secrets.server_pass }}" ssh -p 2222 -o StrictHostKeyChecking=no ${{ secrets.server_user }}@${{ secrets.server_host }} << 'EOF'
             echo "Stopping current Java application..."
             PID=$(pgrep -f 'java -jar')
             if [ -n "$PID" ]; then
