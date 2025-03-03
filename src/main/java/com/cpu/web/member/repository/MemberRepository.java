@@ -26,6 +26,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 특정 ROLE 조회
     Page<Member> findByRole(Member.Role role, Pageable pageable);
+
+    Optional<Member> findByEmail(String email);
     
     @Transactional
     void deleteByUsername(String username);
