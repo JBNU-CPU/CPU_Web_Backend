@@ -61,7 +61,7 @@ public class MyInformationController {
         MemberResponseDTO updatedMemberDTO = myInformationService.updateMember(myPageEditDTO, username);
         return ResponseEntity.ok(updatedMemberDTO);
     }
-    
+    //
     // 비밀번호 재설정
     @PostMapping("/password")
     @Operation(summary = "비밀번호 찾기", description = "비밀번호 재설정")
