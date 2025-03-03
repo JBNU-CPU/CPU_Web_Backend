@@ -41,4 +41,5 @@ public class EventService {
                 .map(EventResponseDTO::new)
                 .collect(Collectors.toList());
     }
+
 }
