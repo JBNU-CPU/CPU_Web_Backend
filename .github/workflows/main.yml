@@ -48,12 +48,10 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test
 
-      # 5) 빌드된 JAR 파일을 아티팩트로 저장 (선택사항)
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: jar-file
-          path: build/libs/web-0.0.1-SNAPSHOT.jar
+      # 5) Docker 이미지 빌드 및 태그 지정
+      - name: Build Docker image
+        run: |
+          docker build -t my-spring-app:latest .
 
       # 6) sshpass 설치 (비밀번호 기반 SSH 자동화)
       - name: Install sshpass
@@ -74,7 +72,12 @@ jobs:
       - name: Deploy to server
         run: |
           echo "Copying JAR file to server..."
-
+          
+          # 프로젝트 파일 (Dockerfile, docker-compose.yml 등) 서버로 전송
+               sshpass -p "${{ secrets.SERVER_PASS }}" scp -P 22 -o StrictHostKeyChecking=no \
+               docker-compose.yml .env \
+               ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/cpu/my-app/
+          
           # JAR 파일을 서버로 복사 (scp는 -P 옵션으로 포트 지정)
           sshpass -p "${{ secrets.SERVER_PASS }}" scp \
             -P 2222 \
@@ -82,42 +85,23 @@ jobs:
             build/libs/web-0.0.1-SNAPSHOT.jar \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/cpu/my-app/web-0.0.1-SNAPSHOT.jar
 
-          echo "Deploying new application on server..."
-
-          # 서버에서 애플리케이션 재시작
-          sshpass -p "${{ secrets.SERVER_PASS }}" ssh \
-            -p 2222 \
-            -o StrictHostKeyChecking=no \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
-
-            echo "Checking current user..."
-            whoami  # 현재 실행 계정 확인
-
-            echo "Stopping current Java application..."
-            PID=\$(pgrep -f 'java -jar')
-            if [ -n "\$PID" ]; then
-              kill -9 \$PID 2>/dev/null || echo "Operation not permitted, check permissions"
-              echo "Stopped process \$PID"
-            else
-              echo "No Java process found"
-            fi
-
-            echo "Starting new application with direct environment variables..."
-            export SPRING_DATASOURCE_URL="${{ secrets.RDS_URL }}"
-            export SPRING_DATASOURCE_USERNAME="${{ secrets.RDS_USERNAME }}"
-            export SPRING_DATASOURCE_PASSWORD="${{ secrets.RDS_PASSWORD }}"
-
-            nohup java -jar /home/cpu/my-app/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds \
-              > /home/cpu/my-app/app.log 2>&1 &
-
-            sleep 2  # 프로세스 시작 대기
-
-            NEW_PID=\$(pgrep -f 'java -jar')
-            if [ -n "\$NEW_PID" ]; then
-              echo "New application started with PID \$NEW_PID"
-            else
-              echo "Failed to start new application"
-              tail -n 50 /home/cpu/my-app/app.log
-              exit 1
-            fi
+          echo "Deploying new Docker containers..."
+          
+          # 서버에서 Docker Compose 실행
+               sshpass -p "${{ secrets.SERVER_PASS }}" ssh -p 22 -o StrictHostKeyChecking=no \
+               ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
+               
+               cd /home/cpu/my-app
+               
+               echo "Stopping old containers..."
+               docker compose down
+               
+               echo "Removing old images..."
+               docker rmi my-spring-app:latest || true
+               
+               echo "Building and restarting containers..."
+               docker compose up -d --build
+               
+               echo "Checking running containers..."
+               docker ps
           EOF
