@@ -41,8 +41,10 @@ jobs:
 
       - name: Test SSH connection
         run: |
-          sshpass -p "${{ secrets.SERVER_PASS }}" ssh -o StrictHostKeyChecking=no \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo SSH connection successful"
+          sshpass -p "${{ secrets.SERVER_PASS }}" ssh \
+          -o StrictHostKeyChecking=no \
+          -p 2222 \
+          ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo SSH connection successful"
 
       - name: Deploy to EC2
         run: |  # EC2에 애플리케이션 배포
