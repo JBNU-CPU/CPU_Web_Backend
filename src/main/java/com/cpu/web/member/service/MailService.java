@@ -19,19 +19,17 @@ public class MailService {
         String verificationCode = generateVerificationCode();
 
         try {
-            // SimpleMailMessage 객체를 사용하여 이메일 전송
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(toEmail);
-            message.setFrom("slyhyun@naver.com"); // 보내는 사람 이메일 (네이버 계정)
-            message.setSubject("Your Email Verification Code");
-            message.setText("Your verification code is: " + verificationCode);
+            message.setFrom("slyhyun@naver.com"); // 보내는 사람 이메일 주소
+            message.setSubject("이메일 인증 코드");
+            message.setText("귀하의 인증 코드는: " + verificationCode);
 
             mailSender.send(message);  // 이메일 전송
+            return verificationCode;
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to send email.", e);
+            throw new IllegalArgumentException("이메일 전송 실패: " + e.getMessage(), e);
         }
-
-        return verificationCode;
     }
 
     private String generateVerificationCode() {
@@ -39,4 +37,3 @@ public class MailService {
         return String.format("%06d", random.nextInt(1000000));
     }
 }
-
