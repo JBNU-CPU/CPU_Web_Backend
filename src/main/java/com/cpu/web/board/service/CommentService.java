@@ -1,6 +1,7 @@
 package com.cpu.web.board.service;
 
-import com.cpu.web.board.dto.response.CommentDTO;
+import com.cpu.web.board.dto.request.CommentRequestDTO;
+import com.cpu.web.board.dto.response.CommentResponseDTO;
 import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.CommentRepository;
@@ -24,11 +25,11 @@ public class CommentService {
     private final MemberRepository memberRepository;
 
     // 댓글 작성
-    public Comment createComment(CommentDTO commentDTO) {
+    public Comment createComment(CommentRequestDTO commentRequestDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Member> member = memberRepository.findByUsername(username);
-        String content = commentDTO.getContent();
-        Long id = commentDTO.getPostId();
+        String content = commentRequestDTO.getContent();
+        Long id = commentRequestDTO.getPostId();
 
         // 내용 유효한지
         if (content == null) {
@@ -43,22 +44,22 @@ public class CommentService {
             throw new IllegalArgumentException("존재하지 않는 유저입니다.");
         }
 
-        Post post = postRepository.findById(commentDTO.getPostId()).orElseThrow(
+        Post post = postRepository.findById(commentRequestDTO.getPostId()).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.: " + id));
-        Comment comment = commentDTO.toCommentEntity(content, post, member.get());
+        Comment comment = commentRequestDTO.toCommentEntity(content, post, member.get());
         return commentRepository.save(comment);
     }
     
     // 특정 글 모든 댓글 조회
-    public List<CommentDTO> getAllComments(Long id) {
+    public List<CommentResponseDTO> getAllComments(Long id) {
         if (!postRepository.existsById(id)){
             throw new IllegalArgumentException("해당 게시글이 존재하지 않습니다: " + id);
         }
-        return commentRepository.findByPost_PostId(id).stream().map(CommentDTO::new).collect(Collectors.toList());
+        return commentRepository.findByPost_PostId(id).stream().map(CommentResponseDTO::new).collect(Collectors.toList());
     }
 
     // 댓글 수정
-    public CommentDTO updateComment(Long id, CommentDTO commentDTO) {
+    public CommentResponseDTO updateComment(Long id, CommentRequestDTO commentRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Member> member = memberRepository.findByUsername(username);
@@ -72,9 +73,9 @@ public class CommentService {
         }
 
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다: " + id));
-        comment.setContent(commentDTO.getContent());
+        comment.setContent(commentRequestDTO.getContent());
         comment = commentRepository.save(comment);
-        return new CommentDTO(comment);
+        return new CommentResponseDTO(comment);
     }
 
     // 댓글 삭제

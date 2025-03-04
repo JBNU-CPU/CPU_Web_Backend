@@ -39,7 +39,6 @@ public class PostResponseDTO {
 
     // entity => dto
     public PostResponseDTO(Post post) {
-
         this.id = post.getPostId();
         this.isNotice = post.getIsNotice();
         this.title = post.getTitle();

@@ -3,30 +3,25 @@ package com.cpu.web.board.dto.response;
 import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.member.entity.Member;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CommentDTO {
+@Schema(description = "댓글 작성 응답 데이터")
+public class CommentResponseDTO {
 
     private Long postId;
     private String content;
 
-    public CommentDTO(){}
+    public CommentResponseDTO(){}
 
     // entity => dto
-    public CommentDTO(Comment comment) {
+    public CommentResponseDTO(Comment comment) {
         this.content = comment.getContent();
         this.postId = comment.getPost().getPostId();
     }
 
-    // dto => entity
-    public Comment toCommentEntity(String content, Post post, Member member){
-        Comment comment = new Comment();
-        comment.setContent(content);
-        comment.setPost(post);
-        comment.setMember(member);
-        return comment;
-    }
+
 }
