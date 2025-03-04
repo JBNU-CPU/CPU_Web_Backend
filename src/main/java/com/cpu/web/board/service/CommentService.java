@@ -31,18 +31,6 @@ public class CommentService {
         String content = commentRequestDTO.getContent();
         Long id = commentRequestDTO.getPostId();
 
-        // 내용 유효한지
-        if (content == null) {
-            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
-        } else if (content.isEmpty()) {
-            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
-        } else if (content.isBlank()) {
-            throw new IllegalArgumentException("내용이 유효하지 않습니다.");
-        }
-
-        if (member.isEmpty()){
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
 
         Post post = postRepository.findById(commentRequestDTO.getPostId()).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.: " + id));
