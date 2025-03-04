@@ -1,98 +1,46 @@
-# main.yml
-# - Gradle로 스프링 부트를 빌드한 뒤
-# - sshpass를 통해 비밀번호 기반 SSH 접속으로 서버에 JAR 파일 배포 및 실행
-# - RDS 연결정보는 GitHub Secrets로부터 가져와서 환경 변수로 설정 (spring.profiles.active=rds)
-#
-# GitHub Secrets 목록 (예시):
-#   SERVER_HOST      = 동아리방 서버 IP (또는 도메인)
-#   SERVER_USER      = SSH 접속 계정명 (예: cpu)
-#   SERVER_PASS      = 해당 계정의 SSH 비밀번호
-#   RDS_URL          = JDBC URL (예: jdbc:mysql://...)
-#   RDS_USERNAME     = DB 유저 이름
-#   RDS_PASSWORD     = DB 비밀번호
-#
-# 주의사항:
-#   - 동아리방 서버 SSH 포트가 2222라면, 아래 -p / -P 옵션 확인
-#   - 서버 방화벽에서 2222 포트가 열려 있는지 확인
-
-name: CI/CD Pipeline
+name: Deploy Spring Boot to Ubuntu Server
 
 on:
   push:
     branches:
-      - main  # main 브랜치에 push될 때 트리거
+      - main  # main 브랜치에 push될 때 실행
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # GitHub Actions: Ubuntu 환경
-    env:
-      ACTIONS_STEP_DEBUG: true  # 디버그 모드(로그 자세히)
+    runs-on: ubuntu-latest  # GitHub Actions에서 사용할 OS
 
     steps:
-      # 1) 소스 체크아웃
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # 코드 가져오기
 
-      # 2) JDK 21 설정 (Temurin)
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      # 3) Gradle Wrapper에 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      # 4) 빌드 (테스트는 -x test로 생략 중)
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew build -x test  # 빌드 (테스트 제외)
 
-      # 5) 아티팩트 업로드 (선택사항)
-      #    워크플로우에서 빌드된 JAR 파일을 아티팩트로 보관할 수 있음
-      - name: Upload build artifacts
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: jar-file
-          path: build/libs/web-0.0.1-SNAPSHOT.jar
+          path: build/libs/web-0.0.1-SNAPSHOT.jar  # 빌드된 JAR 파일 저장
 
-      # 6) sshpass 설치 (비밀번호 입력 자동화)
-      - name: Install sshpass
+      - name: Install SSH client
+        run: sudo apt-get install -y sshpass  # SSH 비밀번호 접속을 위해 sshpass 설치
+
+      - name: Deploy to Ubuntu server
         run: |
-          sudo apt-get update
-          sudo apt-get install -y sshpass
+          echo "Copying JAR file to Ubuntu Server..."
+          sshpass -p "${{ secrets.server_pass }}" scp -P 2222 -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.server_user }}@${{ secrets.server_host }}:/home/${{ secrets.server_user }}/web-0.0.1-SNAPSHOT.jar
 
-      # 7) (선택) SSH 연결 테스트
-      #    SSH 포트가 2222면 -p 2222 옵션,
-      #    IP/도메인/방화벽 설정이 맞는지 확인
-      - name: Test SSH connection
-        run: |
-          sshpass -p "${{ secrets.SERVER_PASS }}" ssh \
-            -o StrictHostKeyChecking=no \
-            -p 2222 \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
-            "echo SSH connection successful"
-
-      # 8) 서버에 JAR 파일 배포 + 프로세스 재시작
-      - name: Deploy to server
-        run: |
-          echo "Copying JAR file to server..."
-
-        # scp 포트 지정: scp는 대문자 -P 2222
-          sshpass -p "${{ secrets.SERVER_PASS }}" scp \
-            -P 2222 \
-            -o StrictHostKeyChecking=no \
-            build/libs/web-0.0.1-SNAPSHOT.jar \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/cpu/my-app/web-0.0.1-SNAPSHOT.jar
-
-          echo "Deploying new application on server..."
-
-        # ssh 포트 지정: 소문자 -p 2222
-          sshpass -p "${{ secrets.SERVER_PASS }}" ssh \
-            -p 2222 \
-            -o StrictHostKeyChecking=no \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-          
+          echo "Deploying application on Ubuntu Server..."
+          sshpass -p "${{ secrets.server_pass }}" ssh -p 2222 -o StrictHostKeyChecking=no ${{ secrets.server_user }}@${{ secrets.server_host }} << 'EOF'
             echo "Stopping current Java application..."
             PID=$(pgrep -f 'java -jar')
             if [ -n "$PID" ]; then
@@ -102,20 +50,19 @@ jobs:
               echo "No Java process found"
             fi
 
-            echo "Starting new application with direct environment variables..."
-            export SPRING_DATASOURCE_URL='${{ secrets.RDS_URL }}'
-            export SPRING_DATASOURCE_USERNAME='${{ secrets.RDS_USERNAME }}'
-            export SPRING_DATASOURCE_PASSWORD='${{ secrets.RDS_PASSWORD }}'
-          
-            nohup java -jar /home/cpu/my-app/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds \
-              > /home/cpu/my-app/app.log 2>&1 &
+            echo "Starting new application..."
+            export SPRING_DATASOURCE_URL=${{ secrets.RDS_URL }}
+            export SPRING_DATASOURCE_USERNAME=${{ secrets.RDS_USERNAME }}
+            export SPRING_DATASOURCE_PASSWORD=${{ secrets.RDS_PASSWORD }}
+
+            nohup java -jar /home/${{ secrets.server_user }}/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds > /home/${{ secrets.server_user }}/app.log 2>&1 &
 
             NEW_PID=$(pgrep -f 'java -jar')
             if [ -n "$NEW_PID" ]; then
               echo "New application started with PID $NEW_PID"
             else
               echo "Failed to start new application"
-              tail -n 50 /home/cpu/my-app/app.log
+              tail -n 50 /home/${{ secrets.server_user }}/app.log
               exit 1
             fi
-            EOF
+          EOF
