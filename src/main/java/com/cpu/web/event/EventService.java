@@ -21,9 +21,11 @@ public class EventService {
 
         if (event != null) { // 기존 데이터가 있는 경우
             if (eventRequestDTO.getScore() > event.getScore()) { // 새로운 점수가 더 높다면 업데이트
+                event.setNickName(eventRequestDTO.getNickName()); // 닉네임 항상 최신화
                 event.setScore(eventRequestDTO.getScore());
                 return eventRepository.save(event);
             } else {
+                event.setNickName(eventRequestDTO.getNickName()); // 닉네임 항상 최신화
                 return event; // 기존 값을 유지
             }
         } else { // 새로운 데이터 삽입

@@ -14,7 +14,7 @@ public class Event {
     @Column(name = "event_id")
     private Long eventId;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false) // 사용자 전화번호
     private String userId;
 
     @Column(name = "score", nullable = false)
