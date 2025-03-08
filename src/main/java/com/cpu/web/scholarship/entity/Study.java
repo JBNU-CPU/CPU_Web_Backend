@@ -25,10 +25,10 @@ public class Study {
     @Column(name = "leader_id", nullable = false)
     private Long leaderId;
 
-    @Column(name = "leader_username")
+    @Column(name = "leader_username") // 리더 학번
     private String leaderUserName;
 
-    @Column(name = "leader_name", nullable = false)
+    @Column(name = "leader_name", nullable = false) // 리더 이름
     private String leaderName;
 
     @Column(name = "study_name", length = 100, nullable = false)
