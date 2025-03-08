@@ -63,7 +63,7 @@ public class Study {
     @JoinColumn(name = "leader_id", nullable = false)
     private Member leader;
 
-    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberStudy> joinedMember = new ArrayList<>();
 
 

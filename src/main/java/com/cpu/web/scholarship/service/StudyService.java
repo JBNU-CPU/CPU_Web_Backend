@@ -17,12 +17,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class StudyService {
 
     private final StudyRepository studyRepository;
@@ -137,14 +139,14 @@ public class StudyService {
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
+
         // 관리자이거나 스터디 개설자인 경우 삭제 가능
-        if (isAdmin || member.equals(study.getLeader())) {
-            studyRepository.deleteById(id);
-        } else {
+        if (!(isAdmin || member.equals(study.getLeader()))) {
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
         }
 
-        studyRepository.deleteById(id);
+        studyRepository.delete(study);
+
     }
 
 }

@@ -69,22 +69,20 @@ public class ApplyService {
     public void cancelApply(Long studyId) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Member> member = memberRepository.findByUsername(username);
-        if (member.isEmpty()) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-        }
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
-        Long memberId = member.get().getMemberId();
+        Long memberId = member.getMemberId();
 
         // 참여 여부 확인
         Optional<MemberStudy> memberStudy = memberStudyRepository.findByStudy_StudyIdAndMember_MemberId(studyId, memberId);
         if (memberStudy.isEmpty()) {
-            throw new IllegalArgumentException("스터디에 참여한 적이 없습니다.");
+            throw new CustomException("스터디에 참여한 적이 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 리더인지 확인 (리더는 신청 취소 불가)
         if (memberStudy.get().getIsLeader()) {
-            throw new IllegalArgumentException("스터디 리더는 신청 취소할 수 없습니다.");
+            throw new CustomException("스터디 리더는 신청 취소할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 신청 취소 (삭제)
