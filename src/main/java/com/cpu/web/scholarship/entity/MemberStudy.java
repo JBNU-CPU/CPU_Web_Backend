@@ -35,7 +35,4 @@ public class MemberStudy {
     @JsonIgnore
     private Study study;
 
-    @Version
-    private Integer version;
-
 }

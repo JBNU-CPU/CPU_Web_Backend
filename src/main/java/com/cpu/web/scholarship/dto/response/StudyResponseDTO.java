@@ -74,8 +74,8 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
-        this.leaderUserName = study.getLeaderUserName();
-        this.leaderName = study.getLeaderName();
+        this.leaderUserName = study.getLeader().getUsername();
+        this.leaderName = study.getLeader().getPersonName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -83,7 +83,7 @@ public class StudyResponseDTO {
         this.techStack = study.getTechStack();
         this.location = study.getLocation();
         this.etc = study.getEtc();
-        this.leaderId = study.getLeaderId();
+        this.leaderId = study.getLeader().getMemberId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
         this.currentCount = 0L; // ✅ 기본값 추가
@@ -93,8 +93,8 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
-        this.leaderUserName = study.getLeaderUserName();
-        this.leaderName = study.getLeaderName();
+        this.leaderUserName = study.getLeader().getUsername();
+        this.leaderName = study.getLeader().getPersonName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -103,7 +103,7 @@ public class StudyResponseDTO {
         this.techStack = study.getTechStack();
         this.location = study.getLocation();
         this.etc = study.getEtc();
-        this.leaderId = study.getLeaderId();
+        this.leaderId = study.getLeader().getMemberId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
     }
@@ -112,8 +112,8 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, List<MemberStudy> memberStudies, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
-        this.leaderUserName = study.getLeaderUserName();
-        this.leaderName = study.getLeaderName();
+        this.leaderUserName = study.getLeader().getUsername();
+        this.leaderName = study.getLeader().getPersonName();
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -122,7 +122,7 @@ public class StudyResponseDTO {
         this.techStack = study.getTechStack();
         this.location = study.getLocation();
         this.etc = study.getEtc();
-        this.leaderId = study.getLeaderId();
+        this.leaderId = study.getLeader().getMemberId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
         this.memberStudies = memberStudies.stream()

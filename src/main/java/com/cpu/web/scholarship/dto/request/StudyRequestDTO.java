@@ -41,9 +41,7 @@ public class StudyRequestDTO {
         study.setTechStack(this.techStack);
         study.setLocation(this.location);
         study.setEtc(this.etc);
-        study.setLeaderId(member.getMemberId());
-        study.setLeaderUserName(member.getUsername());
-        study.setLeaderName(member.getPersonName());
+        study.setLeader(member);
 
         // studyDays 타입 List<StudyScheduleDTO> -> List<String> 변환 
         if(this.studyDays != null) {

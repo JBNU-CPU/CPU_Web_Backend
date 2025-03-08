@@ -1,5 +1,6 @@
 package com.cpu.web.scholarship.entity;
 
+import com.cpu.web.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,19 +23,10 @@ public class Study {
     @Column(name = "study_id", nullable = false, unique = true)
     private Long studyId;
 
-    @Column(name = "leader_id", nullable = false)
-    private Long leaderId;
-
-    @Column(name = "leader_username") // 리더 학번
-    private String leaderUserName;
-
-    @Column(name = "leader_name", nullable = false) // 리더 이름
-    private String leaderName;
-
     @Column(name = "study_name", length = 100, nullable = false)
     private String studyName;
 
-    @Column(name = "is_accepted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_accepted", nullable = false)
     private Boolean isAccepted = false;
 
     @Column(name = "study_type", nullable = false)
@@ -66,6 +58,10 @@ public class Study {
 
     @UpdateTimestamp
     private Timestamp updatedDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leader_id", nullable = false)
+    private Member leader;
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
     private List<MemberStudy> joinedMember = new ArrayList<>();

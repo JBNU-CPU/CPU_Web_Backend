@@ -88,15 +88,14 @@ public class StudyService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
-        Long leaderId = member.getMemberId();
 
         // 스터디 찾기
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 스터디 리더인지 확인
-        if (!study.getLeaderId().equals(leaderId)) {
-            throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + leaderId, HttpStatus.FORBIDDEN);
+        if (!study.getLeader().equals(member)) {
+            throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
         }
 
         // 스터디 등록 시 수정 불가
@@ -139,7 +138,7 @@ public class StudyService {
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 관리자이거나 스터디 개설자인 경우 삭제 가능
-        if (isAdmin || username.equals(study.getLeaderUserName())) {
+        if (isAdmin || member.equals(study.getLeader())) {
             studyRepository.deleteById(id);
         } else {
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);

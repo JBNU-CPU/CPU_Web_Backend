@@ -29,7 +29,6 @@ public class ApplyService {
     public void applyStudy(Long studyId) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("현재 로그인한 사용자 (스터디 신청)" + username);
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
@@ -46,8 +45,7 @@ public class ApplyService {
         }
 
         // 리더인지 확인
-        boolean isLeader = memberStudyRepository.existsByStudy_StudyIdAndMember_MemberIdAndIsLeader(studyId, memberId, true);
-        if (isLeader) {
+        if (study.getLeader().equals(member)) {
             throw new CustomException("스터디 리더는 신청할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
         
