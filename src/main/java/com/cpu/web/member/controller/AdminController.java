@@ -140,18 +140,18 @@ public class AdminController {
         return adminService.getStudiesByStudyType(studyType, page, size);
     }
 
-    // 스터디 등록
+    // 스터디 승인
     @PutMapping("/study/{id}")
-    @Operation(summary = "스터디 등록", description = "스터디 등록 API")
+    @Operation(summary = "스터디 승인", description = "스터디 승인 API")
     @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     public ResponseEntity<?> acceptStudy(@PathVariable Long id){
         StudyResponseDTO updateStudyResponseDTO =  adminService.acceptStudy(id);
         return ResponseEntity.ok(updateStudyResponseDTO);
     }
 
-    // 스터디 등록 취소
+    // 스터디 승인 취소
     @PutMapping("/study/cancel/{id}")
-    @Operation(summary = "스터디 등록 취소", description = "스터디 등록 API")
+    @Operation(summary = "스터디 승인 취소", description = "스터디 승인 API")
     @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     public ResponseEntity<?> unacceptStudy(@PathVariable Long id){
         StudyResponseDTO updateStudyRequestDTO =  adminService.unacceptStudy(id);
