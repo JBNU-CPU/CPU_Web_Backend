@@ -72,7 +72,6 @@ public class AdminService {
         memberRepository.deleteById(id);
     }
 
-
     // 전체 스터디 조회
     public Page<StudyResponseDTO> getAllStudy(int page, int size) {
         Page<Study> studies = studyRepository.findAll(PageRequest.of(page, size));
