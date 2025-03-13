@@ -79,7 +79,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CustomException("해당 댓글이 존재하지 않습니다: " + id, HttpStatus.FORBIDDEN));
 
 
-        if (!isAdmin || !username.equals(comment.getMember().getUsername())){
+        if (!isAdmin && !username.equals(comment.getMember().getUsername())){
             throw new CustomException("삭제 권한이 없는 유저입니다: " + username, HttpStatus.FORBIDDEN);
         }
 

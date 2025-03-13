@@ -48,10 +48,13 @@ public class GatheringService {
     }
 
     // 특정 소모임 조회
-//    public Optional<GatheringResponseDTO> getGatheringById(Long id) {
-//        Gathering gathering = gatheringRepository.findById(id).orElseThrow(() -> new CustomException("소모임이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
-//
-//        List<MemberGathering> memberGatherings = memberGatheringRepository.fi
-//
-//    }
+    public Optional<GatheringResponseDTO> getGatheringById(Long id) {
+        Gathering gathering = gatheringRepository.findById(id).orElseThrow(() -> new CustomException("소모임이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
+
+        List<MemberGathering> memberGatherings = memberGatheringRepository.findByGathering_GatheringId(id);
+        Long currentCount = memberGatheringRepository.countByGathering(gathering);
+
+        return Optional.of(new GatheringResponseDTO(gathering, memberGatherings, currentCount));
+
+    }
 }
