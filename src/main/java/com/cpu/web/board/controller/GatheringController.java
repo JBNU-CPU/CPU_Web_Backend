@@ -11,11 +11,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -40,7 +38,7 @@ public class GatheringController {
                 .path("/{id}")
                 .buildAndExpand(gathering.getGatheringId())
                 .toUri();
-        return ResponseEntity.created(location).body(new GatheringResponseDTO())
+        return ResponseEntity.created(location).body(new GatheringResponseDTO());
     }
 
     @GetMapping
