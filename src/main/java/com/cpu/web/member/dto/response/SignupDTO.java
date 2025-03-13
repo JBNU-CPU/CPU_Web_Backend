@@ -11,4 +11,5 @@ public class SignupDTO {
     private String nickName;
     private String personName;
     private String email;
+    private String phone;  // 전화번호 필드 추가
 }
