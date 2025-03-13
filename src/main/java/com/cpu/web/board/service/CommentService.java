@@ -75,11 +75,12 @@ public class CommentService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
-
+        System.out.println("isAdmin = " + isAdmin);
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CustomException("해당 댓글이 존재하지 않습니다: " + id, HttpStatus.FORBIDDEN));
 
 
-        if (!isAdmin && !username.equals(comment.getMember().getUsername())){
+        // 관리자이거나 댓글 작성자만 삭제 가능
+        if (!(isAdmin || username.equals(comment.getMember().getUsername()))) {
             throw new CustomException("삭제 권한이 없는 유저입니다: " + username, HttpStatus.FORBIDDEN);
         }
 

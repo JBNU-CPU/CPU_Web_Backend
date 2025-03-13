@@ -37,7 +37,14 @@ public class GatheringService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
+        // 소모임 생성 및 저장
         Gathering gathering = gatheringRequestDTO.toGatheringEntity(member);
+        Gathering savedGathering = gatheringRepository.save(gathering);
+
+        // 매핑 테이블에 팀장 정보 추가
+        MemberGathering memberGathering = new MemberGathering();
+        memberGathering.setGathering(gathering);
+        Gathering gathering1 = gatheringRequestDTO.toGatheringEntity(member);
         return gatheringRepository.save(gathering);
     }
 

@@ -90,4 +90,8 @@ public class GatheringResponseDTO {
     public GatheringResponseDTO(Gathering gathering, List<MemberGathering> memberGatherings, Long currentCount) {
 
     }
+
+    public GatheringResponseDTO() {
+
+    }
 }
