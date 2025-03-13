@@ -11,6 +11,7 @@ import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -52,17 +53,15 @@ public class CommentService {
     public CommentResponseDTO updateComment(Long id, CommentRequestDTO commentRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Member> member = memberRepository.findByUsername(username);
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다: " + id));
 
-        if (member.isEmpty()){
-            throw new CustomException("존재하지 않는 유저입니다: " + username, HttpStatus.FORBIDDEN);
-        }
-
-        if (!member.get().equals(memberRepository.findById(id))){
+        // 댓글 작성자 또는 관리자인지 확인
+        if (username.equals(comment.getMember().getUsername())){
             throw new CustomException("수정 권한이 없는 유저입니다: " + username, HttpStatus.UNAUTHORIZED);
         }
 
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다: " + id));
         comment.setContent(commentRequestDTO.getContent());
         comment = commentRepository.save(comment);
         return new CommentResponseDTO(comment);
@@ -71,20 +70,20 @@ public class CommentService {
     // 댓글 삭제
     public void deleteComment(Long id) {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Member> member = memberRepository.findByUsername(username);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
-        if (member.isEmpty()){
-            throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CustomException("해당 댓글이 존재하지 않습니다: " + id, HttpStatus.FORBIDDEN));
+
+
+        if (!isAdmin || !username.equals(comment.getMember().getUsername())){
+            throw new CustomException("삭제 권한이 없는 유저입니다: " + username, HttpStatus.FORBIDDEN);
         }
 
-        if (!member.get().equals(memberRepository.findById(id))){
-            throw new IllegalArgumentException("삭제 권한이 없는 유저입니다: " + username);
-        }
 
-        if(!commentRepository.existsById(id)) {
-            throw new IllegalArgumentException("해당 댓글이 존재하지 않습니다: " + id);
-        }
         commentRepository.deleteById(id);
     }
 }
