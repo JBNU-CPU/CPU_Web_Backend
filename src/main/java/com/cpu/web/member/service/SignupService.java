@@ -1,10 +1,12 @@
 package com.cpu.web.member.service;
 
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.dto.response.SignupDTO;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.exception.DuplicateResourceException;
 import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,27 +21,27 @@ public class SignupService {
 
         // ID 중복 여부 체크
         if (memberRepository.existsByUsername(signupDTO.getUsername())) {
-            throw new DuplicateResourceException("이미 존재하는 아이디입니다.");
+            throw new CustomException("중복된 ID 입니다", HttpStatus.BAD_REQUEST);
         }
 
         // ID 형식 체크
         if (!signupDTO.getUsername().matches("^20\\d{7}$")) {
-            throw new IllegalArgumentException("ID는 '20'으로 시작하는 9자리 숫자여야 합니다.");
+            throw new CustomException("ID는 학번 형식이어야 합니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 닉네임 중복 여부 체크
         if (memberRepository.existsByNickName(signupDTO.getNickName())) {
-            throw new DuplicateResourceException("이미 존재하는 닉네임입니다.");
+            throw new CustomException("중복된 닉네임입니다", HttpStatus.BAD_REQUEST);
         }
 
         // 이메일 중복 여부 체크
         if (memberRepository.existsByEmail(signupDTO.getEmail())) {
-            throw new DuplicateResourceException("이미 존재하는 이메일입니다.");
+            throw new CustomException("중복된 이메일입니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 전화번호 중복 여부 체크
         if (memberRepository.existsByPhone(signupDTO.getPhone())) {
-            throw new DuplicateResourceException("이미 사용 중인 전화번호입니다.");
+            throw new CustomException("중복된 전화번호입니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 중복 검사를 통과하면 회원가입 진행
