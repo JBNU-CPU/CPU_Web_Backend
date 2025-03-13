@@ -58,7 +58,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다: " + id));
 
         // 댓글 작성자 또는 관리자인지 확인
-        if (username.equals(comment.getMember().getUsername())){
+        if (!username.equals(comment.getMember().getUsername())){
             throw new CustomException("수정 권한이 없는 유저입니다: " + username, HttpStatus.UNAUTHORIZED);
         }
 
