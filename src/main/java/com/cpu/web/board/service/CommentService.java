@@ -6,9 +6,11 @@ import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.CommentRepository;
 import com.cpu.web.board.repository.PostRepository;
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -53,11 +55,11 @@ public class CommentService {
         Optional<Member> member = memberRepository.findByUsername(username);
 
         if (member.isEmpty()){
-            throw new IllegalArgumentException("존재하지 않는 유저입니다: " + username);
+            throw new CustomException("존재하지 않는 유저입니다: " + username, HttpStatus.FORBIDDEN);
         }
 
         if (!member.get().equals(memberRepository.findById(id))){
-            throw new IllegalArgumentException("수정 권한이 없는 유저입니다: " + username);
+            throw new CustomException("수정 권한이 없는 유저입니다: " + username, HttpStatus.UNAUTHORIZED);
         }
 
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다: " + id));

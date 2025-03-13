@@ -3,7 +3,11 @@ package com.cpu.web.board.controller;
 import com.cpu.web.board.dto.request.CommentRequestDTO;
 import com.cpu.web.board.dto.response.CommentResponseDTO;
 import com.cpu.web.board.entity.Comment;
+import com.cpu.web.board.entity.Post;
+import com.cpu.web.board.repository.PostRepository;
 import com.cpu.web.board.service.CommentService;
+import com.cpu.web.board.service.PostService;
+import com.cpu.web.exception.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -13,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,6 +32,8 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
+    private final PostService postService;
+    private final PostRepository postRepository;
 
     // 댓글 작성
     @PostMapping()
