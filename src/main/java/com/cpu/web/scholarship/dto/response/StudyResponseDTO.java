@@ -27,6 +27,9 @@ public class StudyResponseDTO {
     @Schema(description = "개설자 이름", example = "박도현")
     private String leaderName;
 
+    @Schema(description = "개설자 전화번호", example = "010-1234-5678")
+    private String leaderPhone; // 개설자 전화번호 필드 추가
+
     @Schema(description = "스터디명", example = "자바를 잡아라!")
     private String studyName;
 
@@ -76,6 +79,7 @@ public class StudyResponseDTO {
         this.isAccepted = study.getIsAccepted();
         this.leaderUserName = study.getLeader().getUsername();
         this.leaderName = study.getLeader().getPersonName();
+        this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -95,6 +99,7 @@ public class StudyResponseDTO {
         this.isAccepted = study.getIsAccepted();
         this.leaderUserName = study.getLeader().getUsername();
         this.leaderName = study.getLeader().getPersonName();
+        this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -114,6 +119,7 @@ public class StudyResponseDTO {
         this.isAccepted = study.getIsAccepted();
         this.leaderUserName = study.getLeader().getUsername();
         this.leaderName = study.getLeader().getPersonName();
+        this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
