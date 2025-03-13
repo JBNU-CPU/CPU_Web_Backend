@@ -15,6 +15,7 @@ public class CommentResponseDTO {
     private Long postId;
     private Long commentId;
     private String content;
+    private Long userId;
     private String nickName;
 
     public CommentResponseDTO(){}
@@ -24,6 +25,7 @@ public class CommentResponseDTO {
         this.content = comment.getContent();
         this.postId = comment.getPost().getPostId();
         this.commentId = comment.getCommentId();
+        this.userId = comment.getMember().getMemberId();
         this.nickName = comment.getMember().getNickName();
     }
 
