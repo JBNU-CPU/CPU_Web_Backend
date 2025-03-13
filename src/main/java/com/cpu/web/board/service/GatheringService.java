@@ -4,7 +4,6 @@ import com.cpu.web.board.dto.request.GatheringRequestDTO;
 import com.cpu.web.board.dto.response.GatheringResponseDTO;
 import com.cpu.web.board.entity.Gathering;
 import com.cpu.web.board.entity.MemberGathering;
-import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.GatheringRepository;
 import com.cpu.web.board.repository.MemberGatheringRepository;
 import com.cpu.web.exception.CustomException;
@@ -15,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +43,10 @@ public class GatheringService {
 
         // 매핑 테이블에 팀장 정보 추가
         MemberGathering memberGathering = new MemberGathering();
-        memberGathering.setGathering(gathering);
-        Gathering gathering1 = gatheringRequestDTO.toGatheringEntity(member);
+        memberGathering.setMember(member);
+        memberGathering.setGathering(savedGathering);
+        memberGathering.setIsLeader(true);
+
         return gatheringRepository.save(gathering);
     }
 
@@ -63,5 +65,49 @@ public class GatheringService {
 
         return Optional.of(new GatheringResponseDTO(gathering, memberGatherings, currentCount));
 
+    }
+
+    // 스터디 수정
+    public GatheringResponseDTO updateGathering(Long id, GatheringRequestDTO gatheringRequestDTO) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
+
+        // 스터디 찾기
+        Gathering gathering = gatheringRepository.findById(id)
+                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
+
+        // 소모임 개설자인지 확인
+        if (!gathering.getMember().equals(member)) {
+            throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
+        }
+
+        Gathering updatedGathering = gatheringRequestDTO.toGatheringEntity(member);
+        updatedGathering.setGatheringId(id);
+
+        return new GatheringResponseDTO(gatheringRepository.save(updatedGathering));
+    }
+    
+    // 소모임 삭제
+    public void deleteGathering(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
+
+        Gathering gathering = gatheringRepository.findById(id)
+                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
+
+
+        // 관리자이거나 스터디 개설자인 경우 삭제 가능
+        if (!(isAdmin || member.equals(gathering.getMember()))) {
+            throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
+        }
+
+        gatheringRepository.delete(gathering);
     }
 }
