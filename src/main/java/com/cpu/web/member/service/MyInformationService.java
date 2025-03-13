@@ -41,6 +41,7 @@ public class MyInformationService {
         member.setPassword(bCryptPasswordEncoder.encode(myPageEditDTO.getPassword()));
         member.setPersonName(myPageEditDTO.getPersonName());
         member.setEmail(myPageEditDTO.getEmail());
+        member.setPhone(myPageEditDTO.getPhone());  // 전화번호 업데이트 추가
         Member updatedMember = memberRepository.save(member);
         return new MemberResponseDTO(updatedMember);
     }

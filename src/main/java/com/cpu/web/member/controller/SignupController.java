@@ -36,7 +36,8 @@ public class SignupController {
             @Parameter(name = "password", description = "비밀번호", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "password", example = "qwer1234"))),
             @Parameter(name = "nickname", description = "닉네임", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "nick123"))),
             @Parameter(name = "personName", description = "이름", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "홍길동"))),
-            @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "email", example = "user@example.com")))
+            @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "email", example = "user@example.com"))),
+            @Parameter(name = "phone", description = "전화번호", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "010-1234-5678")))
     })
     public ResponseEntity<?> signupProcess(SignupDTO signupDTO) {
         try {
