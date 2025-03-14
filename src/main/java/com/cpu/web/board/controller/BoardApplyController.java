@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/gathering/apply")
 @Tag(name = "소모임 신청", description = "소모임 신청 API")
-public class ApplyController {
+public class BoardApplyController {
 
     private final ApplyService applyService;
 
