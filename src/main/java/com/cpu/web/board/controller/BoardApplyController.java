@@ -1,6 +1,6 @@
 package com.cpu.web.board.controller;
 
-import com.cpu.web.board.service.ApplyService;
+import com.cpu.web.board.service.BoardApplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "소모임 신청", description = "소모임 신청 API")
 public class BoardApplyController {
 
-    private final ApplyService applyService;
+    private final BoardApplyService boardApplyService;
 
     // ✅ 스터디 신청
     @PostMapping("/{gatheringId}")
@@ -25,7 +25,7 @@ public class BoardApplyController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     public ResponseEntity<?> applyStudy(@PathVariable Long gatheringId) {
-        applyService.applyGathering(gatheringId);
+        boardApplyService.applyGathering(gatheringId);
         return ResponseEntity.status(201).body("소모임 신청이 완료되었습니다.");
     }
 
@@ -37,7 +37,7 @@ public class BoardApplyController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
     public ResponseEntity<?> cancelApply(@PathVariable Long gatheringId) {
-        applyService.cancelApply(gatheringId);
+        boardApplyService.cancelApply(gatheringId);
         return ResponseEntity.noContent().build();
     }
 }
