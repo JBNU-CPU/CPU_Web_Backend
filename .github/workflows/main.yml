@@ -36,7 +36,7 @@ jobs:
       - name: Create private key file
         run: |  # SSH 프라이빗 키 파일 생성
           echo "${{ secrets.EC2_KEY }}" > private_key.pem  # GitHub Secrets에서 가져온 SSH 키를 파일로 저장
-          chmod 600 private_key.pem  # 프라이빗 키 파일에 적절한 권한 설정
+          chmod 400 private_key.pem  # 프라이빗 키 파일에 적절한 권한 설정
 
       - name: Test SSH connection
         run: |  # SSH 연결을 테스트
