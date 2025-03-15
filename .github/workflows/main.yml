@@ -1,46 +1,55 @@
-name: Deploy Spring Boot to Ubuntu Server
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
-      - main  # main 브랜치에 push될 때 실행
+      - main  # main 브랜치에 코드가 푸시될 때 워크플로우 실행
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # GitHub Actions에서 사용할 OS
+    runs-on: ubuntu-latest  # 최신 Ubuntu 환경에서 실행
+    env:
+      ACTIONS_STEP_DEBUG: true  # 디버그 모드 활성화
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3  # 코드 가져오기
+        uses: actions/checkout@v3  # GitHub 리포지토리에서 코드를 체크아웃
 
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: 'temurin'  # Adoptium Temurin JDK 사용
+          java-version: '21'  # JDK 21 버전을 설정
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+        run: chmod +x ./gradlew  # Gradle Wrapper 파일에 실행 권한 부여
 
       - name: Build with Gradle
-        run: ./gradlew build -x test  # 빌드 (테스트 제외)
+        run: ./gradlew build -x test  # Gradle을 사용하여 프로젝트 빌드, 테스트는 생략
 
-      - name: Upload build artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: jar-file
-          path: build/libs/web-0.0.1-SNAPSHOT.jar  # 빌드된 JAR 파일 저장
+          name: jar-file  # 아티팩트 이름
+          path: build/libs/web-0.0.1-SNAPSHOT.jar  # 빌드된 JAR 파일 경로
 
-      - name: Install SSH client
-        run: sudo apt-get install -y sshpass  # SSH 비밀번호 접속을 위해 sshpass 설치
+      - name: Create private key file
+        run: |  # SSH 프라이빗 키 파일 생성
+          echo "${{ secrets.EC2_KEY }}" > private_key.pem  # GitHub Secrets에서 가져온 SSH 키를 파일로 저장
+          chmod 600 private_key.pem  # 프라이빗 키 파일에 적절한 권한 설정
 
-      - name: Deploy to Ubuntu server
-        run: |
-          echo "Copying JAR file to Ubuntu Server..."
-          sshpass -p "${{ secrets.server_pass }}" scp -P 2222 -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.server_user }}@${{ secrets.server_host }}:/home/${{ secrets.server_user }}/web-0.0.1-SNAPSHOT.jar
+      - name: Test SSH connection
+        run: |  # SSH 연결을 테스트
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "echo SSH connection successful"
+          # EC2 인스턴스에 SSH로 접속하여 연결이 성공하면 "SSH connection successful" 메시지 출력
 
-          echo "Deploying application on Ubuntu Server..."
-          sshpass -p "${{ secrets.server_pass }}" ssh -p 2222 -o StrictHostKeyChecking=no ${{ secrets.server_user }}@${{ secrets.server_host }} << 'EOF'
+      - name: Deploy to EC2
+        run: |  # EC2에 애플리케이션 배포
+          echo "Copying JAR file to EC2..."
+          scp -i private_key.pem -o StrictHostKeyChecking=no build/libs/web-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar
+
+          echo "Deploying new application on EC2..."
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             echo "Stopping current Java application..."
             PID=$(pgrep -f 'java -jar')
             if [ -n "$PID" ]; then
@@ -50,19 +59,22 @@ jobs:
               echo "No Java process found"
             fi
 
-            echo "Starting new application..."
+            echo "Starting new application with direct environment variables..."
             export SPRING_DATASOURCE_URL=${{ secrets.RDS_URL }}
             export SPRING_DATASOURCE_USERNAME=${{ secrets.RDS_USERNAME }}
             export SPRING_DATASOURCE_PASSWORD=${{ secrets.RDS_PASSWORD }}
-
-            nohup java -jar /home/${{ secrets.server_user }}/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds > /home/${{ secrets.server_user }}/app.log 2>&1 &
-
+            nohup java -jar /home/ubuntu/cpu/web-0.0.1-SNAPSHOT.jar --spring.profiles.active=rds > /home/ubuntu/cpu/app.log 2>&1 &
             NEW_PID=$(pgrep -f 'java -jar')
+          
             if [ -n "$NEW_PID" ]; then
               echo "New application started with PID $NEW_PID"
             else
               echo "Failed to start new application"
-              tail -n 50 /home/${{ secrets.server_user }}/app.log
+              tail -n 50 /home/ubuntu/cpu/app.log
               exit 1
             fi
           EOF
+
+      - name: Remove private key file
+        run: |  # 작업이 끝난 후 프라이빗 키 파일 삭제
+          rm -f private_key.pem
