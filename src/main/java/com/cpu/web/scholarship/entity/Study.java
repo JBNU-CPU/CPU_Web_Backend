@@ -34,7 +34,7 @@ public class Study {
     @Column(name = "max_members", nullable = false)
     private int maxMembers;
 
-    @Column(name = "study_description", length = 10000, nullable = false)
+    @Column(name = "study_description", length = 5000, nullable = false)
     private String studyDescription;
 
     @Column(name = "tech_stack", nullable = false)
@@ -43,7 +43,7 @@ public class Study {
     @Column(name = "location", nullable = false)
     private String location;
 
-    @Column(name = "etc", length = 10000)
+    @Column(name = "etc", length = 2000)
     private String etc;
 
     @ElementCollection
