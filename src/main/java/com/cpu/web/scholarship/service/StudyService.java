@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -105,26 +106,24 @@ public class StudyService {
             throw new CustomException("스터디가 등록되었으므로 수정할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        Study updatedStudy = studyRequestDTO.toStudyEntity(member);
-        updatedStudy.setStudyId(study.getStudyId());
-
+        studyRequestDTO.updateStudyEntity(study);
         // studyType 변환 처리
         String typeStr = studyRequestDTO.getStudyType().toLowerCase().trim();
         switch (typeStr) {
             case "study":
-                updatedStudy.setStudyType(Study.StudyType.study);
+                study.setStudyType(Study.StudyType.study);
                 break;
             case "session":
-                updatedStudy.setStudyType(Study.StudyType.session);
+                study.setStudyType(Study.StudyType.session);
                 break;
             case "project":
-                updatedStudy.setStudyType(Study.StudyType.project);
+                study.setStudyType(Study.StudyType.project);
                 break;
             default:
                 throw new CustomException("유효하지 않은 스터디 타입입니다: " + studyRequestDTO.getStudyType(), HttpStatus.BAD_REQUEST);
         }
 
-        return new StudyResponseDTO(studyRepository.save(updatedStudy));
+        return new StudyResponseDTO(studyRepository.save(study));
     }
 
     // 스터디 삭제
