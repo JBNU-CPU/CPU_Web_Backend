@@ -138,8 +138,4 @@ public class StudyResponseDTO {
                 .collect(Collectors.toList());
     }
 
-    public void setStudyDescription(String studyDescription) {
-        this.studyDescription = studyDescription.replace("\r\n", "\n");
-    }
-
 }

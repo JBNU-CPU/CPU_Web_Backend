@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -54,6 +55,9 @@ public class GatheringResponseDTO {
             "            ]")
     private List<String> gatheringDays; // 스터디 요일 및 시간 리스트
 
+    @Schema(description = "소모임 참여자", example = "")
+    private List<GatheringApplyResponseDTO> memberGatherings;
+
     // entity => dto (소모임 참여 멤버 정보 없음)
     public GatheringResponseDTO(Gathering gathering){
         this.id = gathering.getGatheringId();
@@ -83,12 +87,26 @@ public class GatheringResponseDTO {
         this.maxMembers = gathering.getMaxMembers();
         this.createDate = gathering.getCreatedDate();
         this.gatheringDays = gathering.getGatheringDays();
-        this.currentCount = currentCount; // 기본값
+        this.currentCount = currentCount;
     }
 
-    // entity => dto (스터디 참여 멤버 정보 있음)
+    // entity => dto (소모임 참여 멤버 정보 있음)
     public GatheringResponseDTO(Gathering gathering, List<MemberGathering> memberGatherings, Long currentCount) {
-
+        this.id = gathering.getGatheringId();
+        this.leaderId = gathering.getMember().getMemberId();
+        this.leaderName = gathering.getMember().getPersonName();
+        this.leaderUserName = gathering.getMember().getUsername();
+        this.leaderPhone = gathering.getMember().getPhone();
+        this.gatheringTitle = gathering.getGatheringTitle();
+        this.gatheringContent = gathering.getGatheringContent();
+        this.etc = gathering.getEtc();
+        this.maxMembers = gathering.getMaxMembers();
+        this.createDate = gathering.getCreatedDate();
+        this.gatheringDays = gathering.getGatheringDays();
+        this.currentCount = currentCount;
+        this.memberGatherings = memberGatherings.stream()
+                .map(GatheringApplyResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     public GatheringResponseDTO() {
