@@ -2,6 +2,8 @@ package com.cpu.web.scholarship.dto.response;
 
 import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +45,8 @@ public class StudyResponseDTO {
     private Long currentCount;
 
     @Schema(description = "스터디 설명", example = "자바 공부해서 취뽀해봅시다.")
+    @JsonProperty("studyDescription")
+    @JsonRawValue
     private String studyDescription;
 
     @Schema(description = "기술 스택", example = "Java, Spring")
@@ -134,6 +138,10 @@ public class StudyResponseDTO {
         this.memberStudies = memberStudies.stream()
                 .map(ApplyResponseDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    public void setStudyDescription(String studyDescription) {
+        this.studyDescription = studyDescription.replace("\r\n", "\n");
     }
 
 }
