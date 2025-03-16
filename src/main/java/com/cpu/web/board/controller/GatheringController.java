@@ -72,7 +72,7 @@ public class GatheringController {
 
 
     @PutMapping("/{id}")
-    @Operation(summary = "스터디 수정", description = "스터디 수정 API")
+    @Operation(summary = "소모임 수정", description = "소모임 수정 API")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json"))
@@ -89,7 +89,7 @@ public class GatheringController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "스터디 삭제", description = "스터디 삭제 API")
+    @Operation(summary = "소모임 삭제", description = "소모임 삭제 API")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json"))
     })
