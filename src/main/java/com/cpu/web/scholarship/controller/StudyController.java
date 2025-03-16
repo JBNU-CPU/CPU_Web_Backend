@@ -80,7 +80,11 @@ public class StudyController {
     })
     public ResponseEntity<StudyResponseDTO> getStudyById(@Parameter(description = "조회할 스터디 ID", example = "1") @PathVariable Long id) {
         Optional<StudyResponseDTO> studyDTO = studyService.getStudyById(id);
-        return studyDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return studyDTO.map(dto -> {
+            // 개행 문자(\n)를 <br> 태그로 변환
+            dto.setStudyDescription(dto.getStudyDescription().replace("\n", "<br>"));
+            return ResponseEntity.ok(dto);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
