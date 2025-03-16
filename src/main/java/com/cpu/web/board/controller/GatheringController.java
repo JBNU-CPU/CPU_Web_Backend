@@ -1,6 +1,7 @@
 package com.cpu.web.board.controller;
 
 import com.cpu.web.board.dto.request.GatheringRequestDTO;
+import com.cpu.web.board.dto.request.PostRequestDTO;
 import com.cpu.web.board.dto.response.GatheringResponseDTO;
 import com.cpu.web.board.entity.Gathering;
 import com.cpu.web.board.service.GatheringService;
@@ -34,10 +35,16 @@ public class GatheringController {
     @PostMapping
     @Operation(summary = "소모임 생성", description = "소모임 생성 API")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyResponseDTO.class)))
+            @ApiResponse(responseCode = "201", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GatheringResponseDTO.class)))
     })
-    public ResponseEntity<GatheringResponseDTO> createGathering(GatheringRequestDTO gatheringRequestDTO) {
+    public ResponseEntity<GatheringResponseDTO> createGathering(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "소모임 개설 데이터",
+                    required = true,
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = GatheringRequestDTO.class))
+            )  @RequestBody GatheringRequestDTO gatheringRequestDTO) {
         Gathering gathering = gatheringService.createGathering(gatheringRequestDTO);
+        System.out.println("gatheringRequestDTO.getContent() = " + gatheringRequestDTO.getContent());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(gathering.getGatheringId())
