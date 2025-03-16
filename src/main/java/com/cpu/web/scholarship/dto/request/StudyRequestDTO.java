@@ -52,4 +52,24 @@ public class StudyRequestDTO {
         }
         return study;
     }
+
+    // 스터디 수정 (기존 관계가 끊어지지 않도록)
+    public void updateStudyEntity(Study study) {
+        study.setStudyName(this.studyName);
+        study.setStudyType(Study.StudyType.valueOf(this.studyType.toLowerCase()));
+        study.setMaxMembers(this.maxMembers);
+        study.setStudyDescription(this.studyDescription);
+        study.setTechStack(this.techStack);
+        study.setLocation(this.location);
+        study.setEtc(this.etc);
+
+        // studyDays 타입 List<StudyScheduleDTO> -> List<String> 변환
+        if(this.studyDays != null) {
+            List<String> scheduleStrings = this.studyDays.stream()
+                    .map(StudyScheduleDTO::toScheduleString)
+                    .collect(Collectors.toList());
+            study.setStudyDays(scheduleStrings); // 변환 후 엔티티에 저장
+        }
+    }
+
 }
