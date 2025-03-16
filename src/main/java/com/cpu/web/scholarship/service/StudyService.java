@@ -91,22 +91,23 @@ public class StudyService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
-
         // 스터디 찾기
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
+
+        // 현재 참여 인원 확인
+        Long currentCount = memberStudyRepository.countByStudy(study);
+        if (currentCount >= 2) {
+            throw new CustomException("스터디 참여 인원이 2명 이상이므로 수정할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         // 스터디 리더인지 확인
         if (!study.getLeader().equals(member)) {
             throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
         }
 
-        // 스터디 등록 시 수정 불가
-        if(study.getIsAccepted()){
-            throw new CustomException("스터디가 등록되었으므로 수정할 수 없습니다.", HttpStatus.BAD_REQUEST);
-        }
-
         studyRequestDTO.updateStudyEntity(study);
+
         // studyType 변환 처리
         String typeStr = studyRequestDTO.getStudyType().toLowerCase().trim();
         switch (typeStr) {
@@ -138,6 +139,11 @@ public class StudyService {
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
+        // 현재 참여 인원 확인
+        Long currentCount = memberStudyRepository.countByStudy(study);
+        if (currentCount >= 2) {
+            throw new CustomException("스터디 참여 인원이 2명 이상이므로 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         // 관리자이거나 스터디 개설자인 경우 삭제 가능
         if (!(isAdmin || member.equals(study.getLeader()))) {
@@ -145,7 +151,5 @@ public class StudyService {
         }
 
         studyRepository.delete(study);
-
     }
-
 }
