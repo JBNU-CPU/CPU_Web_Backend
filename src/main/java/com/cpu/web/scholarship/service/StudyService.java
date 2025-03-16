@@ -87,6 +87,8 @@ public class StudyService {
     public StudyResponseDTO updateStudy(Long id, StudyRequestDTO studyRequestDTO) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
@@ -95,14 +97,14 @@ public class StudyService {
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
-        // 현재 참여 인원 확인
+        // 현재 참여 인원 확인 및 관리자가 아닌 경우 검사
         Long currentCount = memberStudyRepository.countByStudy(study);
-        if (currentCount >= 2) {
+        if (!isAdmin && currentCount >= 2) {
             throw new CustomException("스터디 참여 인원이 2명 이상이므로 수정할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 스터디 리더인지 확인
-        if (!study.getLeader().equals(member)) {
+        // 스터디 리더인지 확인 및 관리자가 아닌 경우 검사
+        if (!isAdmin && !study.getLeader().equals(member)) {
             throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
         }
 
@@ -127,6 +129,7 @@ public class StudyService {
         return new StudyResponseDTO(studyRepository.save(study));
     }
 
+
     // 스터디 삭제
     public void deleteStudy(Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -139,9 +142,9 @@ public class StudyService {
         Study study = studyRepository.findById(id)
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
-        // 현재 참여 인원 확인
+        // 현재 참여 인원 확인 및 관리자가 아닌 경우 검사
         Long currentCount = memberStudyRepository.countByStudy(study);
-        if (currentCount >= 2) {
+        if (!isAdmin && currentCount >= 2) {
             throw new CustomException("스터디 참여 인원이 2명 이상이므로 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -152,4 +155,5 @@ public class StudyService {
 
         studyRepository.delete(study);
     }
+
 }
