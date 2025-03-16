@@ -61,7 +61,6 @@ public class GatheringService {
         Gathering gathering = gatheringRepository.findById(id).orElseThrow(() -> new CustomException("소모임이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
         System.out.println("gathering.getGatheringTitle() = " + gathering.getGatheringTitle());
         List<MemberGathering> memberGatherings = memberGatheringRepository.findByGathering_GatheringId(id);
-        System.out.println("memberGatherings.getFirst() = " + memberGatherings.getFirst());
         Long currentCount = memberGatheringRepository.countByGathering(gathering);
         System.out.println("currentCount = " + currentCount);
 
