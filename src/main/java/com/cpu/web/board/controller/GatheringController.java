@@ -44,7 +44,6 @@ public class GatheringController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = GatheringRequestDTO.class))
             )  @RequestBody GatheringRequestDTO gatheringRequestDTO) {
         Gathering gathering = gatheringService.createGathering(gatheringRequestDTO);
-        System.out.println("gatheringRequestDTO.getContent() = " + gatheringRequestDTO.getContent());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(gathering.getGatheringId())
