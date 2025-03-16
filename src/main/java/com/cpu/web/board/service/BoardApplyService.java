@@ -42,7 +42,7 @@ public class BoardApplyService {
         }
 
         // 리더인지 확인
-        if (gathering.getMember().equals(member)) {
+        if (gathering.getLeader().equals(member)) {
             throw new CustomException("소모임 개설자는 신청할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 

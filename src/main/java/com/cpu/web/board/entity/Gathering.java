@@ -46,7 +46,7 @@ public class Gathering {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leader_id", nullable = false)
-    private Member member;
+    private Member leader;
 
 }
 

@@ -2,10 +2,12 @@ package com.cpu.web.board.dto.request;
 
 import com.cpu.web.board.entity.Gathering;
 import com.cpu.web.member.entity.Member;
+import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -31,11 +33,19 @@ public class GatheringRequestDTO {
 
     public Gathering toGatheringEntity(Member member) {
         Gathering gathering = new Gathering();
-        gathering.setGatheringTitle(title);  // title 설정
+        gathering.setGatheringTitle(title);
         gathering.setGatheringContent(content);
         gathering.setMaxMembers(maxMembers);
         gathering.setEtc(etc);
-        gathering.setMember(member); // member 설정 (필요한 경우)
+        gathering.setLeader(member);
+
+        // gatheringDays 타입 List<GatheringSchedule> -> List<String> 변환
+        if(this.gatheringDays != null) {
+            List<String> scheduleStrings = this.gatheringDays.stream()
+                    .map(GatheringScheduleDTO::toScheduleString)
+                    .collect(Collectors.toList());
+            gathering.setGatheringDays(scheduleStrings); // 변환 후 엔티티에 저장
+        }
 
         return gathering;  // Gathering 객체 반환
     }
@@ -46,5 +56,12 @@ public class GatheringRequestDTO {
         gathering.setMaxMembers(maxMembers);
         gathering.setEtc(etc);
 
+        // gatheringDays 타입 List<GatheringSchedule> -> List<String> 변환
+        if(this.gatheringDays != null) {
+            List<String> scheduleStrings = this.gatheringDays.stream()
+                    .map(GatheringScheduleDTO::toScheduleString)
+                    .collect(Collectors.toList());
+            gathering.setGatheringDays(scheduleStrings); // 변환 후 엔티티에 저장
+        }
     }
 }

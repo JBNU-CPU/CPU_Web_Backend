@@ -78,7 +78,7 @@ public class GatheringService {
                 .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 소모임 개설자인지 확인
-        if (!gathering.getMember().equals(member)) {
+        if (!gathering.getLeader().equals(member)) {
             throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
         }
         gatheringRequestDTO.updateGatheringEntity(gathering);
@@ -100,7 +100,7 @@ public class GatheringService {
 
 
         // 관리자이거나 스터디 개설자인 경우 삭제 가능
-        if (!(isAdmin || member.equals(gathering.getMember()))) {
+        if (!(isAdmin || member.equals(gathering.getLeader()))) {
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
         }
 

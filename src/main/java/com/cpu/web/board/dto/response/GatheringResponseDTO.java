@@ -61,10 +61,10 @@ public class GatheringResponseDTO {
     // entity => dto (소모임 참여 멤버 정보 없음)
     public GatheringResponseDTO(Gathering gathering){
         this.id = gathering.getGatheringId();
-        this.leaderId = gathering.getMember().getMemberId();
-        this.leaderName = gathering.getMember().getPersonName();
-        this.leaderUserName = gathering.getMember().getUsername();
-        this.leaderPhone = gathering.getMember().getPhone();
+        this.leaderId = gathering.getLeader().getMemberId();
+        this.leaderName = gathering.getLeader().getPersonName();
+        this.leaderUserName = gathering.getLeader().getUsername();
+        this.leaderPhone = gathering.getLeader().getPhone();
         this.gatheringTitle = gathering.getGatheringTitle();
         this.gatheringContent = gathering.getGatheringContent();
         this.etc = gathering.getEtc();
@@ -77,10 +77,10 @@ public class GatheringResponseDTO {
     // entity => dto 소모임 참여 멤버 정보 없음, 현재 참여 인원수 포함
     public GatheringResponseDTO(Gathering gathering, Long currentCount){
         this.id = gathering.getGatheringId();
-        this.leaderId = gathering.getMember().getMemberId();
-        this.leaderName = gathering.getMember().getPersonName();
-        this.leaderUserName = gathering.getMember().getUsername();
-        this.leaderPhone = gathering.getMember().getPhone();
+        this.leaderId = gathering.getLeader().getMemberId();
+        this.leaderName = gathering.getLeader().getPersonName();
+        this.leaderUserName = gathering.getLeader().getUsername();
+        this.leaderPhone = gathering.getLeader().getPhone();
         this.gatheringTitle = gathering.getGatheringTitle();
         this.gatheringContent = gathering.getGatheringContent();
         this.etc = gathering.getEtc();
@@ -93,10 +93,10 @@ public class GatheringResponseDTO {
     // entity => dto (소모임 참여 멤버 정보 있음)
     public GatheringResponseDTO(Gathering gathering, List<MemberGathering> memberGatherings, Long currentCount) {
         this.id = gathering.getGatheringId();
-        this.leaderId = gathering.getMember().getMemberId();
-        this.leaderName = gathering.getMember().getPersonName();
-        this.leaderUserName = gathering.getMember().getUsername();
-        this.leaderPhone = gathering.getMember().getPhone();
+        this.leaderId = gathering.getLeader().getMemberId();
+        this.leaderName = gathering.getLeader().getPersonName();
+        this.leaderUserName = gathering.getLeader().getUsername();
+        this.leaderPhone = gathering.getLeader().getPhone();
         this.gatheringTitle = gathering.getGatheringTitle();
         this.gatheringContent = gathering.getGatheringContent();
         this.etc = gathering.getEtc();
