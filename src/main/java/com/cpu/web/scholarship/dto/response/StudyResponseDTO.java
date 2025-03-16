@@ -45,6 +45,8 @@ public class StudyResponseDTO {
     private Long currentCount;
 
     @Schema(description = "스터디 설명", example = "자바 공부해서 취뽀해봅시다.")
+    @JsonProperty("studyDescription")
+    @JsonRawValue
     private String studyDescription;
 
     @Schema(description = "기술 스택", example = "Java, Spring")
