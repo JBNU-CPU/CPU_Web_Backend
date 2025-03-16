@@ -39,4 +39,12 @@ public class GatheringRequestDTO {
 
         return gathering;  // Gathering 객체 반환
     }
+
+    public void updateGatheringEntity(Gathering gathering) {
+        gathering.setGatheringTitle(title);  // title 설정
+        gathering.setGatheringContent(content);
+        gathering.setMaxMembers(maxMembers);
+        gathering.setEtc(etc);
+
+    }
 }

@@ -83,11 +83,9 @@ public class GatheringService {
         if (!gathering.getMember().equals(member)) {
             throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
         }
+        gatheringRequestDTO.updateGatheringEntity(gathering);
 
-        Gathering updatedGathering = gatheringRequestDTO.toGatheringEntity(member);
-        updatedGathering.setGatheringId(id);
-
-        return new GatheringResponseDTO(gatheringRepository.save(updatedGathering));
+        return new GatheringResponseDTO(gatheringRepository.save(gathering));
     }
     
     // 소모임 삭제
