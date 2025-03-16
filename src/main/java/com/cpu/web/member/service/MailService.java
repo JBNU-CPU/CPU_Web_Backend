@@ -21,7 +21,7 @@ public class MailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(toEmail);
-            message.setFrom("slyhyun@naver.com"); // 보내는 사람 이메일 주소
+            message.setFrom("jbnucpu@gmail.com"); // 보내는 사람 이메일 주소
             message.setSubject("이메일 인증 코드");
             message.setText("귀하의 인증 코드는: " + verificationCode);
 
