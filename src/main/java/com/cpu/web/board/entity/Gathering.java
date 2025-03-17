@@ -33,7 +33,7 @@ public class Gathering {
     @Column(name = "etc")
     private String etc;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "gathering_schedule", joinColumns = @JoinColumn(name = "gathering_id"))
     @Column(name = "gathering_entry")
     private List<String> gatheringDays = new ArrayList<>();
