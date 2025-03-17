@@ -34,7 +34,7 @@ public class Gathering {
     private String etc;
 
     @ElementCollection
-    @CollectionTable(name = "gathering_sechedule", joinColumns = @JoinColumn(name = "gathering_id"))
+    @CollectionTable(name = "gathering_schedule", joinColumns = @JoinColumn(name = "gathering_id"))
     @Column(name = "gathering_entry")
     private List<String> gatheringDays = new ArrayList<>();
 

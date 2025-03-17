@@ -44,7 +44,13 @@ public class GatheringRequestDTO {
             List<String> scheduleStrings = this.gatheringDays.stream()
                     .map(GatheringScheduleDTO::toScheduleString)
                     .collect(Collectors.toList());
+
+            // 변환 값 확인
+            System.out.println("Converted gatheringDays: " + scheduleStrings);
+
             gathering.setGatheringDays(scheduleStrings); // 변환 후 엔티티에 저장
+        }else {
+            System.out.println("소모임 요일이 null 값입니다.");
         }
 
         return gathering;  // Gathering 객체 반환

@@ -48,7 +48,7 @@ public class GatheringController {
                 .path("/{id}")
                 .buildAndExpand(gathering.getGatheringId())
                 .toUri();
-        return ResponseEntity.created(location).body(new GatheringResponseDTO());
+        return ResponseEntity.created(location).body(new GatheringResponseDTO(gathering));
     }
 
     // 소모임 전체 조회
