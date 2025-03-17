@@ -23,6 +23,9 @@ public class StudyResponseDTO {
     @Schema(description = "등록 여부", example = "true")
     private Boolean isAccepted;
 
+    @Schema(description = "스터디 마감 여부", example = "false")
+    private Boolean isClosed;
+
     @Schema(description = "개설자 아이디", example = "202018556")
     private String leaderUserName;
 
@@ -79,6 +82,7 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
+        this.isClosed = study.getIsClosed();
         this.leaderUserName = study.getLeader().getUsername();
         this.leaderName = study.getLeader().getPersonName();
         this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
@@ -99,6 +103,7 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
+        this.isClosed = study.getIsClosed();
         this.leaderUserName = study.getLeader().getUsername();
         this.leaderName = study.getLeader().getPersonName();
         this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
@@ -119,6 +124,7 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, List<MemberStudy> memberStudies, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
+        this.isClosed = study.getIsClosed();
         this.leaderUserName = study.getLeader().getUsername();
         this.leaderName = study.getLeader().getPersonName();
         this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
