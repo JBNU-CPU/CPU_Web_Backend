@@ -170,7 +170,7 @@ public class StudyService {
         studyRepository.save(study);
     }
 
-    // 스터디 마감하기
+    // 스터디 마감하기 (기존 API 유지, 토글 기능 추가)
     public StudyResponseDTO closeStudy(Long id) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -184,12 +184,13 @@ public class StudyService {
         // 스터디 리더인지 확인 또는 관리자 권한 검사
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
         if (!isAdmin && !study.getLeader().equals(member)) {
             throw new CustomException("팀장이 아니므로 마감 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
         }
 
-        // 스터디 상태를 마감으로 설정
-        study.setIsClosed(true);
+        // 현재 상태를 반대로 토글 (true ↔ false)
+        study.setIsClosed(!study.getIsClosed());
         studyRepository.save(study);
 
         // 변경된 스터디 정보로 응답 객체 생성
