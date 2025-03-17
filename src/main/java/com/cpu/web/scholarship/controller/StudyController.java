@@ -1,5 +1,6 @@
 package com.cpu.web.scholarship.controller;
 
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
 import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import com.cpu.web.scholarship.entity.Study;
@@ -113,4 +114,21 @@ public class StudyController {
         studyService.deleteStudy(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/close")
+    @Operation(summary = "스터디 마감", description = "지정된 스터디를 마감합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "스터디가 성공적으로 마감되었습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "403", description = "마감 권한이 없습니다.", content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<StudyResponseDTO> closeStudy(@PathVariable Long id) {
+        try {
+            StudyResponseDTO closedStudy = studyService.closeStudy(id);
+            return ResponseEntity.ok(closedStudy);
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatus()).build();
+        }
+    }
+
 }

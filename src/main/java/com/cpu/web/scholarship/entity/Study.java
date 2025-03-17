@@ -27,6 +27,9 @@ public class Study {
     @Column(name = "is_accepted", nullable = false)
     private Boolean isAccepted = false;
 
+    @Column(name = "is_closed", nullable = false)
+    private Boolean isClosed = false;  // 추가된 마감 여부 필드
+
     @Column(name = "study_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private StudyType studyType;
@@ -64,10 +67,8 @@ public class Study {
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberStudy> joinedMember = new ArrayList<>();
 
-
     // ENUM for study type
     public enum StudyType {
         session, study, project
     }
 }
-

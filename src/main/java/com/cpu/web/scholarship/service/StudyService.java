@@ -34,7 +34,6 @@ public class StudyService {
 
     // 스터디 개설
     public Study createStudy(StudyRequestDTO studyRequestDTO) {
-
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Member leader = memberRepository.findByUsername(username)
@@ -42,15 +41,20 @@ public class StudyService {
 
         // 스터디 생성 및 저장
         Study study = studyRequestDTO.toStudyEntity(leader);
-        Study savedStudy = studyRepository.save(study);
+        study.setIsClosed(false); // 초기에는 항상 false로 설정
 
-        // 매핑 테이블에 팀장 정보 추가
+        // 스터디에 대한 매핑 테이블에 팀장 정보 추가
         MemberStudy memberStudy = new MemberStudy();
         memberStudy.setMember(leader);
-        memberStudy.setStudy(savedStudy);
+        memberStudy.setStudy(study);
         memberStudy.setIsLeader(true);
 
+        // 스터디 저장
+        Study savedStudy = studyRepository.save(study);
         memberStudyRepository.save(memberStudy);
+
+        // 스터디 마감 여부 검사 및 설정
+        updateStudyClosureStatus(savedStudy);
 
         return savedStudy;
     }
@@ -108,7 +112,7 @@ public class StudyService {
             throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
         }
 
-        studyRequestDTO.updateStudyEntity(study);
+        studyRequestDTO.updateStudyEntity(study);  // 먼저 스터디 정보 업데이트
 
         // studyType 변환 처리
         String typeStr = studyRequestDTO.getStudyType().toLowerCase().trim();
@@ -126,9 +130,11 @@ public class StudyService {
                 throw new CustomException("유효하지 않은 스터디 타입입니다: " + studyRequestDTO.getStudyType(), HttpStatus.BAD_REQUEST);
         }
 
+        // 스터디 상태 업데이트 (모든 변경 사항 후에 호출)
+        updateStudyClosureStatus(study);
+
         return new StudyResponseDTO(studyRepository.save(study));
     }
-
 
     // 스터디 삭제
     public void deleteStudy(Long id) {
@@ -156,4 +162,37 @@ public class StudyService {
         studyRepository.delete(study);
     }
 
+    // 스터디 마감 여부 업데이트 로직
+    private void updateStudyClosureStatus(Study study) {
+        long currentCount = memberStudyRepository.countByStudy(study);
+        boolean isFull = currentCount == study.getMaxMembers();
+        study.setIsClosed(isFull);
+        studyRepository.save(study);
+    }
+
+    // 스터디 마감하기
+    public StudyResponseDTO closeStudy(Long id) {
+        // 로그인된 사용자 정보 가져오기
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
+
+        // 스터디 찾기
+        Study study = studyRepository.findById(id)
+                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
+
+        // 스터디 리더인지 확인 또는 관리자 권한 검사
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+        if (!isAdmin && !study.getLeader().equals(member)) {
+            throw new CustomException("팀장이 아니므로 마감 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
+        }
+
+        // 스터디 상태를 마감으로 설정
+        study.setIsClosed(true);
+        studyRepository.save(study);
+
+        // 변경된 스터디 정보로 응답 객체 생성
+        return new StudyResponseDTO(study);
+    }
 }
