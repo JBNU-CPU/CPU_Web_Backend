@@ -165,7 +165,7 @@ public class StudyService {
     // 스터디 마감 여부 업데이트 로직
     private void updateStudyClosureStatus(Study study) {
         long currentCount = memberStudyRepository.countByStudy(study);
-        boolean isFull = currentCount >= study.getMaxMembers();
+        boolean isFull = currentCount == study.getMaxMembers();
         study.setIsClosed(isFull);
         studyRepository.save(study);
     }

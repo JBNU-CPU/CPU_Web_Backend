@@ -9,7 +9,6 @@ import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import com.cpu.web.scholarship.repository.StudyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,20 +48,21 @@ public class ApplyService {
             throw new CustomException("스터디 리더는 신청할 수 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 정원이 초과됏는지 확인
+        // 정원이 초과되었는지 확인
         long currentCount = memberStudyRepository.countByStudy(study);
         if (currentCount >= study.getMaxMembers()){
             throw new CustomException("이미 최대 인원이 찼습니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 신청 정보 저장 (isLeader = false)
-
         MemberStudy memberStudy = new MemberStudy();
         memberStudy.setStudy(study);
         memberStudy.setMember(member);
         memberStudy.setIsLeader(false);
-
         memberStudyRepository.save(memberStudy);
+
+        // 🔹 스터디 마감 여부 업데이트
+        updateStudyClosureStatus(study);
     }
 
     // 스터디 신청 취소
@@ -87,5 +87,18 @@ public class ApplyService {
 
         // 신청 취소 (삭제)
         memberStudyRepository.delete(memberStudy.get());
+
+        // 🔹 스터디 마감 여부 업데이트
+        Study study = studyRepository.findById(studyId)
+                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+        updateStudyClosureStatus(study);
+    }
+
+    // 🔹 스터디 마감 여부 업데이트 로직 추가
+    private void updateStudyClosureStatus(Study study) {
+        long currentCount = memberStudyRepository.countByStudy(study);
+        boolean isFull = currentCount == study.getMaxMembers(); // 최대 인원과 정확히 같을 때만 마감
+        study.setIsClosed(isFull);
+        studyRepository.save(study);
     }
 }
