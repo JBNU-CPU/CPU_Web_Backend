@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "소모임 신청", description = "소모임 신청 API")
 public class BoardApplyController {
     private final BoardApplyService boardApplyService;
-
+    //
     // ✅ 스터디 신청
     @PostMapping("/{gatheringId}")
     @Operation(summary = "소모임 신청", description = "소모임에 참여 신청을 합니다.")
