@@ -9,6 +9,7 @@ import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.repository.MemberStudyRepository;
 import com.cpu.web.scholarship.repository.StudyRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +34,7 @@ public class StudyService {
     private final MemberStudyRepository memberStudyRepository;
 
     // 스터디 개설
-    public Study createStudy(StudyRequestDTO studyRequestDTO) {
+    public Study createStudy(@Valid StudyRequestDTO studyRequestDTO) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Member leader = memberRepository.findByUsername(username)
@@ -88,7 +89,7 @@ public class StudyService {
     }
 
     // 스터디 수정
-    public StudyResponseDTO updateStudy(Long id, StudyRequestDTO studyRequestDTO) {
+    public StudyResponseDTO updateStudy(Long id, @Valid StudyRequestDTO studyRequestDTO) {
         // 로그인된 사용자 정보 가져오기
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
