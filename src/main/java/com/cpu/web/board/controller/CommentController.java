@@ -2,6 +2,7 @@ package com.cpu.web.board.controller;
 
 import com.cpu.web.board.dto.request.CommentRequestDTO;
 import com.cpu.web.board.dto.response.CommentResponseDTO;
+import com.cpu.web.board.dto.response.PostResponseDTO;
 import com.cpu.web.board.entity.Comment;
 import com.cpu.web.board.entity.Post;
 import com.cpu.web.board.repository.PostRepository;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,16 +47,16 @@ public class CommentController {
             @Parameter(name = "postId", description = "게시글 아이디", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "Long", example = "123"))),
             @Parameter(name = "comment", description = "댓글 내용", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "퍼가용~"))),
     })
-    public ResponseEntity<CommentRequestDTO> createComment(@RequestBody CommentRequestDTO commentRequestDTO){
+    public ResponseEntity<CommentResponseDTO> createComment(@RequestBody @Valid CommentRequestDTO commentRequestDTO){
         Comment comment = commentService.createComment(commentRequestDTO);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/post/comment/{id}")
                 .buildAndExpand(comment.getCommentId())
                 .toUri();
-        return ResponseEntity.created(location).body(commentRequestDTO);
+        return ResponseEntity.created(location).body(new CommentResponseDTO(comment));
     }
-    
+
     // 특정 글의 모든 댓글 조회
     @GetMapping("/{id}")
     @Operation(summary = "특정 글의 모든 댓글 조회", description = "특정 글 모든 댓글 조회 API")
@@ -81,9 +83,9 @@ public class CommentController {
             @Parameter(name = "postId", description = "게시글 아이디", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "Long", example = "123"))),
             @Parameter(name = "comment", description = "댓글 내용", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "퍼가용~"))),
     })
-    public ResponseEntity<CommentResponseDTO> updateComment(@PathVariable Long id, @RequestBody CommentRequestDTO commentRequestDTO) {
-        CommentResponseDTO updatedComment = commentService.updateComment(id, commentRequestDTO);
-        return ResponseEntity.ok(updatedComment);
+    public ResponseEntity<CommentResponseDTO> updateComment(@PathVariable Long id, @RequestBody @Valid CommentRequestDTO commentRequestDTO) {
+        CommentResponseDTO updatedCommentResponseDTO = commentService.updateComment(id, commentRequestDTO);
+        return ResponseEntity.ok(updatedCommentResponseDTO);
     }
 
     // 댓글 삭제

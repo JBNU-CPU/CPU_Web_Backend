@@ -99,9 +99,9 @@ public class PostController {
             @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "수정할 게시글 데이터", required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostResponseDTO.class))
-            ) @RequestBody @Valid PostResponseDTO postResponseDTO) {
-        PostResponseDTO updatedPostResponseDTO = postService.updatePost(id, postResponseDTO);
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostRequestDTO.class))
+            ) @RequestBody @Valid PostRequestDTO postRequestDTO) {
+        PostResponseDTO updatedPostResponseDTO = postService.updatePost(id, postRequestDTO);
 
         return ResponseEntity.ok(updatedPostResponseDTO);
     }

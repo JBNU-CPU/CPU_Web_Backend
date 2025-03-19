@@ -9,6 +9,7 @@ import com.cpu.web.board.repository.PostRepository;
 import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -28,7 +29,7 @@ public class CommentService {
     private final MemberRepository memberRepository;
 
     // 댓글 작성
-    public Comment createComment(CommentRequestDTO commentRequestDTO) {
+    public Comment createComment(@Valid CommentRequestDTO commentRequestDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Member> member = memberRepository.findByUsername(username);
         String content = commentRequestDTO.getContent();
@@ -50,7 +51,7 @@ public class CommentService {
     }
 
     // 댓글 수정
-    public CommentResponseDTO updateComment(Long id, CommentRequestDTO commentRequestDTO) {
+    public CommentResponseDTO updateComment(Long id, @Valid CommentRequestDTO commentRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByUsername(username)

@@ -9,6 +9,7 @@ import com.cpu.web.board.repository.MemberGatheringRepository;
 import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +33,7 @@ public class GatheringService {
     private final MemberGatheringRepository memberGatheringRepository;
 
     // 소모임 개설
-    public Gathering createGathering(GatheringRequestDTO gatheringRequestDTO) {
+    public Gathering createGathering(@Valid GatheringRequestDTO gatheringRequestDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
@@ -51,7 +52,7 @@ public class GatheringService {
     }
 
     // 페에지네이션된 소모임 전체 조회
-    public Page<GatheringResponseDTO> getAllStudies(int page, int size) {
+    public Page<GatheringResponseDTO> getAllGatherings(int page, int size) {
         Page<Gathering> gatherings = gatheringRepository.findAll(PageRequest.of(page, size, Sort.by("gatheringId").descending()));
         return gatherings.map(GatheringResponseDTO::new);
     }
@@ -66,7 +67,7 @@ public class GatheringService {
     }
 
     // 스터디 수정
-    public GatheringResponseDTO updateGathering(Long id, GatheringRequestDTO gatheringRequestDTO) {
+    public GatheringResponseDTO updateGathering(Long id, @Valid GatheringRequestDTO gatheringRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -75,7 +76,7 @@ public class GatheringService {
 
         // 스터디 찾기
         Gathering gathering = gatheringRepository.findById(id)
-                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CustomException("소모임이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 소모임 개설자인지 확인
         if (!gathering.getLeader().equals(member)) {
@@ -96,7 +97,7 @@ public class GatheringService {
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
 
         Gathering gathering = gatheringRepository.findById(id)
-                .orElseThrow(() -> new CustomException("스터디가 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new CustomException("소모임이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
 
         // 관리자이거나 스터디 개설자인 경우 삭제 가능
