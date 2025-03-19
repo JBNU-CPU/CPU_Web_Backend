@@ -24,7 +24,7 @@ public class Gathering {
     @Column(name = "gathering_title", length = 100, nullable = false)
     private String gatheringTitle;
 
-    @Column(name = "gathering_content", nullable = false)
+    @Column(name = "gathering_content", length = 10000, nullable = false)
     private String gatheringContent;
 
     @Column(name = "max_members", nullable = false)

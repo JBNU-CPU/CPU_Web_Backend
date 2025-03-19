@@ -25,10 +25,10 @@ public class Post {
     @Column(name = "is_notice", nullable = false)
     private Boolean isNotice;
 
-    @Column(name = "title", nullable = false, length = 1000)
+    @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "content", nullable = false, length = 10000)
+    @Column(name = "content", length = 10000, nullable = false)
     private String content;
 
     @CreationTimestamp
