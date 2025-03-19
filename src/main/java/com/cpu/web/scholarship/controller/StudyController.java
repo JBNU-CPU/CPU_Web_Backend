@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class StudyController {
                     description = "스터디 개설 데이터",
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyRequestDTO.class))
-            ) @RequestBody StudyRequestDTO studyRequestDTO) {
+            ) @RequestBody @Valid StudyRequestDTO studyRequestDTO) {
         Study study = studyService.createStudy(studyRequestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -100,9 +101,9 @@ public class StudyController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "수정할 스터디 수정 데이터", required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyRequestDTO.class))
-            ) @RequestBody StudyRequestDTO studyRequestDTO) {
-        StudyResponseDTO updatedStudyRequestDTO = studyService.updateStudy(id, studyRequestDTO);
-        return ResponseEntity.ok(updatedStudyRequestDTO);
+            ) @RequestBody @Valid StudyRequestDTO studyRequestDTO) {
+        StudyResponseDTO updatedStudyResponseDTO = studyService.updateStudy(id, studyRequestDTO);
+        return ResponseEntity.ok(updatedStudyResponseDTO);
     }
 
     @DeleteMapping("/{id}")

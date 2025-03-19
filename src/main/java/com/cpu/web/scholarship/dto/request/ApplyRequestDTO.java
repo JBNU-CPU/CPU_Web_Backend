@@ -10,6 +10,4 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplyRequestDTO {
-    private Long studyId;
-    private Long memberId;
 }
