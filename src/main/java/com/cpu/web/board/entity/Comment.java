@@ -20,7 +20,7 @@ public class Comment {
     @Column(name = "comment_id")
     private Long commentId;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", length = 10000, nullable = false)
     private String content;
 
     @CreationTimestamp

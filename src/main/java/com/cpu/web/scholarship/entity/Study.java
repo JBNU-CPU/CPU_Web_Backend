@@ -37,16 +37,16 @@ public class Study {
     @Column(name = "max_members", nullable = false)
     private int maxMembers;
 
-    @Column(name = "study_description", length = 5000, nullable = false)
+    @Column(name = "study_description", length = 10000, nullable = false)
     private String studyDescription;
 
-    @Column(name = "tech_stack", nullable = false)
+    @Column(name = "tech_stack", length = 1000, nullable = false)
     private String techStack;
 
-    @Column(name = "location", nullable = false)
+    @Column(name = "location", length = 1000, nullable = false)
     private String location;
 
-    @Column(name = "etc", length = 2000)
+    @Column(name = "etc")
     private String etc;
 
     @ElementCollection
