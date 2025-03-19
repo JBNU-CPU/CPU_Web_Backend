@@ -1,10 +1,10 @@
 package com.cpu.web.member.service;
 
 import com.cpu.web.exception.CustomException;
-import com.cpu.web.member.dto.response.SignupDTO;
+import com.cpu.web.member.dto.request.SignupDTO;
 import com.cpu.web.member.entity.Member;
-import com.cpu.web.member.exception.DuplicateResourceException;
 import com.cpu.web.member.repository.MemberRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,16 +17,11 @@ public class SignupService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public Long signup(SignupDTO signupDTO) {
+    public Long signup(@Valid SignupDTO signupDTO) {
 
         // ID 중복 여부 체크
         if (memberRepository.existsByUsername(signupDTO.getUsername())) {
             throw new CustomException("중복된 ID 입니다", HttpStatus.BAD_REQUEST);
-        }
-
-        // ID 형식 체크
-        if (!signupDTO.getUsername().matches("^20\\d{7}$")) {
-            throw new CustomException("ID는 학번 형식이어야 합니다.", HttpStatus.BAD_REQUEST);
         }
 
         // 닉네임 중복 여부 체크
@@ -60,5 +55,4 @@ public class SignupService {
         member = memberRepository.save(member);
         return member.getMemberId(); // 사용자 ID 반환
     }
-
 }
