@@ -1,6 +1,6 @@
 package com.cpu.web.member.controller;
 
-import com.cpu.web.member.dto.response.SignupDTO;
+import com.cpu.web.member.dto.request.SignupDTO;
 import com.cpu.web.member.service.SignupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +40,7 @@ public class SignupController {
             @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "email", example = "user@example.com"))),
             @Parameter(name = "phone", description = "전화번호", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "010-1234-5678")))
     })
-    public ResponseEntity<?> signupProcess(SignupDTO signupDTO) {
+    public ResponseEntity<?> signupProcess(@Valid SignupDTO signupDTO) {
         try {
             Long memberId = signupService.signup(signupDTO);
             URI location = ServletUriComponentsBuilder

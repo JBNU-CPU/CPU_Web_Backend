@@ -1,4 +1,4 @@
-package com.cpu.web.member.dto.request;
+package com.cpu.web.member.dto.response;
 
 import com.cpu.web.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,7 +1,6 @@
 package com.cpu.web.member.service;
 
 import com.cpu.web.exception.CustomException;
-import com.cpu.web.member.dto.request.CheckDTO;
 import com.cpu.web.member.dto.request.MyPageEditDTO;
 import com.cpu.web.member.dto.request.NewPasswordDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
@@ -11,6 +10,7 @@ import com.cpu.web.member.repository.MemberRepository;
 import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
 import com.cpu.web.scholarship.repository.MemberStudyRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -34,7 +34,7 @@ public class MyInformationService {
         return memberRepository.findByUsername(username).map(MemberResponseDTO::new);
     }
 
-    public MemberResponseDTO updateMember(MyPageEditDTO myPageEditDTO, String username) {
+    public MemberResponseDTO updateMember(@Valid MyPageEditDTO myPageEditDTO, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
         member.setNickName(myPageEditDTO.getNickName());
@@ -46,7 +46,7 @@ public class MyInformationService {
         return new MemberResponseDTO(updatedMember);
     }
 
-    public void setNewPassword(NewPasswordDTO newPasswordDTO) {
+    public void setNewPassword(@Valid NewPasswordDTO newPasswordDTO) {
         Member member = memberRepository.findByUsername(newPasswordDTO.getUsername())
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
         member.setPassword(bCryptPasswordEncoder.encode(newPasswordDTO.getPassword()));

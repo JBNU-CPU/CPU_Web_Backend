@@ -1,6 +1,5 @@
 package com.cpu.web.member.controller;
 
-import com.cpu.web.member.dto.request.CheckDTO;
 import com.cpu.web.member.dto.request.MyPageEditDTO;
 import com.cpu.web.member.dto.request.NewPasswordDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
@@ -72,7 +71,7 @@ public class MyInformationController {
     @Parameters({
             @Parameter(name = "password", description = "비밀번호")
     })
-    public ResponseEntity<?> setNewPassword(@RequestBody NewPasswordDTO newPasswordDTO){
+    public ResponseEntity<?> setNewPassword(@RequestBody @Valid NewPasswordDTO newPasswordDTO){
         myInformationService.setNewPassword(newPasswordDTO);
         return ResponseEntity.ok().build();
     }
