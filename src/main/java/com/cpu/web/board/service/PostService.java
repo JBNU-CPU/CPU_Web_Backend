@@ -8,7 +8,7 @@ import com.cpu.web.board.repository.PostRepository;
 import com.cpu.web.exception.CustomException;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +29,7 @@ public class PostService {
     private final MemberRepository memberRepository;
 
     // 글 생성
-    public Post createPost(PostRequestDTO postRequestDTO) {
+    public Post createPost(@Valid PostRequestDTO postRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByUsername(username)
@@ -51,7 +51,7 @@ public class PostService {
     }
 
     // 글 수정
-    public PostResponseDTO updatePost(Long id, PostResponseDTO postResponseDTO) {
+    public PostResponseDTO updatePost(Long id, @Valid PostRequestDTO postRequestDTO) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.UNAUTHORIZED));
@@ -63,8 +63,8 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new CustomException("게시글이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
-        post.setTitle(postResponseDTO.getTitle());
-        post.setContent(postResponseDTO.getContent());
+        post.setTitle(postRequestDTO.getTitle());
+        post.setContent(postRequestDTO.getContent());
         Post updatedPost = postRepository.save(post);
         return new PostResponseDTO(updatedPost);
     }
