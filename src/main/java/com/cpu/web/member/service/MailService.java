@@ -14,6 +14,7 @@ import java.util.Random;
 public class MailService {
 
     private final MailgunMessagesApi mailgunMessagesApi;
+
     private final SpringTemplateEngine templateEngine;
 
     @Value("${mailgun.domain}")
