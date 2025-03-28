@@ -39,6 +39,9 @@ out/
 ### db 민감 정보 ###
 application-rds.properties
 
+### mailgun 민감 정보
+mailgun
+
 ### SSL 인증서
 src/main/resources/ssl/keystore.p12
 

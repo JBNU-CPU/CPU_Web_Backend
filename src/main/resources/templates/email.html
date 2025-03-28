@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>CPU 동아리 가입 인증</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f1f3f5;
+      margin: 0;
+      padding: 0;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .email-header {
+      background-color: #00c471;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .email-body {
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .verification-code {
+      background-color: #f1f3f5;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      font-size: 24px;
+      font-weight: bold;
+      color: #00c471;
+      letter-spacing: 4px;
+    }
+    .footer {
+      background-color: #f1f3f5;
+      color: #868E96;
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+<table width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="center" style="background-color: #f1f3f5; padding: 20px;">
+      <table class="email-container" width="600" cellspacing="0" cellpadding="0">
+        <tr>
+          <td class="email-header">
+            <h1 style="margin: 0;">CPU 동아리 가입 인증</h1>
+          </td>
+        </tr>
+        <tr>
+          <td class="email-body">
+            <p style="font-size: 16px; color: #1b1c1d;">
+              <b>전북대학교 중앙동아리 CPU에 가입해주셔서 감사합니다.</b>
+            </p>
+            <p style="font-size: 15px; color: #1b1c1d;">
+              아래의 인증 코드를 사용하여 가입을 완료해주세요.
+            </p>
+            <div class="verification-code" th:text="${verificationCode}">
+              000000
+            </div>
+            <p style="font-size: 14px; color: #868E96;">
+              이 코드는 30분 동안 유효합니다.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td class="footer">
+            © 전북대학교 중앙동아리 CPU. All rights reserved.
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

@@ -5,6 +5,8 @@ import com.mailgun.client.MailgunClient;
 import com.mailgun.model.message.Message;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.Random;
 
@@ -13,31 +15,38 @@ public class MailService {
 
     private final MailgunMessagesApi mailgunMessagesApi;
 
+    private final SpringTemplateEngine templateEngine;
+
     @Value("${mailgun.domain}")
     private String domain;
 
     @Value("${mailgun.sender}")
     private String sender;
 
-    public MailService(@Value("${mailgun.api-key}") String apiKey) {
+    public MailService(@Value("${mailgun.api-key}") String apiKey, SpringTemplateEngine templateEngine) {
         this.mailgunMessagesApi = MailgunClient.config(apiKey).createApi(MailgunMessagesApi.class);
+        this.templateEngine = templateEngine;
     }
 
     public String sendVerificationCode(String toEmail) {
         String verificationCode = generateVerificationCode();
 
         try {
+            Context context = new Context();
+            context.setVariable("verificationCode", verificationCode);
+
+            //템플릿 엔진 작동시켜 변수(인증코드) 넣기
+            String htmlContent = templateEngine.process("email", context);
+
             Message message = Message.builder()
                     .from(sender)
                     .to(toEmail)
                     .subject("CPU 이메일 확인 코드")
-                    .html(String.format("""
-                        <p><b>전북대학교 중앙동아리 CPU에 가입해주셔서 감사합니다.</b></p>
-                        <p>귀하의 확인 코드는: <strong>%s</strong> 입니다.</p>
-                    """, verificationCode))
+                    .html(htmlContent)
                     .build();
 
             mailgunMessagesApi.sendMessage(domain, message);
+
             return verificationCode;
         } catch (Exception e) {
             throw new RuntimeException("이메일 전송 실패: " + e.getMessage(), e);
