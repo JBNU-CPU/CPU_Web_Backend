@@ -74,9 +74,6 @@ public class PostService {
             throw new CustomException("수정 권한이 없는 유저입니다: " + username, HttpStatus.FORBIDDEN);
         }
 
-        // 기존 게시글의 isNotice 값을 가져와 새 게시글 데이터에 설정
-        postRequestDTO.setIsNotice(post.getIsNotice());
-
         post.setTitle(postRequestDTO.getTitle());
         post.setContent(postRequestDTO.getContent());
         Post updatedPost = postRepository.save(post);
