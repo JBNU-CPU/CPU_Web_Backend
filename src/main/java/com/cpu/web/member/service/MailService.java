@@ -1,41 +1,51 @@
 package com.cpu.web.member.service;
 
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import com.mailgun.api.v3.MailgunMessagesApi;
+import com.mailgun.client.MailgunClient;
+import com.mailgun.model.message.Message;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.Random;
 
 @Service
 public class MailService {
 
-    private final JavaMailSender mailSender;
+    private final MailgunMessagesApi mailgunMessagesApi;
+    private final SpringTemplateEngine templateEngine;
 
-    public MailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    @Value("${mailgun.domain}")
+    private String domain;
+
+    @Value("${mailgun.sender}")
+    private String sender;
+
+    public MailService(@Value("${mailgun.api-key}") String apiKey, SpringTemplateEngine templateEngine) {
+        this.mailgunMessagesApi = MailgunClient.config(apiKey).createApi(MailgunMessagesApi.class);
+        this.templateEngine = templateEngine;
     }
 
     public String sendVerificationCode(String toEmail) {
         String verificationCode = generateVerificationCode();
 
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            Context context = new Context();
+            context.setVariable("verificationCode", verificationCode);
 
-            helper.setTo(toEmail);
-            helper.setFrom("jbnucpu@gmail.com"); //보내는 사람 메일 주소
-            helper.setSubject("CPU 이메일 확인 코드");
+            //템플릿 엔진 작동시켜 변수(인증코드) 넣기
+            String htmlContent = templateEngine.process("email", context);
 
-            //메일 내용
-            String emailContent = """
-            <p><b>전북대학교 중앙동아리 CPU에 가입해주셔서 감사합니다.</b></p>
-            <p>귀하의 확인 코드는: <strong>%s</strong> 입니다.</p>
-            """.formatted(verificationCode);
+            Message message = Message.builder()
+                    .from(sender)
+                    .to(toEmail)
+                    .subject("CPU 이메일 확인 코드")
+                    .html(htmlContent)
+                    .build();
 
-            helper.setText(emailContent, true); //HTML 내용
+            mailgunMessagesApi.sendMessage(domain, message);
 
-            mailSender.send(message); //메일 전송
             return verificationCode;
         } catch (Exception e) {
             throw new RuntimeException("이메일 전송 실패: " + e.getMessage(), e);
