@@ -56,7 +56,9 @@ public class GatheringController {
             @ApiResponse(responseCode = "200", description = "요청에 성공하였습니다.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GatheringResponseDTO.class)))
     })
     public Page<GatheringResponseDTO> getAllGatherings(
+            @Parameter(description = "페이지 번호 (0 이상)", example = "0")
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지 크기 (최대 100)", example = "10")
             @RequestParam(defaultValue = "10") int size
     ) {
         return gatheringService.getAllGatherings(page, size);

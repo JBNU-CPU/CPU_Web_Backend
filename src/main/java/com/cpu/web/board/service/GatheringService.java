@@ -54,7 +54,13 @@ public class GatheringService {
     // 페에지네이션된 소모임 전체 조회
     public Page<GatheringResponseDTO> getAllGatherings(int page, int size) {
         Page<Gathering> gatherings = gatheringRepository.findAll(PageRequest.of(page, size, Sort.by("gatheringId").descending()));
-        return gatherings.map(GatheringResponseDTO::new);
+
+        Page<GatheringResponseDTO> result = gatherings.map(gathering -> {
+            Long currentCount = memberGatheringRepository.countByGathering(gathering);
+            return new GatheringResponseDTO(gathering, currentCount);
+        });
+
+        return result;
     }
 
     // 특정 소모임 조회
@@ -66,7 +72,7 @@ public class GatheringService {
         return Optional.of(new GatheringResponseDTO(gathering, memberGatherings, currentCount));
     }
 
-    // 스터디 수정
+    // 소모임 수정
     public GatheringResponseDTO updateGathering(Long id, @Valid GatheringRequestDTO gatheringRequestDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
