@@ -76,6 +76,8 @@ public class GatheringService {
 
     // 소모임 수정
     public GatheringResponseDTO updateGathering(Long id, @Valid GatheringRequestDTO gatheringRequestDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -87,7 +89,7 @@ public class GatheringService {
                 .orElseThrow(() -> new CustomException("소모임이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
         // 소모임 개설자인지 확인
-        if (!gathering.getLeader().equals(member)) {
+        if (!(isAdmin || member.equals(gathering.getLeader()))) {
             throw new CustomException("팀장이 아니므로 수정 권한이 없습니다: " + member.getPersonName(), HttpStatus.FORBIDDEN);
         }
         gatheringRequestDTO.updateGatheringEntity(gathering);
