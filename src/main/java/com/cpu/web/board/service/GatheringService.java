@@ -45,10 +45,12 @@ public class GatheringService {
         // 매핑 테이블에 팀장 정보 추가
         MemberGathering memberGathering = new MemberGathering();
         memberGathering.setMember(member);
-        memberGathering.setGathering(savedGathering);
+        memberGathering.setGathering(gathering);
         memberGathering.setIsLeader(true);
 
-        return gatheringRepository.save(gathering);
+        memberGatheringRepository.save(memberGathering);
+
+        return savedGathering;
     }
 
     // 페에지네이션된 소모임 전체 조회
@@ -80,7 +82,7 @@ public class GatheringService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
 
-        // 스터디 찾기
+        // 소모임 찾기
         Gathering gathering = gatheringRepository.findById(id)
                 .orElseThrow(() -> new CustomException("소모임이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
@@ -105,11 +107,18 @@ public class GatheringService {
         Gathering gathering = gatheringRepository.findById(id)
                 .orElseThrow(() -> new CustomException("소모임이 존재하지 않습니다: " + id, HttpStatus.NOT_FOUND));
 
+        // 현재 참여 인원 확인 및 관리자가 아닌 경우 검사
+        Long currentCount = memberGatheringRepository.countByGathering(gathering);
+        if (!isAdmin && currentCount >= 2) {
+            throw new CustomException("소모임 참여 인원이 2명 이상이므로 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
 
-        // 관리자이거나 스터디 개설자인 경우 삭제 가능
+        // 관리자이거나 소모임 개설자인 경우 삭제 가능
         if (!(isAdmin || member.equals(gathering.getLeader()))) {
             throw new CustomException("삭제 권한이 없는 유저입니다.", HttpStatus.FORBIDDEN);
         }
+
+        memberGatheringRepository.deleteByGathering(gathering);
 
         gatheringRepository.delete(gathering);
     }
