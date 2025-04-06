@@ -22,17 +22,18 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         // 세션이 만료되었는지 확인
         boolean isSessionExpired = request.getRequestedSessionId() != null && !request.isRequestedSessionIdValid();
 
+        // 항상 sessionExpired 헤더를 설정
+        response.setHeader("sessionExpired", String.valueOf(isSessionExpired));
+
+        // 응답 설정
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        
-        // 세션 만료 시 응답 헤더 추가
-        if (isSessionExpired) {
-            response.setHeader("sessionExpired", "true");
-        }
 
-        // JSON 응답 구성
+        // 응답 메시지 설정
         Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("message", isSessionExpired ? "세션이 만료되었습니다. 다시 로그인해주세요." : "로그인이 필요합니다.");
+        errorResponse.put("message", isSessionExpired
+                ? "세션이 만료되었습니다. 다시 로그인해주세요."
+                : "로그인이 필요합니다.");
         errorResponse.put("status", HttpStatus.UNAUTHORIZED.value());
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
