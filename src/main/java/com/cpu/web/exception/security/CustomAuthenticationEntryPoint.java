@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -19,17 +20,30 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
-        // 세션이 만료되었는지 확인
-        boolean isSessionExpired = request.getRequestedSessionId() != null && !request.isRequestedSessionIdValid();
 
-        // 항상 sessionExpired 헤더를 설정
+        boolean isSessionExpired = false;
+
+        String sessionId = request.getRequestedSessionId();
+        boolean valid = request.isRequestedSessionIdValid();
+
+        HttpSession session = request.getSession(false);
+
+        if (sessionId != null && !valid) {
+            isSessionExpired = true;
+        } else if (session == null && sessionId != null) {
+            isSessionExpired = true;
+        }
+
+        // 디버깅용 로그
+        System.out.println("sessionId = " + sessionId);
+        System.out.println("isRequestedSessionIdValid = " + valid);
+        System.out.println("session = " + (session != null ? session.getId() : "null"));
+        System.out.println("==> sessionExpired = " + isSessionExpired);
+
         response.setHeader("sessionExpired", String.valueOf(isSessionExpired));
-
-        // 응답 설정
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-        // 응답 메시지 설정
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("message", isSessionExpired
                 ? "세션이 만료되었습니다. 다시 로그인해주세요."
