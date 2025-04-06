@@ -1,7 +1,8 @@
 package com.cpu.web.member.service;
 
-import org.springframework.mail.SimpleMailMessage;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -19,16 +20,25 @@ public class MailService {
         String verificationCode = generateVerificationCode();
 
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(toEmail);
-            message.setFrom("jbnucpu@gmail.com"); // 보내는 사람 이메일 주소
-            message.setSubject("이메일 인증 코드");
-            message.setText("귀하의 인증 코드는: " + verificationCode);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            mailSender.send(message);  // 이메일 전송
+            helper.setTo(toEmail);
+            helper.setFrom("jbnucpu@gmail.com"); //보내는 사람 메일 주소
+            helper.setSubject("CPU 이메일 확인 코드");
+
+            //메일 내용
+            String emailContent = """
+            <p><b>전북대학교 중앙동아리 CPU에 가입해주셔서 감사합니다.</b></p>
+            <p>귀하의 확인 코드는: <strong>%s</strong> 입니다.</p>
+            """.formatted(verificationCode);
+
+            helper.setText(emailContent, true); //HTML 내용
+
+            mailSender.send(message); //메일 전송
             return verificationCode;
         } catch (Exception e) {
-            throw new IllegalArgumentException("이메일 전송 실패: " + e.getMessage(), e);
+            throw new RuntimeException("이메일 전송 실패: " + e.getMessage(), e);
         }
     }
 
