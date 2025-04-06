@@ -20,7 +20,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
-
         boolean isSessionExpired = false;
         boolean isAuthenticated = false;
 
@@ -43,6 +42,15 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         System.out.println("session = " + (session != null ? session.getId() : "null"));
         System.out.println("==> sessionExpired = " + isSessionExpired);
         System.out.println("==> isAuthenticated = " + isAuthenticated);
+
+        if (isSessionExpired) {
+            // 세션 만료된 경우 세션 종료 및 새로 시작
+            if (session != null) {
+                session.invalidate();
+            }
+            // 새 세션 시작
+            request.getSession(true);
+        }
 
         // 세션 만료 여부를 응답 헤더에 추가
         response.setHeader("sessionExpired", String.valueOf(isSessionExpired));
