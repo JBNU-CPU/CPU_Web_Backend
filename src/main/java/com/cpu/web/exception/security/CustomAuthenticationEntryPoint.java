@@ -23,23 +23,23 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         boolean isSessionExpired = false;
 
+        // 세션 ID와 세션 유효성 검사
         String sessionId = request.getRequestedSessionId();
         boolean valid = request.isRequestedSessionIdValid();
-
         HttpSession session = request.getSession(false);
 
-        if (sessionId != null && !valid) {
-            isSessionExpired = true;
-        } else if (session == null && sessionId != null) {
+        // 세션이 만료된 경우 or 세션이 존재하지 않는 경우 처리
+        if (sessionId == null || !valid || session == null) {
             isSessionExpired = true;
         }
 
-        // 디버깅용 로그
+        // 디버깅용 로그 추가
         System.out.println("sessionId = " + sessionId);
         System.out.println("isRequestedSessionIdValid = " + valid);
         System.out.println("session = " + (session != null ? session.getId() : "null"));
         System.out.println("==> sessionExpired = " + isSessionExpired);
 
+        // 세션 만료 여부를 응답 헤더에 추가
         response.setHeader("sessionExpired", String.valueOf(isSessionExpired));
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
