@@ -20,4 +20,6 @@ public interface MemberGatheringRepository extends JpaRepository<MemberGathering
 
     // 특정 멤버의 신청 정보 조회
     Optional<MemberGathering> findByGathering_GatheringIdAndMember_MemberId(Long gatheringId, Long memberId);
+
+    void deleteByGathering(Gathering gathering);
 }

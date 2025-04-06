@@ -32,7 +32,7 @@ public class BoardApplyService {
         Long memberId = member.getMemberId();
 
         // 스터디 존재 여부 확인
-        Gathering gathering = gatheringRepository.findById(gatheringId)
+        Gathering gathering = gatheringRepository.findByGatheringId(gatheringId)
                 .orElseThrow(() -> new CustomException("존재하지 않는 소모임입니다. ID: " + gatheringId, HttpStatus.NOT_FOUND));
 
         // 이미 참여한 멤버인지 확인

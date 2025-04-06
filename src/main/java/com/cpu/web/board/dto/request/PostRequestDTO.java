@@ -16,8 +16,7 @@ import java.sql.Timestamp;
 @Schema(description = "게시글 작성 요청 데이터")
 public class PostRequestDTO {
 
-    @Schema(description = "공지 여부", example = "true", required = true)
-    @NotNull(message = "공지 여부는 필수입니다.")
+    @Schema(description = "공지 여부", example = "true")
     private Boolean isNotice;
 
     @Schema(description = "게시글 제목", example = "박관소 개최 안내", required = true)

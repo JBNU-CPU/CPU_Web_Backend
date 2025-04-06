@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class BoardApplyController {
     private final BoardApplyService boardApplyService;
     //
-    // ✅ 스터디 신청
+    // 소모임 신청
     @PostMapping("/{gatheringId}")
     @Operation(summary = "소모임 신청", description = "소모임에 참여 신청을 합니다.")
     @ApiResponses(value = {
@@ -28,7 +28,7 @@ public class BoardApplyController {
         return ResponseEntity.status(201).body("소모임 신청이 완료되었습니다.");
     }
 
-    // ✅ 스터디 신청 취소
+    // 소모임 신청 취소
     @DeleteMapping("/{gatheringId}")
     @Operation(summary = "소모임 신청 취소", description = "소모임 신청을 취소합니다.")
     @ApiResponses(value = {

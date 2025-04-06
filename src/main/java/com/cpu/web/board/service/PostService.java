@@ -31,9 +31,15 @@ public class PostService {
     // 글 생성
     public Post createPost(@Valid PostRequestDTO postRequestDTO) {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException("로그인한 사용자만 접근 가능합니다.", HttpStatus.FORBIDDEN));
+
+        if (postRequestDTO.getIsNotice() && !isAdmin) {
+            throw new CustomException("관리자만 공지 게시글을 작성할 수 있습니다.", HttpStatus.FORBIDDEN);
+        }
 
         Post post = postRequestDTO.toPostEntity(member);
         return postRepository.save(post);
