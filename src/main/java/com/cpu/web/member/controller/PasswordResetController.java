@@ -38,7 +38,7 @@ public class PasswordResetController {
             @ApiResponse(responseCode = "200", description = "비밀번호가 성공적으로 재설정되었습니다.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "400", description = "이메일 인증되지 않았거나 사용자를 찾을 수 없습니다.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> resetPassword(@RequestParam @Valid NewPasswordDTO newPasswordDTO, HttpSession session) {
+    public ResponseEntity<String> resetPassword(@ModelAttribute @Valid NewPasswordDTO newPasswordDTO, HttpSession session) {
         return passwordResetService.resetPassword(newPasswordDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().body("비밀번호 재설정 중 오류가 발생했습니다."));
