@@ -13,9 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static com.cpu.web.member.entity.Member.Role;
 import static com.cpu.web.member.entity.Member.Role.*;
 import static com.cpu.web.scholarship.entity.Study.StudyType;
