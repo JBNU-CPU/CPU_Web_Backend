@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class PasswordResetService {
         return Optional.empty();
     }
 
-    public Optional<String> resetPassword(@Valid NewPasswordDTO newPasswordDTO) {
+    public Optional<String> resetPassword(@ModelAttribute @Valid NewPasswordDTO newPasswordDTO) {
         String email = newPasswordDTO.getEmail();
         String newPassword = newPasswordDTO.getPassword();
 
