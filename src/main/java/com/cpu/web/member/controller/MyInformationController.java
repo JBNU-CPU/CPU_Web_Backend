@@ -1,6 +1,5 @@
 package com.cpu.web.member.controller;
 
-import com.cpu.web.member.dto.request.CheckDTO;
 import com.cpu.web.member.dto.request.MyPageEditDTO;
 import com.cpu.web.member.dto.request.NewPasswordDTO;
 import com.cpu.web.member.dto.response.MemberResponseDTO;
@@ -52,16 +51,17 @@ public class MyInformationController {
     })
     @Parameters({
             @Parameter(name = "nickname", description = "닉네임", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "닉네임"))),
-            @Parameter(name = "password", description = "비밀번호", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format ="password", example = "qwer1234"))),
+            @Parameter(name = "password", description = "비밀번호", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "password", example = "qwer1234"))),
             @Parameter(name = "personName", description = "이름", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "홍길동"))),
-            @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "email", example = "user@example.com")))
+            @Parameter(name = "email", description = "이메일", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", format = "email", example = "user@example.com"))),
+            @Parameter(name = "phone", description = "전화번호", content = @Content(mediaType = "multipart/form-data", schema = @Schema(type = "string", example = "010-1234-5678")))
     })
     public ResponseEntity<MemberResponseDTO> updateMember(@RequestBody @Valid MyPageEditDTO myPageEditDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberResponseDTO updatedMemberDTO = myInformationService.updateMember(myPageEditDTO, username);
         return ResponseEntity.ok(updatedMemberDTO);
     }
-    //
+
     // 비밀번호 재설정
     @PostMapping("/password")
     @Operation(summary = "비밀번호 찾기", description = "비밀번호 재설정")
@@ -71,7 +71,7 @@ public class MyInformationController {
     @Parameters({
             @Parameter(name = "password", description = "비밀번호")
     })
-    public ResponseEntity<?> setNewPassword(@RequestBody NewPasswordDTO newPasswordDTO){
+    public ResponseEntity<?> setNewPassword(@RequestBody @Valid NewPasswordDTO newPasswordDTO){
         myInformationService.setNewPassword(newPasswordDTO);
         return ResponseEntity.ok().build();
     }
@@ -111,6 +111,4 @@ public class MyInformationController {
         List<StudyOverviewDTO> ledStudies = myInformationService.getMyLedStudies(username);
         return ResponseEntity.ok(ledStudies);
     }
-    
-
 }

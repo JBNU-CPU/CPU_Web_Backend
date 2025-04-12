@@ -1,5 +1,6 @@
 package com.cpu.web.scholarship.controller;
 
+import com.cpu.web.exception.CustomException;
 import com.cpu.web.scholarship.dto.request.StudyRequestDTO;
 import com.cpu.web.scholarship.dto.response.StudyResponseDTO;
 import com.cpu.web.scholarship.entity.Study;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +40,7 @@ public class StudyController {
                     description = "스터디 개설 데이터",
                     required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyRequestDTO.class))
-            ) @RequestBody StudyRequestDTO studyRequestDTO) {
+            ) @RequestBody @Valid StudyRequestDTO studyRequestDTO) {
         Study study = studyService.createStudy(studyRequestDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -80,7 +82,11 @@ public class StudyController {
     })
     public ResponseEntity<StudyResponseDTO> getStudyById(@Parameter(description = "조회할 스터디 ID", example = "1") @PathVariable Long id) {
         Optional<StudyResponseDTO> studyDTO = studyService.getStudyById(id);
-        return studyDTO.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return studyDTO.map(dto -> {
+            // 기존 개행(\n)을 그대로 유지하여 변환
+            dto.setStudyDescription(dto.getStudyDescription().replace("\r\n", "\n"));
+            return ResponseEntity.ok(dto);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{id}")
@@ -95,9 +101,9 @@ public class StudyController {
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "수정할 스터디 수정 데이터", required = true,
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyRequestDTO.class))
-            ) @RequestBody StudyRequestDTO studyRequestDTO) {
-        StudyResponseDTO updatedStudyRequestDTO = studyService.updateStudy(id, studyRequestDTO);
-        return ResponseEntity.ok(updatedStudyRequestDTO);
+            ) @RequestBody @Valid StudyRequestDTO studyRequestDTO) {
+        StudyResponseDTO updatedStudyResponseDTO = studyService.updateStudy(id, studyRequestDTO);
+        return ResponseEntity.ok(updatedStudyResponseDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -108,5 +114,22 @@ public class StudyController {
     public ResponseEntity<?> deleteStudy(@PathVariable Long id) {
         studyService.deleteStudy(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/close")
+    @Operation(summary = "스터디 마감", description = "지정된 스터디의 마감 상태를 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "스터디 마감 상태가 성공적으로 변경되었습니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = StudyResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 스터디입니다.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "403", description = "마감 권한이 없습니다.", content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<StudyResponseDTO> closeStudy(@PathVariable Long id) {
+        try {
+            StudyResponseDTO updatedStudy = studyService.closeStudy(id);
+            return ResponseEntity.ok(updatedStudy);
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getStatus()).build();
+        }
     }
 }

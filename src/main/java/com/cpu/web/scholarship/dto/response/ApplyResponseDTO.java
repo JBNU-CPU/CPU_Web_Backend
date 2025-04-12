@@ -15,6 +15,8 @@ public class ApplyResponseDTO {
     private Long memberId;
     private String nickName;
     private String email;
+    private String phone;  // 전화번호 필드 추가
+    private String personName;
 
     public ApplyResponseDTO(MemberStudy memberStudy) {
         this.memberStudyId = memberStudy.getMemberStudyId();
@@ -23,5 +25,7 @@ public class ApplyResponseDTO {
         this.memberId = memberStudy.getMember().getMemberId();
         this.nickName = memberStudy.getMember().getNickName();
         this.email = memberStudy.getMember().getEmail();
+        this.phone = memberStudy.getMember().getPhone();  // 전화번호 설정
+        this.personName = memberStudy.getMember().getPersonName();
     }
 }

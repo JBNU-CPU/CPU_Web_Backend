@@ -9,6 +9,7 @@ public class EventResponseDTO {
     private String userId;
     private Integer score;
     private String nickName;
+
     public EventResponseDTO(){
 
     }

@@ -1,41 +1,37 @@
 package com.cpu.web.board.entity;
 
 import com.cpu.web.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-public class Comment {
+public class MemberGathering {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    private Long commentId;
-
-    @Column(name = "content", length = 10000, nullable = false)
-    private String content;
+    @Column(name = "member_gathering_id")
+    private Long memberGatheringId;
 
     @CreationTimestamp
-    private LocalDateTime postDate;
+    private Timestamp joinDate;
 
-    @UpdateTimestamp
-    private LocalDateTime updateDate;
+    @Column(name = "is_leader", nullable = false)
+    private Boolean isLeader;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
+    @JsonIgnore
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
-
-
+    @JoinColumn(name = "gathering_id", nullable = false)
+    @JsonIgnore
+    private Gathering gathering;
 }

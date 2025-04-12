@@ -2,6 +2,8 @@ package com.cpu.web.scholarship.dto.response;
 
 import com.cpu.web.scholarship.entity.MemberStudy;
 import com.cpu.web.scholarship.entity.Study;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,11 +23,17 @@ public class StudyResponseDTO {
     @Schema(description = "등록 여부", example = "true")
     private Boolean isAccepted;
 
+    @Schema(description = "스터디 마감 여부", example = "false")
+    private Boolean isClosed;
+
     @Schema(description = "개설자 아이디", example = "202018556")
     private String leaderUserName;
 
     @Schema(description = "개설자 이름", example = "박도현")
     private String leaderName;
+
+    @Schema(description = "개설자 전화번호", example = "010-1234-5678")
+    private String leaderPhone; // 개설자 전화번호 필드 추가
 
     @Schema(description = "스터디명", example = "자바를 잡아라!")
     private String studyName;
@@ -74,8 +82,10 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
-        this.leaderUserName = study.getLeaderUserName();
-        this.leaderName = study.getLeaderName();
+        this.isClosed = study.getIsClosed();
+        this.leaderUserName = study.getLeader().getUsername();
+        this.leaderName = study.getLeader().getPersonName();
+        this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -83,7 +93,7 @@ public class StudyResponseDTO {
         this.techStack = study.getTechStack();
         this.location = study.getLocation();
         this.etc = study.getEtc();
-        this.leaderId = study.getLeaderId();
+        this.leaderId = study.getLeader().getMemberId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
         this.currentCount = 0L; // ✅ 기본값 추가
@@ -93,8 +103,10 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
-        this.leaderUserName = study.getLeaderUserName();
-        this.leaderName = study.getLeaderName();
+        this.isClosed = study.getIsClosed();
+        this.leaderUserName = study.getLeader().getUsername();
+        this.leaderName = study.getLeader().getPersonName();
+        this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -103,7 +115,7 @@ public class StudyResponseDTO {
         this.techStack = study.getTechStack();
         this.location = study.getLocation();
         this.etc = study.getEtc();
-        this.leaderId = study.getLeaderId();
+        this.leaderId = study.getLeader().getMemberId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
     }
@@ -112,8 +124,10 @@ public class StudyResponseDTO {
     public StudyResponseDTO(Study study, List<MemberStudy> memberStudies, Long currentCount) {
         this.id = study.getStudyId();
         this.isAccepted = study.getIsAccepted();
-        this.leaderUserName = study.getLeaderUserName();
-        this.leaderName = study.getLeaderName();
+        this.isClosed = study.getIsClosed();
+        this.leaderUserName = study.getLeader().getUsername();
+        this.leaderName = study.getLeader().getPersonName();
+        this.leaderPhone = study.getLeader().getPhone(); // 개설자 전화번호 매핑
         this.studyName = study.getStudyName();
         this.studyType = study.getStudyType();
         this.maxMembers = study.getMaxMembers();
@@ -122,7 +136,7 @@ public class StudyResponseDTO {
         this.techStack = study.getTechStack();
         this.location = study.getLocation();
         this.etc = study.getEtc();
-        this.leaderId = study.getLeaderId();
+        this.leaderId = study.getLeader().getMemberId();
         this.createDate = study.getCreatedDate();
         this.studyDays = study.getStudyDays();
         this.memberStudies = memberStudies.stream()

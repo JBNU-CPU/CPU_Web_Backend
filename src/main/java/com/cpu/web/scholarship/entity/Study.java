@@ -1,11 +1,10 @@
 package com.cpu.web.scholarship.entity;
 
+import com.cpu.web.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
@@ -22,20 +21,14 @@ public class Study {
     @Column(name = "study_id", nullable = false, unique = true)
     private Long studyId;
 
-    @Column(name = "leader_id", nullable = false)
-    private Long leaderId;
-
-    @Column(name = "leader_username")
-    private String leaderUserName;
-
-    @Column(name = "leader_name", nullable = false)
-    private String leaderName;
-
     @Column(name = "study_name", length = 100, nullable = false)
     private String studyName;
 
-    @Column(name = "is_accepted", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "is_accepted", nullable = false)
     private Boolean isAccepted = false;
+
+    @Column(name = "is_closed", nullable = false)
+    private Boolean isClosed = false;  // 추가된 마감 여부 필드
 
     @Column(name = "study_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -44,13 +37,13 @@ public class Study {
     @Column(name = "max_members", nullable = false)
     private int maxMembers;
 
-    @Column(name = "study_description", nullable = false)
+    @Column(name = "study_description", length = 10000, nullable = false)
     private String studyDescription;
 
-    @Column(name = "tech_stack", nullable = false)
+    @Column(name = "tech_stack", length = 1000, nullable = false)
     private String techStack;
 
-    @Column(name = "location", nullable = false)
+    @Column(name = "location", length = 1000, nullable = false)
     private String location;
 
     @Column(name = "etc")
@@ -67,13 +60,15 @@ public class Study {
     @UpdateTimestamp
     private Timestamp updatedDate;
 
-    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
-    private List<MemberStudy> joinedMember = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "leader_id", nullable = false)
+    private Member leader;
 
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberStudy> joinedMember = new ArrayList<>();
 
     // ENUM for study type
     public enum StudyType {
         session, study, project
     }
 }
-

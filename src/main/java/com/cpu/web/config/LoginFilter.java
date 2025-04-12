@@ -115,6 +115,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         System.out.println("login fail");
 
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = objectMapper.writeValueAsString(Map.of(
+                    "error", "Login failed",
+                    "message", failed.getMessage()
+            ));
+
+            response.getWriter().write(jsonResponse);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write response", e);
+        }
     }
 }

@@ -13,7 +13,10 @@ import lombok.Setter;
 public class CommentResponseDTO {
 
     private Long postId;
+    private Long commentId;
     private String content;
+    private Long userId;
+    private String nickName;
 
     public CommentResponseDTO(){}
 
@@ -21,6 +24,9 @@ public class CommentResponseDTO {
     public CommentResponseDTO(Comment comment) {
         this.content = comment.getContent();
         this.postId = comment.getPost().getPostId();
+        this.commentId = comment.getCommentId();
+        this.userId = comment.getMember().getMemberId();
+        this.nickName = comment.getMember().getNickName();
     }
 
 
