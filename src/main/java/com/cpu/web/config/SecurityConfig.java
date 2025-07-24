@@ -81,7 +81,7 @@ public class SecurityConfig {
                 }));
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**", "/study", "/post", "/event", "/event/**", "/find/**")
+                .requestMatchers("/", "/login", "/signup", "/reissue", "/auth/**", "swagger-ui/**", "/v3/api-docs/**", "/study", "/post", "/event", "/event/**", "/find/**")
                 .permitAll() // 비회원 접근 허용 경로
                 .requestMatchers("/study/**", "/study/apply/**", "/post/**", "/comment/**", "/gathering", "/gathering/**", "/gathering/apply/**")
                 .hasAnyRole("MEMBER") // 게시글 조회/작성은 MEMBER 이상만 가능
