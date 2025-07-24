@@ -12,7 +12,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -63,6 +62,16 @@ public class Member {
     public enum Role {
         ROLE_GUEST,
         ROLE_MEMBER,
-        ROLE_ADMIN
+        ROLE_ADMIN;
+
+        public static Role from(String value) {
+            try {
+                return Role.valueOf(value.toUpperCase());
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid Role: " + value);
+            }
+        }
     }
+
+
 }
