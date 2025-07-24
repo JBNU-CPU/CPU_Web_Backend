@@ -3,6 +3,7 @@ package com.cpu.web.config;
 import com.cpu.web.auth.JWTFilter;
 import com.cpu.web.auth.JWTUtil;
 import com.cpu.web.auth.LoginFilter;
+import com.cpu.web.member.repository.RefreshRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,9 +28,9 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CorsConfigurationSource corsConfigurationSource;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -91,7 +92,7 @@ public class SecurityConfig {
         );
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
