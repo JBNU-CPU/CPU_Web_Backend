@@ -1,8 +1,9 @@
 package com.cpu.web.config;
 
-import com.cpu.web.exception.security.CustomAccessDeniedHandler;
-import com.cpu.web.exception.security.CustomAuthenticationEntryPoint;
-import com.cpu.web.member.repository.MemberRepository;
+import com.cpu.web.auth.JWTFilter;
+import com.cpu.web.auth.JWTUtil;
+import com.cpu.web.auth.LoginFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,13 +13,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -27,14 +29,13 @@ public class SecurityConfig {
 
     private final CorsConfigurationSource corsConfigurationSource;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final MemberRepository memberRepository;
+    private final JWTUtil jwtUtil;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 
         return configuration.getAuthenticationManager();
     }
-
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
 
@@ -51,9 +52,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource));
+        http
+                .csrf((auth) -> auth.disable());
 
+        http
+                .httpBasic((auth) -> auth.disable());
+
+        http
+                .formLogin(login -> login.disable());
+
+        http
+                .cors(cors -> cors.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                        return configuration;
+                    }
+                }));
 
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/", "/login", "/loginProc", "/signup", "/signupProc", "/auth/**", "swagger-ui/**", "/v3/api-docs/**", "/study", "/post", "/event", "/event/**", "/find/**")
@@ -62,28 +87,18 @@ public class SecurityConfig {
                 .hasAnyRole("MEMBER") // 게시글 조회/작성은 MEMBER 이상만 가능
                 .requestMatchers("/admin/**")
                 .hasRole("ADMIN") // 관리자 전용 경로
-                .anyRequest()
-                .authenticated()
+                .anyRequest().authenticated()
         );
 
-        http.exceptionHandling(exceptionHandling -> exceptionHandling
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 401 Unauthorized 처리
-                .accessDeniedHandler(new CustomAccessDeniedHandler()) // 403 Forbidden 처리
-        );
+        http
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-        http.formLogin(login -> login.disable());
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
-        http.sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-        );
-
-        http.securityContext(securityContext -> securityContext
-                .securityContextRepository(new HttpSessionSecurityContextRepository()) // 세션을 통해 SecurityContext 유지
-        );
-
-        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), memberRepository);
-        loginFilter.setFilterProcessesUrl("/loginProc");
-        http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }

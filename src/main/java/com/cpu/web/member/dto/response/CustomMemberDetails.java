@@ -8,17 +8,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CustomMember implements UserDetails {
+public class CustomMemberDetails implements UserDetails {
 
     private final Member member;
 
-    public CustomMember(Member member) {
+    public CustomMemberDetails(Member member) {
         this.member = member;
     }
 
     // 사용자 권한 반환 (Role enum을 사용하여 권한 처리)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
         // Role enum을 String 형태로 변환하여 SimpleGrantedAuthority로 반환

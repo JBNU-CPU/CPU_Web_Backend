@@ -1,6 +1,6 @@
 package com.cpu.web.member.service;
 
-import com.cpu.web.member.dto.response.CustomMember;
+import com.cpu.web.member.dto.response.CustomMemberDetails;
 import com.cpu.web.member.entity.Member;
 import com.cpu.web.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("존재하지 않는 유저입니다: " + username);
         }
 
-        return new CustomMember(member.get());
+        return new CustomMemberDetails(member.get());
     }
 }
