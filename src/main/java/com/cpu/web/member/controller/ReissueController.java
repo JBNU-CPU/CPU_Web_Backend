@@ -79,7 +79,7 @@ public class ReissueController {
         refreshRepository.deleteByRefresh(refresh);
         addRefreshEntity(username, newRefresh, 24*60*60*1000L);
 
-        response.setHeader("access", newAccess);
+        response.setHeader("Authorization", "Bearer " + newAccess);
         response.addCookie(createCookie("refresh", newRefresh));
 
         return new ResponseEntity<>(HttpStatus.OK);
